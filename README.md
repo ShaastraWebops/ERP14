@@ -1,4 +1,15 @@
-erp2014
-=======
+shaastra_erp
+============
 
-The Enterprise Resource Planner for Shaastra 2014
+shaastra_erp
+
+TODO : 
+Frontend :
+> Showing children and parents in task page
+
+Frontend+Backend :
+> Put dajax to Task edit/create
+> Implement change status option (input + ajax for coord) (button change for core)
+
+Backend :
+> Formsets

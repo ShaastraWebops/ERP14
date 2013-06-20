@@ -1,0 +1,67 @@
+{% load staticfiles %}
+
+<!-- Extra styles -->
+
+<!-- Extra scripts -->
+
+<!-- Content -->
+<div id="table_cross" class="span11">
+  <p><h3>Tasks for other departments created by {{userprofile.dept}}:</h3></p>
+  <p>
+    <table class="table table-bordered table-hover display" id="table_cross">
+      <thead>
+        <tr>
+          <th>Subject</th>
+          <th>Creator</th>
+          <th>Target Dept</th>
+          <th>Created</th>
+          <th>Deadline</th>
+          {% comment %}
+            All 'th' with class button_in_table are not shown on the screen 
+            If the corresponding tr has a btn-gtoup, it's innerHTML and 
+            href are taken to the topbar of the table.
+            
+            This is done as js cannot get the task.id in any other simple way
+            Currently : edit, del, status, deptSubtask, crossSubtask are 
+                searched for, if others need to be added, js needs to be changed in show_table
+                in templates/tasks/content.js
+            
+          {% endcomment %}
+          <th class="sorttable_nosort button_in_table">Options</th>
+          <th class="sorttable_nosort button_in_table">Add a subtask for</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for task in dept_created_crosstasks %}
+          <tr>
+            <td><a href="javascript:Dajaxice.tasks.display_task_get(Dajax.process, {'primkey':{{task.pk}}});">{{task.subject}}</a></td>
+            <td>
+              <a href="javascript:Dajaxice.users.display_profile(Dajax.process, {'userid':{{task.taskcreator.user.get_profile.id}}});">
+                {{task.taskcreator.user.first_name}} {{task.taskcreator.user.last_name}}
+              </a>
+            </td>
+            <td>{{task.targetdept}}</td>
+            <td>{{task.datecreated}}</td>
+            <td>{{task.deadline}}</td>
+            <td class="button_in_table">
+              {% if task.isUnapprovedCrosstask %}
+                <div class="btn-group">
+                  <a class="btn button_in_table_edit" href="{% url tasks.views.edit_task task.pk %}">Edit</a>
+                  <a class="btn button_in_table_del" href="javascript:Dajaxice.tasks.delete_task(Dajax.process, { 'primkey':'{{task.id}}' })">Delete</a>
+                </div>
+              {% else %}
+                Approved
+              {% endif %}
+            </td>
+            <td class="button_in_table">
+              <div class="btn-group">
+                <a class="btn button_in_table_subtaskDept" href="{% url tasks.views.add_cross_task task.pk %}">Add Dept Subtask</a>
+                <a class="btn button_in_table_subtaskCross" href="{% url tasks.views.add_intra_task task.pk %}">Add Cross Subtask</a>
+              </div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </p>
+</div>

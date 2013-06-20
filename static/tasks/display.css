@@ -1,0 +1,16 @@
+
+#task_table { 
+    text-align : center;
+}
+
+#task_table tr { 
+    text-align : center;
+}
+
+#task_table tr td { 
+    text-align : left;
+}
+
+#task_table tr th { 
+    text-align : right;
+}

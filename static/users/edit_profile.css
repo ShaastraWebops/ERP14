@@ -1,0 +1,12 @@
+#profile_container {
+    padding-top: 60px;
+    padding-bottom: 40px;
+} 
+
+#complete_details {
+   font-size: 100%;
+}
+
+#profile_edit_table tbody tr th label {
+    text-align : right;
+}

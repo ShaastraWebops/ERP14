@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+
+{% load staticfiles %}
+{% load dajaxice_templatetags %}
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Shaastra | ERP - Beta Release</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- The Js -->
+    <script src="{% static 'js/jquery-1.9.1.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script>
+    <script src="{% static 'js/jquery.dajax.core.js' %}"></script>
+    <script src="{% static 'js/base.js' %}"></script>
+    
+    {% dajaxice_js_import 'nocsrf' %}
+    <!--<script src="{% static 'js/bootstrap.min.js' %}"></script>-->
+    
+    <!-- The styles -->
+    
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" media="screen">
+    <!--<link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen">-->
+    <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/base.css' %}" rel="stylesheet" media="screen">
+    
+    <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    {% block extrahead %}
+    {% endblock %}
+    
+    {% block extrascripts %}
+    {% endblock %}
+    
+    {% block extrastyle %}
+    {% endblock %}
+    
+</head>
+
+<body>
+  {% block welcome %}{% endblock %}
+   
+  {% block modal %}
+  <div class="modal hide" id="id_modal"> <!-- common modal used by stuff -->
+    
+  </div>
+  {% endblock %}
+  
+  {% block navbar %}
+  <div class="navbar navbar-fixed-top navbar-inverse" id="header_content">
+    <div class="navbar-inner">
+      <div class="container">
+        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> 
+          <span class="icon-bar"></span> 
+          <span class="icon-bar"></span> 
+          <span class="icon-bar"></span> 
+        </a>
+        <ul class="nav">
+          <li>
+            <a class="brand" href="http://www.shaastra.org" id="logo">
+              <i></i>Shaastra 
+            </a>
+          </li>
+          <li>
+            <a class="brand" href="{% url dash.views.dash_view %}" id="logo">
+              <i class="icon-globe icon-white" style="margin-top:5px;"></i> ERP
+            </a>
+          </li>
+        </ul>
+        <!-- Dropdown box on the right.
+          <div class="btn-group pull-right">
+          <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i  class="icon-th-large"></i> Actions
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url users.views.edit_profile %}"><i class="icon-tag"></i> Edit Profile</a></li>
+            <li>
+              <a href="{% url users.views.logout %}"><i class="icon-off"></i> Sign Out</a>
+            </li>
+          </ul>
+        </div>
+        -->
+        <div class="nav-collapse pull-right">
+          <ul class="nav">
+            <li id="nav_profile">
+              <a href="javascript:Dajaxice.users.display_profile(Dajax.process);">
+                  Logged in as
+                  {% if user %}
+                    {{user.first_name}}
+                  {% else %}
+                    Guest
+                  {% endif %}  
+              
+              </a>
+            </li>
+            <li id="nav_profile">
+              <!--<a href="{% url users.views.edit_profile %}"><i class="icon-tag icon-white"></i>Edit Profile</a>-->
+              <a href="javascript:Dajaxice.users.edit_profile_get(Dajax.process);"><i class="icon-tag icon-white"></i>Edit Profile</a>
+            </li>
+            <li>
+              <a href="{% url users.views.logout %}"><i class="icon-off icon-white"></i> Sign Out </a>
+            </li>
+          </ul>
+          <ul class="nav">
+          </ul>
+        </div><!--/.nav-collapse -->
+        <div class="nav-collapse">
+          <ul class="nav">
+            <li id="nav_home">
+              <a href="{% url dash.views.dash_view %}"><i class="icon-home icon-white"></i> Home</a>
+            </li>
+            <!--<li id="nav_profile">
+              <a href="{% url users.views.view_profile %}"><i class="icon-user icon-white"></i> Profile</a>
+            </li>-->
+            <li id="nav_contact">
+              <a href="javascript:Dajaxice.users.contact_us(Dajax.process);"><i class="icon-wrench icon-white"></i> Contact</a>
+            </li>
+          </ul>
+          <!-- Universal Search 
+          <ul class="nav">
+            <li>
+              <div class="input-append">
+                <form id="search" class="navbar-search" method="POST" action="/search/">
+                  <div style="display:none">
+                    <input type="hidden" value="smc5zXKSyhRqplSNBPFlCJS0d1bnUMOM" name="csrfmiddlewaretoken"></input>
+                  </div>
+                  <div class="input-append">
+                    <input class="input-xlarge search-query" type="text" name="searchbar" placeholder="Search" style="border-radius:13px 13px 13px 13px;"></input>
+                    <a id="search-icon" href="#">
+                      <i class="icon-search" style="margin-top:2px; position:absolute; right:10px; top:5px;"></i>
+                    </a>
+                  </div>
+                </form>
+              </div>
+            </li>
+          </ul>
+          -->
+        </div><!--/.nav-collapse -->
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+  
+  <div id="main_content">
+    <div id="id_messages">
+        
+      {% if messages %}
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags|lower }}">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            <strong>{{ message.tags|upper }}!</strong> {{message}}
+          </div>
+        {% endfor %}
+      {% endif %}
+      <div class="alert hide" id="id_alert"> <!-- alert for javascript -->
+        <button type="button" class="close" onclick="javascript:js_alert_hide();">&times;</button>
+        <strong></strong>
+      </div>
+    </div> 
+    <div id="id_content"> <!-- A row/row-fluid needs to be created in the sub-templates -->
+      {% block content %} {% endblock %}
+    </div>
+    
+  </div>
+  
+</body>
+</html>

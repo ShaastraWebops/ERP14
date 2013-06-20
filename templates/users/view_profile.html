@@ -1,0 +1,77 @@
+{% load staticfiles %}
+
+<!-- Extra Styles -->
+<link href="{% static 'users/edit_profile.css' %}" rel="stylesheet" media="screen">
+
+<!-- Extra Scripts -->
+
+<!-- Content -->
+{% if userexists %}
+<center>
+  <div class="modal-header">
+    <button type="button" class="close" onclick="javascript:modal_hide()">&times;</button>
+    <h3>{{fullname}}</h3>
+    {% if nickname %} 
+      <h4> 
+        ( 
+          {{ nickname }} 
+          <!--{% if ownprofile %}
+           ... you
+          {% endif %}-->
+        ) 
+      </h4>
+    {% endif %}
+  </div>
+  <div class='modal-body'>
+    <div class="row-fluid">
+      <div class="span12">
+        <!-- Show personal profile info -->
+        <table class="table table-striped table-hover" id="profile_table">
+          <tr>
+            <th> Contact Number </th>
+            <td> {{ chennaino }} </td>
+          </tr>
+          <tr>
+            <th> Summer Number </th>
+            <td> {{ summerno }} </td>
+          </tr>
+          <tr>
+            <th> Summer Stay </th>
+            <td> {{ summerstay }} </td>
+          </tr>
+          <tr>
+            <th> Hostel </th>
+            <td> {{ hostel }} </td>
+          </tr>
+          <tr>
+            <th> Room number </th>
+            <td> {{ roomno }} </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+    <div class="modal-footer">  
+      <div class="btn-group">
+        <!-- Give buttons to close modal, and to edit profile if the profile is the logged in user's -->
+        {% if ownprofile %} 
+          <a class ="btn btn-info" href="javascript:Dajaxice.users.edit_profile_get(Dajax.process);">Edit Profile</a>
+        {% endif %}
+          <a class ="btn btn-info" href="javascript:modal_hide()">Close</a>
+      </div>
+    </div>
+  </div>
+</center>
+{% else %}
+<center>
+  <!-- If invalid id, give error message in modal -->
+  <div class="modal-header">
+    <button type="button" class="close" onclick="javascript:modal_hide()">&times;</button>
+    <h3><strong style="color:#FF0000">User does not exist!</strong></h3>
+  </div>
+  <div class="modal-body">
+    <strong style="color:#FF0000">User does not exist!</strong>
+  </div>
+</center>
+{% endif %}
+
+

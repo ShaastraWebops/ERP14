@@ -1,0 +1,12 @@
+#profile_container {
+    padding-top: 60px;
+    padding-bottom: 40px;
+} 
+
+#profile_table tbody tr th {
+    text-align : right;
+}
+
+#profile_table tbody tr td {
+    text-align : left;
+}

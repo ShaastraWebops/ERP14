@@ -1,0 +1,25 @@
+#form_table {
+
+}
+
+/* ----  To center  ---- */
+#form_table tbody tr th {
+    text-align : right;
+    font-weight : bold;
+}
+
+#form_table tbody tr th label {
+    text-align : right;
+    font-weight : bold;
+}
+
+#form_table tbody tr td {
+    text-align : left;
+}
+
+/* ---- To make multiple select look better */
+#form_table tbody tr td ul {
+    list-style-type : none;
+    padding : 0;
+    margin : 0;
+}
