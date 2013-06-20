@@ -1,6 +1,7 @@
 from django.conf.urls import patterns, include, url
 import os.path
 from erp.settings import STATIC_URL
+from django.views.generic.simple import redirect_to
 
 # For DajaxIce to work
 from misc.dajaxice.core import dajaxice_autodiscover, dajaxice_config
@@ -22,6 +23,8 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^tasks/', include('tasks.urls')),
     url(r'^login/$', 'users.views.login'),
+    url(r'^/$', redirect_to, {'url': '/login/'}),
+    url(r'^$', redirect_to, {'url': '/login/'}),
     url(r'^choose_identity/$', 'users.views.choose_identity'),
     url(r'^logout/$', 'users.views.logout'),
     url(r'^dash/$', 'dash.views.dash_view'),
