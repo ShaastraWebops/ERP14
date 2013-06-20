@@ -4,8 +4,12 @@
 # **************** ERP - SETTINGS.PY - COMMENTING DONE TO KEEP TRACK OF MODIFICATIONS
 # Django settings for erp project.
 
+import os.path
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+
+PROJECT_PATH = os.path.abspath( os.path.join( os.path.dirname(__file__), '..') )
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
@@ -44,21 +48,11 @@ USE_TZ = True
 # Example: "/home/media/media.lawrence.com/media/"
 MEDIA_ROOT = ''
 
-# URL that handles the media served from MEDIA_ROOT. Make sure to use a
-# trailing slash.
-# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
-
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = ''
-
-# URL prefix for static files.
-# Example: "http://media.lawrence.com/static/"
-STATIC_URL = '/static/'
-
 
 # List of finder classes that know how to find static files in
 # various locations.

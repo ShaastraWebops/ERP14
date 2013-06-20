@@ -4,9 +4,8 @@ from misc.dajaxice.decorators import dajaxice_register
 from misc.dajax.core import Dajax
 from misc.dajaxice.utils import deserialize_form
 # For rendering templates
-from django.template import Template, Context, RequestContext
-from django.shortcuts import render
-from django.template.loader import get_template
+from django.template import RequestContext
+from django.template.loader import render_to_string
 # From views
 from users.views import edit_profile as view_edit_profile
 # From forms
@@ -72,12 +71,12 @@ def display_profile(request, userid=None):
         profile_dict['ownprofile'] = ( profile == userprofile )
         
         # Render the template with given info
-        html_content = render(request, 'users/view_profile.html', profile_dict)
+        html_content = render_to_string('users/view_profile.html', profile_dict, RequestContext(request))
     
     except:
         # Profile given was invalid.
         profile_dict['userexists'] = False
-        html_content = render(request, 'users/view_profile.html', locals())
+        html_content = render_to_string('users/view_profile.html', locals(), RequestContext(request))
     
     dajax.remove_css_class('#id_modal', 'hide') # Show modal
     dajax.assign('#id_modal','innerHTML', html_content) # Populate modal
@@ -115,7 +114,7 @@ def edit_profile(request, edit_form=None):
             #show_alert(dajax, 'error', "There were errors in the form") # as it is in modal, not req
     else:
         edit_form = EditProfileForm ( instance = userprofile )
-        html_content = render(request, "users/edit_profile.html", locals())
+        html_content = render_to_string("users/edit_profile.html", locals(), RequestContext(request))
         dajax.remove_css_class('#id_modal', 'hide') # Show modal
         dajax.assign("#id_modal", "innerHTML", html_content) # Populate modal
     
@@ -128,7 +127,7 @@ def contact_us(request):
     """
     dajax = Dajax()
     
-    html_content = render(request, "common/contact_us.html", locals())
+    html_content = render_to_string("common/contact_us.html", locals(), RequestContext(request))
     dajax.remove_css_class('#id_modal', 'hide') # Show modal
     dajax.assign("#id_modal", "innerHTML", html_content) # Populate modal
     #print "added"

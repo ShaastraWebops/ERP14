@@ -5,7 +5,7 @@ from misc.dajax.core import Dajax
 # For rendering templates
 from django.template import Template, Context, RequestContext
 from django.shortcuts import render
-from misc.django.template.loader import get_template
+from django.template.loader import get_template
 # From models
 from users.models import *
 # From Misc to show bootstrap alert

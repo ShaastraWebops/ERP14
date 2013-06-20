@@ -1,4 +1,6 @@
 from django.conf.urls import patterns, include, url
+import os.path
+from erp.settings import STATIC_URL
 
 # For DajaxIce to work
 from misc.dajaxice.core import dajaxice_autodiscover, dajaxice_config
@@ -27,7 +29,8 @@ urlpatterns = patterns('',
     
     (r'^comments/', include('django.contrib.comments.urls')),
     
-    (dajaxice_config.dajaxice_url, include('dajaxice.urls')),
-
+    (dajaxice_config.dajaxice_url, include('dajaxice.urls')), # For dajaxice to function corrently
+    (r'^static/(?P<path>.*)$', 'django.views.static.serve', {   'document_root' : STATIC_URL } ), # For static files to be server properly (on server)
+            
+    
 )
-

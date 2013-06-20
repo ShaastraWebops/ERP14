@@ -3,9 +3,8 @@ from django.utils import simplejson
 from misc.dajaxice.decorators import dajaxice_register
 from misc.dajax.core import Dajax
 # For rendering templates
-from django.template import Template, Context, RequestContext
-from django.shortcuts import render
-from django.template.loader import get_template
+from django.template import RequestContext
+from django.template.loader import render_to_string
 # Decorators
 from django.contrib.auth.decorators import login_required, user_passes_test
 # From forms
@@ -81,37 +80,37 @@ def task_table(request, page):
     if page == "table_you":
         query_dictionary["user_tasks"] = userprofile.task_set.filter(targetdept=userprofile.dept).all()
         if userprofile.is_coord():
-            html_content = render(request, "dash/task_tables/coord_you.html", query_dictionary)
+            html_content = render_to_string("dash/task_tables/coord_you.html", query_dictionary, RequestContext(request))
         elif userprofile.is_supercoord():
-            html_content = render(request, "dash/task_tables/supercoord_you.html", query_dictionary)
+            html_content = render_to_string("dash/task_tables/coord_you.html", query_dictionary, RequestContext(request))
         elif userprofile.is_core():
-            html_content = render(request, "dash/task_tables/core_you.html", query_dictionary)
+            html_content = render_to_string("dash/task_tables/core_you.html", query_dictionary, RequestContext(request))
     
     # COORD ONLY
     elif page == "table_subdept" and userprofile.is_coord():
         #The attribute userprofile.subdept is present only if he's a coord
         query_dictionary["subdept_tasks"] = userprofile.subdept.task_set.exclude(taskstatus='U')
-        html_content = render(request, "dash/task_tables/coord_subdept.html", query_dictionary)
+        html_content = render_to_string("dash/task_tables/coord_subdept.html", query_dictionary, RequestContext(request))
         
     # SUPERCOORD ONLY
     elif page == "table_cross" and userprofile.is_supercoord():
         query_dictionary["dept_todo_crosstasks"] = userprofile.dept.todo_task_set.filter(isxdepartmental=True).exclude(taskstatus='U') #Remove if necessary.
-        html_content = render(request, "dash/task_tables/supercoord_cross.html", query_dictionary)
+        html_content = render_to_string("dash/task_tables/supercoord_cross.html", query_dictionary, RequestContext(request))
     elif page == "table_dept" and userprofile.is_supercoord():
         query_dictionary["dept_tasks"] = userprofile.dept.todo_task_set.exclude(taskstatus='U')
-        html_content = render(request, "dash/task_tables/supercoord_dept.html", query_dictionary)
+        html_content = render_to_string("dash/task_tables/supercoord_dept.html", query_dictionary, RequestContext(request))
       
     # CORE ONLY
     elif page == "table_pending" and userprofile.is_core():
         query_dictionary["approval_pending_tasks"] = userprofile.dept.todo_task_set.filter(taskstatus='R') # Reported Completed tasks
         query_dictionary["approval_pending_tasks"] += userprofile.dept.todo_task_set.filter(taskstatus='U') # Unapproved tasks
-        html_content = render(request, "dash/task_tables/core_pending.html", query_dictionary)
+        html_content = render_to_string("dash/task_tables/core_pending.html", query_dictionary, RequestContext(request))
     elif page == "table_cross" and userprofile.is_core():
         query_dictionary["dept_created_crosstasks"] = userprofile.dept.created_task_set.filter(isxdepartmental=True)
-        html_content = render(request, "dash/task_tables/core_cross.html", query_dictionary)
+        html_content = render_to_string("dash/task_tables/core_cross.html", query_dictionary, RequestContext(request))
     elif page == "table_dept" and userprofile.is_core():
         query_dictionary["dept_tasks"] = userprofile.dept.todo_task_set.exclude(taskstatus='U')
-        html_content = render(request, "dash/task_tables/core_dept.html", query_dictionary)
+        html_content = render_to_string("dash/task_tables/core_dept.html", query_dictionary, RequestContext(request))
     
     # Weird case
     else:
@@ -165,7 +164,7 @@ def display_task(request, primkey, comments_field=None):
         if comments_field != "" and comments_field != None: 
             # i.e. if "Submit Comment" was pressed, and comment was given ... need to refresh
             comments = Comment.objects.filter(task = task)
-            html_content = render(request, 'tasks/display.html', locals() )
+            html_content = render_to_string('tasks/display.html', locals(), RequestContext(request))
             dajax.remove_css_class('#id_modal', 'hide') # Show modal
             dajax.assign("#id_modal", "innerHTML", html_content) # Populate modal
 
@@ -368,7 +367,7 @@ def add_task(request, page, primkey=None, edit_form=None):
         else: # Give a new intra dept form
             form = IntraTaskForm(department)
             context = {'form': form, 'title':title, 'id_form':page }
-            html_content = render(request, 'tasks/task.html', context)
+            html_content = render_to_string('tasks/task.html', context, RequestContext(request))
     
     elif page == "new_cross_task": # cross-departmental form
         #Get Parent Task of cross dept form
@@ -417,11 +416,11 @@ def add_task(request, page, primkey=None, edit_form=None):
             else: # Show errors for cross dept form
                 #Render the form again with all its errors.
                 context = {'form': form, 'title':title, 'info':info, 'id_form':page }
-                html_content = render (request, 'tasks/task.html', context)
+                html_content = render (request, 'tasks/task.html', context, RequestContext(request))
         else: # Give a new cross dept form
             form = CrossTaskForm (department)
             context = {'form': form, 'title':title, 'info':info, 'id_form':page }
-            html_content = render(request, 'tasks/task.html', context)
+            html_content = render_to_string('tasks/task.html', context, RequestContext(request))
     
     if(html_content != ""):
         dajax.assign("#id_content_right", "innerHTML", html_content)
