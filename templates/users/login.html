@@ -11,87 +11,73 @@
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
     <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet" media="screen">
     <link href="{% static 'css/bootstrap-image-gallery.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/login.css' %}" rel="stylesheet" media="screen">
     
     <script src="{% static 'js/jquery-1.9.1.js' %}"></script>
     <script src="{% static 'js/bootstrap.js' %}"></script><!--make it bootstrap.min.js when deployed-->
-    <script src="http://blueimp.github.com/JavaScript-Load-Image/load-image.min.js"></script>
-    <!--<script src="{% static 'js/bootstrap-image-gallery.js' %}"></script>-->
-    <script src="http://erp.shaastra.org/media/js/bootstrap-image-gallery.min.js"></script>
- <style type="text/css">
-      body {
-        padding-top: 60px;
-        padding-bottom: 40px;
-        background: #100920;
-      }
-      
-      #content
-      {
-      padding-top: 10px;
-      padding-left: 0px;
-      padding-bottom: 50px;
-      }
-
-      
-            
-    </style>
-
+    <!--<script src="http://blueimp.github.com/JavaScript-Load-Image/load-image.min.js"></script>
+    <!--<script src="{% static 'js/bootstrap-image-gallery.js' %}"></script>
+    <script src="http://erp.shaastra.org/media/js/bootstrap-image-gallery.min.js"></script>-->
 </head>
 <body>
 
-<div class="container">
-
+    <div class="container-fluid">
       <!-- Main hero unit for a primary marketing message or call to action -->
-	<div class="hero-unit">
-
-		<div class="row-fluid"><div class="span7 offset3"> <h1>Shaastra | ERP</h1></div></div>
-		<br />
-     <p>Shaastra isn’t just a tech fest. It is THE tech fest. Professionally organised in a manner unprecedented for fests of its kind, Shaastra presents its Enterprise Resource Planner to set the bar higher than ever.</p>
-     <div class="row-fluid">
-        <div class="span9 offset3">
-					<a class="grow" href="https://www.facebook.com/Shaastra" id="fb-social">
-					<!-- To uncomment on server	    <img id="fb-img" src = "http://erp.shaastra.org/media/images/facebook.png"></a>-->
-					<img id="fb-img" src ="{% static 'img/facebook.png' %}"></a>
-					<a class="grow" href="https://twitter.com/Shaastra_IITM" id="tw-social">
-					<!-- To uncomment on server		    <img id="tw-img" src = "http://erp.shaastra.org/media/images/twitter.png"></a>-->
-					<img id="tw-img" src = "{% static 'img/twitter.png' %}"></a>
-					<a class="grow" href="http://www.youtube.com/iitmshaastra" id="yt-social">
-					<!-- To uncomment on server         <img id="yt-img" src = "http://erp.shaastra.org/media/images/youtube.png"></a>-->
-					<img id="yt-img" src = "{% static 'img/youtube.png' %}"></a>
-				</div>
-			</div>
-			<div class = "row-fluid"><div class="span9"></div></div>
-			<div class = "row-fluid"><div class="span9"></div></div>
-			<div class="row-fluid">
-				<div class="span6 offset1">		
-        <a id="shaastra-button" class="btn btn-primary btn-large pull-right" href="http://www.shaastra.org">Go to Shaastra &raquo;</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-<div class="row-fluid">
-	<div class="span4 offset4" id="content"  style="background-color:#FFFFFF;">
-	</br>			
-			{% if invalid_login %}
-			<div class ="span4 offset5"><H5 style="color:#Fd261d;">Invalid Login!</H5></div>
-			{% endif %}
-			<form action="" method="POST" class="form span8 offset2">
-				{% csrf_token %}
-     
-				<div class="control-group">					
-					<label class="span4 control-label">Username</label>
-					<input type="text" id="id_username" name="username" placeholder="Roll No" class="span6">
-				</div>
-				<div class="control-group">
-					<label class="span4 control-label">Password</label>
-					<input type="password" id="id_password" name="password" placeholder="Password" class="span6">
-				</div>
-				<div class="control-group">
-					<input id="submit" value="Login" class="btn btn-primary span8 offset2" type="submit">
-  			</div>
-			</form>
-	</div>
-</div>
+      <div class="hero-unit">
+        <div class="row-fluid">
+          <div class="span7 offset3">
+            <h1>Shaastra | ERP</h1>
+          </div>
+        </div>
+        <br />
+        <div class="row-fluid">
+          <div class="span6">
+            <p>Shaastra isn’t just a tech fest. It is THE tech fest. Professionally organised in a manner unprecedented for fests of its kind, Shaastra presents its Enterprise Resource Planner to set the bar higher than ever.</p>
+            <a class="grow" href="https://www.facebook.com/Shaastra" id="fb-social">
+              <!-- To uncomment on server	    <img id="fb-img" src = "http://erp.shaastra.org/media/images/facebook.png"></a>-->
+              <img id="fb-img" src ="{% static 'img/facebook.png' %}">
+            </a>
+            <a class="grow" href="https://twitter.com/Shaastra_IITM" id="tw-social">
+              <!-- To uncomment on server		    <img id="tw-img" src = "http://erp.shaastra.org/media/images/twitter.png"></a>-->
+              <img id="tw-img" src = "{% static 'img/twitter.png' %}">
+            </a>
+            <a class="grow" href="http://www.youtube.com/iitmshaastra" id="yt-social">
+              <!-- To uncomment on server         <img id="yt-img" src = "http://erp.shaastra.org/media/images/youtube.png"></a>-->
+              <img id="yt-img" src = "{% static 'img/youtube.png' %}">
+            </a>
+            <div class="pull-right">
+              <a id="shaastra-button" class="btn btn-primary btn-large pull-right" href="http://www.shaastra.org">Go to Shaastra &raquo;</a>
+            </div>
+          </div>
+          <div class="span5 pull-right" id="content">
+            <br />
+            {% if invalid_login %}
+              <div class ="span4 offset5">
+                <h5 style="color:#Fd261d;">Invalid Login!</h5>
+              </div>  
+            {% endif %}
+            <form action="" method="POST" class="form span8 offset2">
+              {% csrf_token %}
+           
+              <div class="control-group">					
+                <label class="span4 control-label">Username</label>
+                <input type="text" id="id_username" name="username" placeholder="Roll No" class="span6">
+              </div>
+              <div class="control-group">
+                <label class="span4 control-label">Password</label>
+                <input type="password" id="id_password" name="password" placeholder="Password" class="span6">
+              </div>
+              <div class="control-group">
+                <input id="submit" value="Login" class="btn btn-primary span8 offset2" type="submit">
+              </div>
+            </form>
+      </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="row-fluid">
+      
   
 </body>
 </html>

@@ -1,0 +1,89 @@
+#content {
+    padding-top: 10px;
+    padding-left: 0px;
+    padding-bottom: 50px;
+    background : #FFFFFF;
+         border-radius: 25px;
+    -webkit-border-radius: 25px;
+         -o-border-radius: 25px;
+       -moz-border-radius: 25px;
+}
+
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+    background: #100920;
+}
+
+#tw-social {
+	width: 64px;
+	height:64px;
+	display:inline-block;
+	/* [disabled]float:left; */
+	background:transparent url(../img/twitter-desat.png) center top no-repeat;
+}
+
+#fb-social {
+	width: 64px;
+	height:64px;
+	display:inline-block;
+	/* [disabled]float:left; */
+	background:transparent url(../img/facebook-desat.png) center top no-repeat;
+}
+
+#yt-social {
+	width: 64px;
+	height:64px;
+	display:inline-block;
+	/* [disabled]float:left; */
+	background:transparent url(../img/youtube-desat.png) center top no-repeat;
+}
+
+#fb-social #fb-img, #yt-social #yt-img, #tw-social #tw-img {
+  opacity : 0;
+  -moz-transition-property : opacity;
+  -webkit-transition-property : opacity;
+  -o-transition-property : opacity;
+  transition-property : opacity;
+  -moz-transition-duration : 0.5s;
+  -webkit-transition-duration : 0.5s;
+  -o-transition-duration : 0.5s; 
+  transition-duration : 0.5s; 
+}
+
+#fb-social:hover #fb-img, #yt-social:hover #yt-img, #tw-social:hover #tw-img {
+  opacity : 1;
+  -moz-transition-property : opacity;
+  -webkit-transition-property : opacity;
+  -o-transition-property : opacity;
+  transition-property : opacity;
+  -moz-transition-duration : 0.5s;
+  -webkit-transition-duration : 0.5s;
+  -o-transition-duration : 0.5s; 
+  transition-duration : 0.5s;
+}
+
+#social {
+	text-align:center;
+}
+
+.grow {
+    -moz-transition: all 0.1s ease-in-out;
+    -webkit-transition: all 0.1s ease-in-out;
+    -o-transition : all 0.1s ease-in-out; 
+    transition : all 0.1s ease-in-out;
+}
+
+.grow:hover { 
+    -moz-transform: scale(1.2); 
+    -webkit-transform: scale(1.2); 
+	-o-transition: scale(1.2);
+    transition : scale(1.2);
+}
+#shaastra-button {
+	margin-top:10px;
+}
+
+#fb-img, #tw-img, #yt-img {
+	border:0;
+}
