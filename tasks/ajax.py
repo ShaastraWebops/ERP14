@@ -142,7 +142,7 @@ def display_task(request, primkey, comments_field=None):
     # TODO: Redirect people who aren't allowd to view this task. 
     # Add edit and delete buttons for cores and supercoords
     # Display ALL details in the template - template needs work.
-    
+    print primkey
     dajax = Dajax()
     html_content = ""
     primkey = int(primkey)
@@ -153,6 +153,7 @@ def display_task(request, primkey, comments_field=None):
     try:
         task = Task.objects.get(pk = primkey)
         task_statuses = TASK_STATUSES
+        print "task"
         if request.method == 'POST' and comments_field != None: # Add new comment if necessary
             if comments_field == "":
                 dajax.add_css_class("#comments_field", "error")
@@ -163,13 +164,16 @@ def display_task(request, primkey, comments_field=None):
                 task_comment.comment_string = comments_field
                 task_comment.time_stamp = datetime.datetime.now()
                 task_comment.save()
-        if comments_field != "" and comments_field != None: 
-            # i.e. if "Submit Comment" was pressed, and comment was given ... need to refresh
+        print "check comment"        
+        if ( comments_field != "" and comments_field != None ) or request.method == 'GET': 
+            print "true"
+            # i.e. if "Submit Comment" was pressed, and comment was given OR GET ... need to refresh
             comments = Comment.objects.filter(task = task)
             html_content = render_to_string('tasks/display.html', locals(), RequestContext(request))
+            print html_content
             dajax.remove_css_class('#id_modal', 'hide') # Show modal
             dajax.assign("#id_modal", "innerHTML", html_content) # Populate modal
-
+        print "done"
     except:
         show_alert(dajax, "error", "The task was not found")
         html_content = ""
