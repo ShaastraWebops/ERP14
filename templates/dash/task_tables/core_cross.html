@@ -34,9 +34,9 @@
       <tbody>
         {% for task in dept_created_crosstasks %}
           <tr>
-            <td><a href="javascript:Dajaxice.tasks.display_task_get(Dajax.process, {'primkey':{{task.pk}}});">{{task.subject}}</a></td>
+            <td><a href="#" onclick="javascript:Dajaxice.tasks.display_task_get(Dajax.process, {'primkey':{{task.pk}}});">{{task.subject}}</a></td>
             <td>
-              <a href="javascript:Dajaxice.users.display_profile(Dajax.process, {'userid':{{task.taskcreator.user.get_profile.id}}});">
+              <a href="#" onclick="javascript:Dajaxice.users.display_profile(Dajax.process, {'userid':{{task.taskcreator.user.get_profile.id}}});">
                 {{task.taskcreator.user.first_name}} {{task.taskcreator.user.last_name}}
               </a>
             </td>

@@ -50,19 +50,19 @@
         {% endcomment %}
         <ul class="nav nav-tabs nav-stacked sidenav affix-top">
           <li id="list_table_you" class="active">
-            <a href="javascript:Dajaxice.tasks.task_table(show_page, {'page' : 'table_you'})"><i class="icon-chevron-right"></i> Your Tasks </a>
+            <a href="#" onclick="javascript:Dajaxice.tasks.task_table(show_page, {'page' : 'table_you'})"><i class="icon-chevron-right"></i> Your Tasks </a>
           </li>
           <li id="list_table_dept" class="">
-            <a href="javascript:Dajaxice.tasks.task_table(show_page, {'page' : 'table_dept'})"><i class="icon-chevron-right"></i> {{ userprofile.dept }} Tasks </a>
+            <a href="#" onclick="javascript:Dajaxice.tasks.task_table(show_page, {'page' : 'table_dept'})"><i class="icon-chevron-right"></i> {{ userprofile.dept }} Tasks </a>
           </li>
           <li id="list_table_pending" class="">
-            <a href="javascript:Dajaxice.tasks.task_table(show_page, {'page' : 'table_pending'})"><i class="icon-chevron-right"></i> Tasks pending approval </a>
+            <a href="#" onclick="javascript:Dajaxice.tasks.task_table(show_page, {'page' : 'table_pending'})"><i class="icon-chevron-right"></i> Tasks pending approval </a>
           </li>
           <li id="list_table_cross" class="">
-            <a href="javascript:Dajaxice.tasks.task_table(show_page, {'page' : 'table_cross'})"><i class="icon-chevron-right"></i> Tasks to other Depts </a>
+            <a href="#" onclick="javascript:Dajaxice.tasks.task_table(show_page, {'page' : 'table_cross'})"><i class="icon-chevron-right"></i> Tasks to other Depts </a>
           </li>
           <li id="list_form_new_task" class="">
-            <!--<a href="javascript:Dajaxice.tasks.add_task_get(show_page, {'page' : 'new_task'})"><i class="icon-chevron-right"></i> Create Task </a>-->
+            <!--<a href="#" onclick="javascript:Dajaxice.tasks.add_task_get(show_page, {'page' : 'new_task'})"><i class="icon-chevron-right"></i> Create Task </a>-->
             <a href={% url tasks.views.add_intra_task %}><i class="icon-chevron-right"></i> Create Task </a>
           </li>
           <li id="list_form_new_cross_task" class="">
