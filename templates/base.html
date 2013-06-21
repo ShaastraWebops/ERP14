@@ -87,7 +87,7 @@
         <div class="nav-collapse pull-right">
           <ul class="nav">
             <li id="nav_profile">
-              <a href="javascript:Dajaxice.users.display_profile(Dajax.process);">
+              <a href="" onclick="javascript:Dajaxice.users.display_profile(Dajax.process);">
                   Logged in as
                   {% if user %}
                     {{user.first_name}}
@@ -99,7 +99,7 @@
             </li>
             <li id="nav_profile">
               <!--<a href="{% url users.views.edit_profile %}"><i class="icon-tag icon-white"></i>Edit Profile</a>-->
-              <a href="javascript:Dajaxice.users.edit_profile_get(Dajax.process);"><i class="icon-tag icon-white"></i>Edit Profile</a>
+              <a href="" onclick="javascript:Dajaxice.users.edit_profile_get(Dajax.process);"><i class="icon-tag icon-white"></i>Edit Profile</a>
             </li>
             <li>
               <a href="{% url users.views.logout %}"><i class="icon-off icon-white"></i> Sign Out </a>
@@ -117,7 +117,7 @@
               <a href="{% url users.views.view_profile %}"><i class="icon-user icon-white"></i> Profile</a>
             </li>-->
             <li id="nav_contact">
-              <a href="javascript:Dajaxice.users.contact_us(Dajax.process);"><i class="icon-wrench icon-white"></i> Contact</a>
+              <a href="" onclick="javascript:Dajaxice.users.contact_us(Dajax.process);"><i class="icon-wrench icon-white"></i> Contact</a>
             </li>
           </ul>
           <!-- Universal Search 
