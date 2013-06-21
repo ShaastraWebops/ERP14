@@ -2,6 +2,8 @@
 from django.utils import simplejson
 from misc.dajaxice.decorators import dajaxice_register
 from misc.dajax.core import Dajax
+# Django imports
+from django.db.models import Q
 # For rendering templates
 from django.template import RequestContext
 from django.template.loader import render_to_string
@@ -102,8 +104,8 @@ def task_table(request, page):
       
     # CORE ONLY
     elif page == "table_pending" and userprofile.is_core():
-        query_dictionary["approval_pending_tasks"] = userprofile.dept.todo_task_set.filter(taskstatus='R') # Reported Completed tasks
-        query_dictionary["approval_pending_tasks"] += userprofile.dept.todo_task_set.filter(taskstatus='U') # Unapproved tasks
+        query_dictionary["approval_pending_tasks"] = userprofile.dept.todo_task_set.filter(Q(taskstatus='R') | Q(taskstatus='U')) # Reported Completed tasks
+        #query_dictionary["approval_pending_tasks"] += userprofile.dept.todo_task_set.filter(taskstatus='U') # Unapproved tasks
         html_content = render_to_string("dash/task_tables/core_pending.html", query_dictionary, RequestContext(request))
     elif page == "table_cross" and userprofile.is_core():
         query_dictionary["dept_created_crosstasks"] = userprofile.dept.created_task_set.filter(isxdepartmental=True)
