@@ -70,7 +70,7 @@
                 {% for comment in comments %}
                   <tr>
                     <td>
-                      <a href="#" onclick="javascript:Dajaxice.users.display_profile(Dajax.process, {'userid':'{{ comment.author.get_profile.id }}' });">
+                      <a href="#" onclick="javascript:do_dajax(Dajaxice.users.display_profile, Dajax.process, {'userid':'{{ comment.author.get_profile.id }}' }, 'id_modal');">
                         {{ comment.author.first_name }} {{ comment.author.last_name }}
                       </a>
                     </td>
@@ -97,7 +97,7 @@
   <div class="modal-footer">
     <div class="btn-group">
       <!-- Render buttons to hide modal and submit comment -->
-      <a class ="btn btn-info" href="#" onclick="javascript:Dajaxice.tasks.display_task_post(Dajax.process, {'primkey':'{{ task.id }}', 'comments_field':$('#comments_field')[0].value }) ;">Submit Comment</a>
+      <a class ="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.tasks.display_task_post, Dajax.process, {'primkey':'{{ task.id }}', 'comments_field':$('#comments_field')[0].value }, 'id_modal') ;">Submit Comment</a>
       <a class ="btn btn-info" href="#" onclick="javascript:modal_hide()">Close</a>
     </div>
   </div>

@@ -37,7 +37,7 @@
     <div class="modal-footer">
       <div class="btn-group">
         <!-- give buttons to : show profile, submit edited profile, close modal -->
-        <a class ="btn btn-info" href="javascript:Dajaxice.users.display_profile(Dajax.process);">View Profile</a>
+        <a class ="btn btn-info" href="javascript:do_dajax(Dajaxice.users.display_profile, Dajax.process, {}, 'id_modal'));">View Profile</a>
         <a class ="btn btn-info" href="javascript:save_profile_form('#profile_edit_form')">Submit Changes</a>
         <a class ="btn btn-info" href="javascript:modal_hide()">Close</a>
       </div>

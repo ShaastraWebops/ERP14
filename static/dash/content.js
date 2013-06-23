@@ -27,7 +27,6 @@ function show_table(oTable_element) { // show and initialize datatable
      */
     
     if( oTable != null )    oTable.fnDestroy() // delete last instance of table
-    
     // oTable_element is the table element which needs to be made data-table
     
     $("#" + oTable_element.id + " tbody").click(function(event) { 
@@ -81,7 +80,7 @@ function show_table(oTable_element) { // show and initialize datatable
     cols.push({ "bSearchable": false }); // for Edit/Del
     cols.push({ "bSearchable": false }); // for Subtask adding
     
-    oTable = $(oTable_element.tagName).dataTable( { // Initializes the table with necessary params
+    oTable = $(oTable_element).dataTable( { // Initializes the table with necessary params
         "bJQueryUI" : true, // let jqueryUI handle rendering
         "bLengthChange" : false, // Don't show dropdown for number of entries to show on one page
         "bFilter" : true, // On the fly Search text-field on top right
@@ -116,29 +115,29 @@ function show_table(oTable_element) { // show and initialize datatable
         
         var btn_html =  "<div class='btn-group'>"; // Adds what to do with the buttons in the table
         if( first_tr.getElementsByClassName('button_in_table_edit')[0] ) { // Edit button
-            btn_html +=         "<a class='btn button_edit' href='" + default_href_datatable + "'>"
+            btn_html +=         "<a class='btn btn-primary button_edit' href='" + default_href_datatable + "'>"
             btn_html +=             first_tr.getElementsByClassName('button_in_table_edit')[0].innerHTML
             btn_html +=         "</a>"
         }
         if( first_tr.getElementsByClassName('button_in_table_status')[0] ) { // Status Update button
-            btn_html +=         "<a class='btn button_status' href='" + default_href_datatable + "'>Upgrade Status</a>"
+            btn_html +=         "<a class='btn btn-success button_status' href='" + default_href_datatable + "'>"
             btn_html +=             first_tr.getElementsByClassName('button_in_table_status')[0].innerHTML
             btn_html +=         "</a>"
         }
         if( first_tr.getElementsByClassName('button_in_table_del')[0] ) { // Delete button
-            btn_html +=         "<a class='btn button_del' href='" + default_href_datatable + "'>Delete</a>"
+            btn_html +=         "<a class='btn btn-danger button_del' href='" + default_href_datatable + "'>"
             btn_html +=             first_tr.getElementsByClassName('button_in_table_del')[0].innerHTML
             btn_html +=         "</a>"
         }
         btn_html +=     "</div>"
         btn_html +=     "<div class='btn-group'>"
         if( first_tr.getElementsByClassName('button_in_table_subtaskDept')[0] ) { // Add dept subtask
-            btn_html +=         "<a class='btn button_subtaskDept' href='" + default_href_datatable + "'>Add Dept Subtask</a>"
+            btn_html +=         "<a class='btn btn-info button_subtaskDept' href='" + default_href_datatable + "'>"
             btn_html +=             first_tr.getElementsByClassName('button_in_table_subtaskDept')[0].innerHTML
             btn_html +=         "</a>"
         }
         if( first_tr.getElementsByClassName('button_in_table_subtaskCross')[0] ) { // Add cross Subtask
-            btn_html +=         "<a class='btn button_subtaskCross' href='" + default_href_datatable + "'>Add Cross Subtask</a>"
+            btn_html +=         "<a class='btn btn-inverse button_subtaskCross' href='" + default_href_datatable + "'>"
             btn_html +=             first_tr.getElementsByClassName('button_in_table_subtaskCross')[0].innerHTML
             btn_html +=         "</a>"
         }

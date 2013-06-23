@@ -5,6 +5,14 @@ table {
     border-spacing : 0;
 }
 
+table a {
+    color : #000000;
+}
+
+table a:hover {
+    color : #888888;
+}
+
 table {
     padding : 0;
     text-align : center;
@@ -27,4 +35,8 @@ table tbody tr td {
 
 .button_in_table {
     display : none;
+}
+
+.btn-group > .btn {
+    color : #ffffff;
 }

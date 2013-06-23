@@ -34,9 +34,9 @@
       <tbody>
         {% for task in approval_pending_tasks %}
           <tr>
-            <td><a href="#" onclick="javascript:Dajaxice.tasks.display_task_get(Dajax.process, {'primkey':{{task.pk}}});">{{task.subject}}</a></td>
+            <td><a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.display_task_get, Dajax.process, {'primkey':{{task.pk}}}, 'id_content_right');">{{task.subject}}</a></td>
             <td>
-              <a href="#" onclick="javascript:Dajaxice.users.display_profile(Dajax.process, {'userid':{{task.taskcreator.user.get_profile.id}}});">
+              <a href="#" onclick="javascript:do_dajax(Dajaxice.users.display_profile, Dajax.process, {'userid':{{task.taskcreator.user.get_profile.id}}}, 'id_content_right');">
                 {{task.taskcreator.user.first_name}} {{task.taskcreator.user.last_name}}
               </a>
             </td>
@@ -46,8 +46,8 @@
             <td class="button_in_table">
               <div class="btn-group">
                 <a class="btn button_in_table_edit" href="{% url tasks.views.edit_task task.pk %}">Edit</a>
-                <a class="btn button_in_table_status" href="javascript:Dajaxice.tasks.upgrade_task(Dajax.process, { 'primkey':'{{task.id}}' })">Accept</a>
-                <a class="btn button_in_table_del" href="javascript:Dajaxice.tasks.upgrade_task(Dajax.process, { 'primkey':'{{task.id}}', 'direc':'-1' })">Reject</a>
+                <a class="btn button_in_table_status" href="javascript:do_dajax(Dajaxice.tasks.upgrade_task, Dajax.process, { 'primkey':'{{task.id}}' }, 'id_content_right')">Accept</a>
+                <a class="btn button_in_table_del" href="javascript:do_dajax(Dajaxice.tasks.upgrade_task, Dajax.process, { 'primkey':'{{task.id}}', 'direc':'-1' }, 'id_content_right')">Reject</a>
               </div>
             </td>
             <td class="button_in_table">
