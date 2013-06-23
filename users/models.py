@@ -61,3 +61,13 @@ class ERPUser(models.Model):
     
     def is_core(self):
         return self.status == 2
+        
+        
+class UserPhoto(models.Model):
+    user = models.ForeignKey(ERPUser)
+    photo_path = models.FileField(upload_to=settings.MEDIA_ROOT)
+
+    def __str__(self):
+        return str(self.photo_path)
+    class Admin:
+        pass
