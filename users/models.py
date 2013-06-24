@@ -2,6 +2,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 from dept.models import Dept, Subdept
+from django.conf import settings
 
 # Create your models here.
 
@@ -65,7 +66,7 @@ class ERPUser(models.Model):
         
 class UserPhoto(models.Model):
     user = models.ForeignKey(ERPUser)
-    photo_path = models.FileField(upload_to=global_settings.MEDIA_ROOT)
+    photo_path = models.FileField(upload_to=settings.MEDIA_ROOT)
 
     def __str__(self):
         return str(self.photo_path)
