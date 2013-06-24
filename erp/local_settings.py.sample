@@ -57,3 +57,15 @@ MEDIA_ROOT = ''
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
 STATIC_ROOT = ''
+
+
+
+#Python's internal mail server settings. FOR DEVELOPMENT ONLY.
+#To run the DebuggingServer: python -m smtpd -n -c DebuggingServer localhost:<portnumber>
+if DEBUG:
+    EMAIL_HOST = 'localhost'
+    EMAIL_PORT = <port>
+    EMAIL_HOST_USER = ''
+    EMAIL_HOST_PASSWORD = ''
+    EMAIL_USE_TLS = False
+    DEFAULT_FROM_EMAIL = '<from email address>'
