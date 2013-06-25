@@ -32,10 +32,14 @@ urlpatterns = patterns('',
     url(r'^users/', include('users.urls')),
     
     #Password Reset Handling
-    url(r'^users/password/reset/$', 'django.contrib.auth.views.password_reset',  {'post_reset_redirect' : '/users/password/reset/done/', 'template_name': 'users/password_reset_form.html'}, name="password_reset"),
-    url(r'^users/password/reset/done/$', 'django.contrib.auth.views.password_reset_done', {'template_name': 'users/password_reset_done.html'}),
-    url(r'^users/password/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',  'django.contrib.auth.views.password_reset_confirm', {'post_reset_redirect' : '/users/password/done/', 'template_name': 'users/password_reset_confirm.html'}),
-    url(r'^users/password/done/$', 'django.contrib.auth.views.password_reset_complete', {'template_name': 'users/password_reset_complete.html'}),    
+    url(r'^forgotpassword/reset/$', 'django.contrib.auth.views.password_reset',  {'post_reset_redirect' : '/forgotpassword/reset/done/', 'template_name': 'users/password_reset_form.html', 'email_template_name': 'user/password_email_template.html'}, name="password_reset"),
+    url(r'^forgotpassword/reset/done/$', 'django.contrib.auth.views.password_reset_done', {'template_name': 'users/password_reset_done.html'}),
+    url(r'^forgotpassword/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',  'django.contrib.auth.views.password_reset_confirm', {'post_reset_redirect' : '/forgotpassword/done/', 'template_name': 'users/password_reset_confirm.html'}),
+    url(r'^forgotpassword/done/$', 'django.contrib.auth.views.password_reset_complete', {'template_name': 'users/password_reset_complete.html'}),    
+    
+    #Password Change
+    url(r'^users/changepassword/$',  'django.contrib.auth.views.password_change', {'post_change_redirect' : '/users/changepassword/success/', 'template_name': 'users/password_change_form.html'}),    
+    url(r'^users/changepassword/success/$',  'django.contrib.auth.views.password_change_done', {'template_name': 'users/password_change_done.html'}),    
     
     (r'^comments/', include('django.contrib.comments.urls')),
     url(dajaxice_config.dajaxice_url, include('misc.dajaxice.urls')), # For dajaxice to function corrently
