@@ -31,8 +31,13 @@ urlpatterns = patterns('',
     url(r'^dash/$', 'dash.views.dash_view'),
     url(r'^users/', include('users.urls')),
     
-    url(r'^comments/', include('django.contrib.comments.urls')),
+    #Password Reset Handling
+    url(r'^users/password/reset/$', 'django.contrib.auth.views.password_reset',  {'post_reset_redirect' : '/users/password/reset/done/', 'template_name': 'users/password_reset_form.html'}, name="password_reset"),
+    url(r'^users/password/reset/done/$', 'django.contrib.auth.views.password_reset_done', {'template_name': 'users/password_reset_done.html'}),
+    url(r'^users/password/reset/(?P<uidb36>[0-9A-Za-z]+)-(?P<token>.+)/$',  'django.contrib.auth.views.password_reset_confirm', {'post_reset_redirect' : '/users/password/done/', 'template_name': 'users/password_reset_confirm.html'}),
+    url(r'^users/password/done/$', 'django.contrib.auth.views.password_reset_complete', {'template_name': 'users/password_reset_complete.html'}),    
     
+    (r'^comments/', include('django.contrib.comments.urls')),
     url(dajaxice_config.dajaxice_url, include('misc.dajaxice.urls')), # For dajaxice to function corrently
 )
 
