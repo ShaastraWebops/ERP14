@@ -60,7 +60,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 #    'django.contrib.staticfiles.finders.DefaultStorageFinder',
-    "dajaxice.finders.DajaxiceFinder",
+    "misc.dajaxice.finders.DajaxiceFinder",
 )
 
 # Make this unique, and don't share it with anybody.
@@ -70,7 +70,7 @@ SECRET_KEY = 'l)%gnj=t42@13@ixkzckd!4yc*ef8b9863lg-c6+n6)n54zz*7'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.Loader',
     'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
+    'django.template.loaders.eggs.Loader',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -147,12 +147,12 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'dajaxice': {
+        'misc.dajaxice': {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,
         },
-        'dajaxice.DajaxiceRequest': {
+        'misc.dajaxice.DajaxiceRequest': {
             'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,
