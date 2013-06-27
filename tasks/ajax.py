@@ -10,30 +10,14 @@ from django.template.loader import render_to_string
 # Decorators
 from django.contrib.auth.decorators import login_required, user_passes_test
 # From forms
-from tasks.forms import *
+from tasks.forms import IntraTaskForm, CrossTaskForm
 # From models
 from tasks.models import Task, Comment, TASK_STATUSES
-from users.models import *
+from users.models import ERPUser
 # From Misc to show bootstrap alert
-from misc.utilities import *
+from misc.utilities import show_alert, get_position, core_or_supercoord_check, core_check
 # Python imports
 import datetime
-
-@dajaxice_register
-def hello_world(request):
-    """
-        Used for testing Dajax + Dajaxice
-    """
-    dajax = Dajax()
-    dajax.assign('id_content','innerHTML', "Hello world !")
-    return dajax.json()
-    
-@dajaxice_register
-def hello(request):
-    """
-        Used for testing Dajaxice
-    """
-    return simplejson.dumps({'message': 'hello'})
     
 # _____________--- TASK TABLE DISPLAY VIEW ---______________#
 @dajaxice_register(name="tasks.task_table")

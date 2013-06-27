@@ -51,10 +51,14 @@
         {% endcomment %}
         <ul class="nav nav-tabs nav-stacked sidenav affix-top">
           <li id="list_table_you" class="active">
-            <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.task_table, show_page, {'page' : 'table_you'}, 'id_content_right')"><i class="icon-chevron-right"></i> Your Tasks </a>
+            <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.task_table, show_page, {'page' : this.parentNode.id.substring('list_'.length)}, 'id_content_right')">
+              <i class="icon-chevron-right"></i> Your Tasks 
+            </a>
           </li>
           <li id="list_table_subdept" class="">
-            <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.task_table, show_page, {'page' : 'table_subdept'}, 'id_content_right')"><i class="icon-chevron-right"></i> {{ userprofile.subdept }} Tasks </a>
+            <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.task_table, show_page, {'page' : this.parentNode.id.substring('list_'.length)}, 'id_content_right')">
+              <i class="icon-chevron-right"></i> {{ userprofile.subdept }} Tasks 
+            </a>
           </li>
         </ul>
       </div>

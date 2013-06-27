@@ -2,8 +2,6 @@ from django import forms
 from users.models import ERPUser
 from dept.models import Dept, Subdept
 
-
-
 class ChooseIdentityForm(forms.Form):
 
     coordships = forms.ModelChoiceField( queryset = Subdept.objects.none(), required=False)#, help_text = 'Choose a coordship' )

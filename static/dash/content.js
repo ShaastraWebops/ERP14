@@ -72,11 +72,14 @@ function show_table(oTable_element) { // show and initialize datatable
     });
     
     // Last two cols need to be non-Searchable (has buttons)
-    var cols = Array(), 
+    var cols = Array(), cols_table_tools = Array()
         cols_len = oTable_element.getElementsByTagName("thead")[0].getElementsByTagName("th").length
-    for ( var col_i = 0; col_i < cols_len-2; col_i++ )
+    for ( var col_i = 0; col_i < cols_len-2; col_i++ ) {
         // For universality between tables, get length from the table elements itself.
         cols.push(null);
+        cols_table_tools.push(col_i)
+    }
+    alert(cols_table_tools)
     cols.push({ "bSearchable": false }); // for Edit/Del
     cols.push({ "bSearchable": false }); // for Subtask adding
     
@@ -88,7 +91,23 @@ function show_table(oTable_element) { // show and initialize datatable
         "bAutoWidth": true, // Auto fit the table columns
         "oLanguage": { "sSearch": "" } , // Remove the Search Label (for the text-field)
         "aoColumns": cols, // Choose which columns are used in Filter(Search) [[ needed to ignore button columns ]]
-        "sDom": 'R<C>H<"clear"><"ui-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix"<"#button_' + oTable_element.id + '">fr>t<"ui-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix"ip>',
+        "sDom": 'R<C>H<"clear"><"ui-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix"<"#button_' + oTable_element.id + '">fr>tT<"ui-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix"ip>',
+        "oTableTools": {
+            "sSwfPath": "/static/dash/datatables/swf/copy_csv_xls_pdf.swf",
+            "aButtons": [ {
+                    "sExtends": "copy",
+                    "mColumns": cols_table_tools
+                },
+                {
+                    "sExtends": "csv",
+                    "mColumns": cols_table_tools
+                },
+                {
+                    "sExtends": "pdf",
+                    "mColumns": cols_table_tools
+                },"xls" 
+            ]
+        }
         /*
          * The sDom is a complicated line. It holds what all is there on 
          * the table based on some coded html :P
@@ -185,4 +204,35 @@ function show_page(json_got) {
     
     $("#id_content_left ul.nav li").removeClass("active") // de-activate all other elements
     $("#list_" + oDiv_element.id).addClass("active") // activate
+}
+
+function do_accordion(e) {
+    e = e || window.event;
+    e = e.target || e.srcElement;
+    var ep = $(e).closest('li'), epid = ep.attr('id')
+    alert(epid);
+    if (ep.hasClass("active-head")) {
+        // Close all children
+        $(".list_"+epid.substring("list_head_".length)).collapse("hide");
+        //$(".list_"+epid.substring("list_head_".length)).addClass("collapse");
+        //$(".list_"+epid.substring("list_head_".length)).removeClass("on");
+        // Show up arrow
+        $(epid + " a i").removeClass("icon-chevron-down")
+        $(epid + " a i").addClass("icon-chevron-up")
+        // Change its own class
+        $("list_head").removeClass("active-head")
+    } else {
+        // Close all children
+        $(".list_"+epid.substring("list_head_".length)).collapse("show");
+        //$(".list_"+epid.substring("list_head_".length)).addClass("on");
+        //$(".list_"+epid.substring("list_head_".length)).removeClass("collapse");
+        // Show up arrow
+        $(epid + " a i").addClass("icon-chevron-down")
+        $(epid + " a i").removeClass("icon-chevron-up")
+        // Change its own class
+        $("list_head").removeClass("active-head")
+        ep.addClass("active-head")
+        
+    }
+    
 }

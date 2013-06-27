@@ -9,32 +9,11 @@ from django.template.loader import render_to_string
 # From views
 from users.views import edit_profile as view_edit_profile
 # From forms
-from users.forms import *
+from users.forms import ChooseIdentityForm, EditProfileForm
 # From models
-from users.models import *
-import users.models
+from users.models import ERPUser
 # From Misc to show bootstrap alert
 from misc.utilities import show_alert, get_position
-
-
-def model_validate(request, model, fields):
-    return generate_model_validation(users.model, request, model, fields)
-
-@dajaxice_register
-def hello_world(request):
-    """
-        Used for testing Dajax + Dajaxice
-    """
-    dajax = Dajax()
-    dajax.assign('id_content','innerHTML', "Hello world !")
-    return dajax.json()
-    
-@dajaxice_register
-def hello(request):
-    """
-        Used for testing Dajaxice
-    """
-    return simplejson.dumps({'message': 'hello'})
 
 @dajaxice_register
 def display_profile(request, userid=None):
