@@ -32,11 +32,13 @@ HOSTEL_CHOICES  =(
 #User Profile Model
 class ERPUser(models.Model):
     user = models.OneToOneField(User)
+    
+    #THIS SET OF ATTRIBUTES REPRESENTS THE CURRENTLY SELECTED PROFILE OF THE USER.
     dept = models.ForeignKey(Dept, related_name='dept_user_set')
     subdept = models.ForeignKey(Subdept, blank=True, null=True, default=None, related_name='subdept_user_set')
     status = models.IntegerField (default=0) # 0 = Coord, 1 = Supercoord, 2 = Core
     
-    #Handling the Multiple Identity Problem
+    #THIS SET OF ATTRIBUTES STORES THE VARIOUS IDENTITIES OF THE USER.
     multiple_ids = models.BooleanField(default=False)
     coord_relations = models.ManyToManyField(Subdept, null=True, blank=True, related_name='coord_set')
     supercoord_relations = models.ManyToManyField(Dept, null=True, blank=True, related_name='supercoord_set')
