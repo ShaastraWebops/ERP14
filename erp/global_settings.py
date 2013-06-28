@@ -100,8 +100,9 @@ INSTALLED_APPS = (
     'users',
     'dept',
     'dash',
-    'misc.dajax',
-    'misc.dajaxice'
+    'events',
+    'misc.dajaxice',
+    'misc.dajax'
 )
 
 AUTH_PROFILE_MODULE = 'users.ERPUser'
