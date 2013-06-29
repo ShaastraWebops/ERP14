@@ -23,7 +23,6 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     url(r'^admin/', include(admin.site.urls)),
     url(r'^tasks/', include('tasks.urls')),
-    url(r'^events/', include('events.urls')),
     url(r'^login/$', 'users.views.login'),
     url(r'^/$', 'users.views.redirectToLogin'),#redirect_to, {'url': '/login/'}),
     url(r'^$', 'users.views.redirectToLogin'),#redirect_to, {'url': '/login/'}),
@@ -42,7 +41,7 @@ urlpatterns = patterns('',
     url(r'^users/changepassword/$',  'django.contrib.auth.views.password_change', {'post_change_redirect' : '/users/changepassword/success/', 'template_name': 'users/password_change_form.html'}),    
     url(r'^users/changepassword/success/$',  'django.contrib.auth.views.password_change_done', {'template_name': 'users/password_change_done.html'}),    
     
-    url(r'^comments/', include('django.contrib.comments.urls')),
+    (r'^comments/', include('django.contrib.comments.urls')),
     url(dajaxice_config.dajaxice_url, include('misc.dajaxice.urls')), # For dajaxice to function corrently
 )
 

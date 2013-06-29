@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html>
+<head>
+    <title>Events | Home</title>
+    
+    <meta charset="utf-8">
+    
+    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/bootstrap-image-gallery.css' %}" rel="stylesheet" media="screen">
+    
+    <script src="{% static 'js/jquery-1.9.1.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script><!--make it bootstrap.min.js when deployed-->
+    
+    <style type="text/css">
+        body {
+            padding-top: 60px;
+            padding-bottom: 40px;
+            background: #100920;
+        }
+
+        label{
+            color: #957F38;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="editEventContainer">
+    <center>
+        <form method="POST" action="">
+            {% csrf_token %}
+            <table>
+                <caption style="color:#758FB2;"><h3>Event Details</h3></caption>
+                {{form.as_table}}
+            </table>
+            {% if error%}
+                <p class="text-error">{{error}}</p>
+            {% endif %}
+            <br>
+            <input class="btn btn-primary" type="Submit" value="Edit">
+        </form>
+        
+        <a class="btn btn-inverse" href="/events/"> Back to Event Details </a>        
+    </center>
+    </div>
+    
+</body>
+
+</html>
