@@ -32,6 +32,7 @@ class EventDetailsForm(ModelForm):
             print iden, clean_form[iden]
             event_json[iden] = clean_form[iden] # add to json
         file_path = get_json_file_path('test.json')
+        print event_json
         with open(file_path, 'w') as f:
             json.dump(event_json, f)
             f.close()

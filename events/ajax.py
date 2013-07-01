@@ -26,7 +26,8 @@ def hello_world(request):
         Used for testing Dajax + Dajaxice
     """
     dajax = Dajax()
-    dajax.assign('id_content','innerHTML', "Hello world !")
+    dajax.assign('#id_content','innerHTML', "Hello world !")
+    #dajax.alert("Hello World!")
     return dajax.json()
     
 @dajaxice_register
@@ -43,7 +44,7 @@ def get_event(request, event_name):
     """
         This function gets the data from the json file and gives it to dajaxice
         The processing of the json happens at the client side
-        Note : Does NTO use Dajax. The json data needs to be parsed separately.
+        Note : Does NOT use Dajax. The json data needs to be parsed separately.
     """
     return_dict = {}
     event_json_filepath = get_json_file_path(event_name + '.json')
@@ -53,5 +54,5 @@ def get_event(request, event_name):
     with open(event_json_filepath) as f:
         return_dict = json.load(f) # This is a python object: has to be converted to a json object1
         f.close()
-    return json.dumps(return_dict, sort_keys=True, indent=4)
+    return json.dumps(return_dict, sort_keys=False, indent=4)
 
