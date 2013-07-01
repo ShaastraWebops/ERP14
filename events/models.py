@@ -84,6 +84,7 @@ class ParticipantEvent(GenericEvent):
             help_text='Does this event require participants to submit TDP ?')
     has_questionnaire = models.BooleanField(default=False,
             help_text='Does this event require participants to answer a questionnaire ?')
+    
     #no need of __unicode__ as it is inherited from GenericEvent
 
 class AudienceEvent(GenericEvent):
@@ -183,6 +184,3 @@ class Sponsor(models.Model):
 
     def __unicode__(self):
         return self.name
-
-
-

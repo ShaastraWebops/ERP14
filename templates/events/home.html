@@ -1,74 +1,44 @@
 <!DOCTYPE html>
 {% load staticfiles %}
+{% load dajaxice_templatetags %}
+
 <html>
 <head>
     <title>Events | Home</title>
     
     <meta charset="utf-8">
     
-    <link href="{% static 'css/bootstrap.css' %}" rel="stylesheet" media="screen">
     <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
     <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet" media="screen">
-    <link href="{% static 'css/bootstrap-image-gallery.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'events/content.css' %}" rel="stylesheet" media="screen">
     
     <script src="{% static 'js/jquery-1.9.1.js' %}"></script>
+    <script src="{% static 'js/jquery.dajax.core.js' %}"></script>
     <script src="{% static 'js/bootstrap.js' %}"></script><!--make it bootstrap.min.js when deployed-->
+    <script src="{% static 'events/json.js' %}"></script>
+    <script src="{% static 'js/base.js' %}"></script>
     
-    <style type="text/css">
-        body {
-            padding-top: 60px;
-            padding-bottom: 40px;
-            background: #100920;
-        }
-
-        #eventDetailsContainer{
-            width: 600px;
-            height: auto;
-            position: absolute;
-            left: 350px;
-            border: 2px ridge #641DA7;
-            border-radius: 10px;
-            padding: 10px;
-        }
-
-        .eventDetailsText{
-            color: #80DDCB;
-            font-size: 16px;
-        }
-    </style>
+    {% dajaxice_js_import 'nocsrf' %}
+    
 </head>
 
 <body>
-    <div id="eventDetailsContainer">
+    <div id="id_content">
+      <div id="eventDetailsContainer">
         <center>
             <h3 style="color:#758FB2; text-decoration: underline">Event Details</h3>
-            {% if message %}
-                <p style="font-size: 16px;" class="text-error">{{ message }}</p>
-                <a class="btn btn-primary" href="/events/edit"> Add Event Details </a>
-            {% endif %}
             <div id="eventDetails">
-                <dl id="eventName" class="eventDetailsText dl-horizontal"></dl>
-                <dl id="eventDescription" class="eventDetailsText dl-horizontal"></dl>
-                <dl id="eventUpdate" class="eventDetailsText dl-horizontal"></dl>
-                <br>
-            {% if not message %}
+                <!--<dl id="eventUpdate" class="eventDetailsText dl-horizontal"></dl>-->
+                <br />
                 <a class="btn btn-primary" href="/events/edit"> Edit Event Details </a>
-            {% endif %}
             </div>
         </center>
-        <input type="hidden" value="{{event_details}}" id="eventDetailsValue">
+      </div>
     </div>
 </body>
 
 <script type="text/javascript">
-    function displayEvent(){
-        data = $('#eventDetailsValue').val();
-        data = JSON.parse(data);
-        $('#eventName').html("<dt>Name:</dt>" + "<dd>"+data.name+"</dd>");
-        $('#eventDescription').html("<dt>Description:</dt>" + "<dd>"+data.description+"</dd>");
-        $('#eventUpdate').html("<dt>Update:</dt>" + "<dd>"+data.update+"</dd>");
-    }
-    displayEvent();
+    do_dajax(Dajaxice.events.get_event, display_event, {'event_name' : 'test'}, 'id_content');
 </script>
 
 </html>

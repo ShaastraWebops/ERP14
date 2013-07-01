@@ -9,9 +9,9 @@ from django.template.loader import render_to_string
 # From views
 from users.views import edit_profile as view_edit_profile
 # From forms
-from users.forms import *
+from users.forms import EditProfileForm, ChooseIdentityForm
 # From models
-from users.models import *
+from users.models import ERPUser
 import users.models
 # From Misc to show bootstrap alert
 from misc.utilities import show_alert, get_position
