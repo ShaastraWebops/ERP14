@@ -24,9 +24,19 @@ function display_event(json_got){
             parse_json_property(key, json_got[key]);
         }
     }
-    /*$('#eventName').html("<dt>Name:</dt>" + "<dd>"+data.name+"</dd>");
-    $('#eventDescription').html("<dt>Description:</dt>" + "<dd>"+data.description+"</dd>");
-    $('#eventUpdate').html("<dt>Update:</dt>" + "<dd>"+data.update+"</dd>");*/
+}
+
+function display_event_erp(json_got){
+    /* show_page - the universal js function to handle all sidebar dajaxice 
+     * handles the populating of the div with the necessary html
+     * This function will just create the fields for the event
+     */
+     alert(json_got)
+    for (var key in json_got) {
+        if (json_got.hasOwnProperty(key)) {
+            parse_json_property(key, json_got[key]);
+        }
+    }
 }
 
 function parse_json_property(key, val) {
@@ -37,7 +47,7 @@ function parse_json_property(key, val) {
         alert(val['type'] + " : " + val['msg'])
     } else {
         key_name = key.toLowerCase();
-        key_name = key_name.charAt(0).toUpperCase() + key_name.slice(1); //gives the first letter as capital letter, rest small letters
+        key_name = key_name.charAt(0).toUpperCase() + key_name.slice(1); // gives the first letter as capital letter, rest small letters
         html_content = '<dl class="eventDetailsText dl-horizontal">' +
                        '<dt>' + key_name + ":" + '</dt>' +
                        '<dd>' + val + '</dd>' + '</dl>';

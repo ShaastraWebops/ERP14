@@ -1,0 +1,20 @@
+{% load staticfiles %}
+<!--<link href="{% static 'events/content.css' %}" rel="stylesheet" media="screen">-->
+<script src="{% static 'events/json.js' %}"></script>
+
+<div id="page_eventinfo">
+  <div id="eventDetailsContainer">
+    <center>
+        <h3 style="color:#758FB2; text-decoration: underline">Event Details</h3>
+        <div id="eventDetails">
+            <!--<dl id="eventUpdate" class="eventDetailsText dl-horizontal"></dl>-->
+            <br />
+            <a class="btn btn-primary" href="#" onclick="javascript:do_dajax(Dajaxice.events.edit_event_get, show_page, {'event_name' : 'test' }, 'id_content_right')""> Edit Event Details </a>
+        </div>
+    </center>
+  </div>
+</div>
+
+<script type="text/javascript"> // This handles the first event to show onload
+    display_event_erp( {{json_dict}} )
+</script>

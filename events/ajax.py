@@ -52,13 +52,36 @@ def get_event(request, event_name):
     event_json_filepath = get_json_file_path(event_name + '.json')
     if not os.path.exists(event_json_filepath): # No file found, give error message
         return_dict['id_alert'] = {'type' : 'error', 'msg' : 'No event found'}
-        return json.dumps(return_dict, sort_keys=True, indent=4)
+        return json.dumps(return_dict, sort_keys=False, indent=4)
     with open(event_json_filepath) as f:
         return_dict = json.load(f) # This is a python object: has to be converted to a json object1
         f.close()
     return json.dumps(return_dict, sort_keys=False, indent=4)
 
-
+@dajaxice_register
+# __________--- Send events data from json file ---___________#
+def show_event_erp(request, event_name):
+    """
+        This function gets the data from the json file and gives it to 
+        the template to show it in nice html content. This template is for ERP.
+        Mainsite may require another template.
+    """
+    dajax = Dajax()
+    json_dict = {}
+    event_json_filepath = get_json_file_path(event_name + '.json')
+    if not os.path.exists(event_json_filepath): # No file found, give error message
+        show_alert(dajax, "error", "Event not found")
+    with open(event_json_filepath) as f:
+        json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a python object: has to be converted to a json object1
+        html_content = render_to_string('events/show_erp.html', locals(), RequestContext(request))
+        f.close()
+    
+    # Now that json data is in json_dict : populate in a template and give
+    if html_content:
+        dajax.assign("#id_content_right", "innerHTML", html_content) # Populate content
+    
+    return dajax.json()
+    
 @dajaxice_register(method="GET", name="events.edit_event_get")
 @dajaxice_register(method="POST", name="events.edit_event_post")
 # __________--- Send events edit page from json file ---___________#
@@ -88,7 +111,7 @@ def edit_event(request, event_name, edit_form=None):
         form = EventDetailsForm()
         html_content = render_to_string('events/edit.html', locals(), RequestContext(request))
     if html_content :
-        dajax.assign("#id_content", "innerHTML", html_content) # Populate content
+        dajax.assign("#id_content_right", "innerHTML", html_content) # Populate content
     
     return dajax.json()
 

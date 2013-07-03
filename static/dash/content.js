@@ -165,12 +165,11 @@ function show_page(json_got) {
      * 
      * e.g. of datatable : #sidebar li.id = "list_table_my_name" , #id_content_right div.id = "table_my_name"
      */
-    
     Dajax.process(json_got) // Process the json
     
     // Check if div or table info
     var oDiv_element = document.getElementById('id_content_right').getElementsByTagName('div')[0]
-    if( oDiv_element.id.match("^form_") ) {
+    if( oDiv_element.id.match("^form_") ) { // forms may require datepicker
         /*if( oDiv_element.id.match("^form_add_task") || oDiv_element.id.match("^form_add_task_cross")) {
             $(function() { 
                 $( '#id_deadline' ).datepicker({ 
@@ -181,8 +180,11 @@ function show_page(json_got) {
     } else if( oDiv_element.id.match("^table_") ) {
         var oTable_element = oDiv_element.getElementsByTagName('table')[0]
         show_table(oTable_element)
-    }
+    } else if( oDiv_element.id.match("^page_") ) { // no extra processing
+        
+    } 
     
     $("#id_content_left ul.nav li").removeClass("active") // de-activate all other elements
     $("#list_" + oDiv_element.id).addClass("active") // activate
+    
 }
