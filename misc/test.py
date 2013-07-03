@@ -58,7 +58,7 @@ def populate_db():
             )
         u.user.username = '_core'+str(i)
         u.user.set_password(str(i))
-        u.user.email = "core" + str(i) + "email@shaastra.org",  
+        u.user.email = "core" + str(i) + "email@shaastra.org"
         u.user.first_name = "Core" + str(i)
         u.user.last_name = "ACore"
         if Dept.objects.filter(name="Dept"+str(i%DEPT_RANGE)).count():
@@ -67,7 +67,6 @@ def populate_db():
             print "Error, there is no dept to assign the core to"
             return
         u.status = 2
-        u.core_relations = u.dept
         u.nickname = "Corenick" + str(i)
         u.chennai_number = str(i%10)*10
         u.summer_number = str((i%100)/10)*10
@@ -75,6 +74,9 @@ def populate_db():
         u.hostel = HOSTEL_CHOICES[i%len(HOSTEL_CHOICES)][0]
         u.room_no = i%1000
         u.user.save()
+        u.save()
+        #INSTANCE MUST BE SAVED BEFORE MANY TO MANY RELATIONS CAN BE SET.
+        u.core_relations.add(u.dept)
         u.save()
     
     # MAKE COORDS
@@ -92,7 +94,7 @@ def populate_db():
             )
         u.user.username = '_coord'+str(i)
         u.user.set_password(str(i))
-        u.user.email = "coord" + str(i) + "email@shaastra.org",  
+        u.user.email = "coord" + str(i) + "email@shaastra.org"
         u.user.first_name = "Coord" + str(i)
         u.user.last_name = "ACoord"
         if Dept.objects.filter(name="Dept"+str(i%DEPT_RANGE)).count():
@@ -106,7 +108,6 @@ def populate_db():
             print "Error, there is no SUBdept to assign the coord to"
             return
         u.status = 0
-        u.core_relations = u.dept
         u.nickname = "Coordnick" + str(i)
         u.chennai_number = str(i%10)*10
         u.summer_number = str((i%100)/10)*10
@@ -114,6 +115,9 @@ def populate_db():
         u.hostel = HOSTEL_CHOICES[i%len(HOSTEL_CHOICES)][0]
         u.room_no = i%1000
         u.user.save()
+        u.save()
+        #INSTANCE MUST BE SAVED BEFORE MANY TO MANY RELATIONS CAN BE SET.
+        u.coord_relations.add(u.subdept)
         u.save()
     
     # MAKE SUPERCOORDS
@@ -131,7 +135,7 @@ def populate_db():
             )
         u.user.username = '_super'+str(i)
         u.user.set_password(str(i))
-        u.user.email = "super" + str(i) + "email@shaastra.org",  
+        u.user.email = "super" + str(i) + "email@shaastra.org"  
         u.user.first_name = "Super" + str(i)
         u.user.last_name = "ASuper"
         if Dept.objects.filter(name="Dept"+str(i%DEPT_RANGE)).count():
@@ -140,7 +144,6 @@ def populate_db():
             print "Error, there is no dept to assign the super to"
             return
         u.status = 1
-        u.core_relations = u.dept
         u.nickname = "Supernick" + str(i)
         u.chennai_number = str(i%10)*10
         u.summer_number = str((i%100)/10)*10
@@ -149,6 +152,10 @@ def populate_db():
         u.room_no = i%1000
         u.user.save()
         u.save()
+        #INSTANCE MUST BE SAVED BEFORE MANY TO MANY RELATIONS CAN BE SET.
+        u.supercoord_relations.add(u.dept)
+        u.save()
+        
     
     # MAKE INTRA DEPARTMENTAL TASKS - ACCEPTED
     print "Creating", INTRATASK_ACCEPTED_RANGE, "Intra dept tasks which are ACCEPTED"
