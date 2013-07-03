@@ -1,6 +1,6 @@
 {% load staticfiles %}
-<!--<link href="{% static 'events/content.css' %}" rel="stylesheet" media="screen">-->
-<script src="{% static 'events/json.js' %}"></script>
+<!--<link href="{% static 'events/content.css' %}" rel="stylesheet" media="screen">
+<script src="{% static 'events/json.js' %}"></script>-->
 
 <div id="page_eventinfo">
   <div id="eventDetailsContainer">
@@ -9,12 +9,13 @@
         <div id="eventDetails">
             <!--<dl id="eventUpdate" class="eventDetailsText dl-horizontal"></dl>-->
             <br />
-            <a class="btn btn-primary" href="#" onclick="javascript:do_dajax(Dajaxice.events.edit_event_get, show_page, {'event_name' : 'test' }, 'id_content_right')""> Edit Event Details </a>
+            <input type="hidden" id="json_dict_content" value="{{json_dict}}">
         </div>
+       <a class="btn btn-primary" href="#" onclick="javascript:do_dajax(Dajaxice.events.edit_event_erp_get, show_page, {'event_name' : 'test' }, 'id_content_right')"> Edit Event Details </a>  
     </center>
   </div>
 </div>
 
-<script type="text/javascript"> // This handles the first event to show onload
-    display_event_erp( {{json_dict}} )
-</script>
+<!--<script type="text/javascript"> // This handles the first event to show onload
+    display_event_erp( {{json_dict}} );
+</script>-->

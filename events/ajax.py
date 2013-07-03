@@ -72,20 +72,26 @@ def show_event_erp(request, event_name):
     if not os.path.exists(event_json_filepath): # No file found, give error message
         show_alert(dajax, "error", "Event not found")
     with open(event_json_filepath) as f:
-        json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a python object: has to be converted to a json object1
+        json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a json object
         html_content = render_to_string('events/show_erp.html', locals(), RequestContext(request))
         f.close()
     
     # Now that json data is in json_dict : populate in a template and give
     if html_content:
         dajax.assign("#id_content_right", "innerHTML", html_content) # Populate content
-    
+        dajax.script("display_event_erp($('#json_dict_content').val());")
+        try:                                                                        #remove any previous success or error message
+           dajax.remove_css_class('div .alert', ['alert-success', 'alert-error'])
+           dajax.add_css_class('div .alert', 'hide')
+        except:
+            pass
+        
     return dajax.json()
     
-@dajaxice_register(method="GET", name="events.edit_event_get")
-@dajaxice_register(method="POST", name="events.edit_event_post")
+@dajaxice_register(method="GET", name="events.edit_event_erp_get")
+@dajaxice_register(method="POST", name="events.edit_event_erp_post")
 # __________--- Send events edit page from json file ---___________#
-def edit_event(request, event_name, edit_form=None):
+def edit_event_erp(request, event_name, edit_form=None):
     """
         This function renders the "edit event" page for Event coords
         args : event_name : The name of the event which needs to be edited
@@ -102,16 +108,32 @@ def edit_event(request, event_name, edit_form=None):
             form = EventDetailsForm(deserialize_form(edit_form))
         if form.is_valid():
             form.save()
-            dajax.script("alert('Form saved');")
+            show_alert(dajax, "success", "Event edited successfully")
+            json_dict = {}
+            event_json_filepath = get_json_file_path(event_name + '.json')
+            with open(event_json_filepath) as f:
+                json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a json object
+                event_detail_html_content = render_to_string('events/show_erp.html', locals(), RequestContext(request))
+                f.close()
+            dajax.assign("#id_content_right", "innerHTML", event_detail_html_content) # Populate content
+            dajax.script("display_event_erp($('#json_dict_content').val());")
         else:
+            error_string = "<br>"
+            for error in form.errors:
+                error_string += error[0].upper() + error[1:] + ": " + form.errors[error][0] + "<br>"
+
             form = EventDetailsForm()
-            dajax.script("alert('Form error');")
+            show_alert(dajax, "error", error_string)
             html_content = render_to_string('events/edit.html', locals(), RequestContext(request))
     else:
         form = EventDetailsForm()
         html_content = render_to_string('events/edit.html', locals(), RequestContext(request))
+        try:                                                                        #remove any previous success or error message
+           dajax.remove_css_class('div .alert', ['alert-success', 'alert-error'])
+           dajax.add_css_class('div .alert', 'hide')
+        except:
+            pass
     if html_content :
         dajax.assign("#id_content_right", "innerHTML", html_content) # Populate content
-    
-    return dajax.json()
 
+    return dajax.json()
