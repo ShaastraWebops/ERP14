@@ -136,12 +136,12 @@ class Update(models.Model):
     description = models.TextField()
     date = models.DateField(default=datetime.now)
     category = models.CharField(max_length=25, choices=UPDATE_CATEGORY,
-            help_text='You can add 4 Updates and 1 Announcement.\
-            Mark as Announcement only if info is of utmost importance')
+            help_text='You can add 4 Updates and 1 Major Update.\
+            Mark as Major only if info is of utmost importance')
     event = models.ForeignKey(GenericEvent, blank=True, null=True)
     expired = models.BooleanField(default=False,
             help_text='Mark an update expired if it is no longer relevant\
-            or if you have more than 4 Updates and 1 Announcement')
+            or if you have more than 4 Updates and 1 Major Update')
 
     def __unicode__(self):
         return self.subject
