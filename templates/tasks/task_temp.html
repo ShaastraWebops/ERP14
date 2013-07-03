@@ -7,9 +7,17 @@
     <link href="{% static 'tasks/task.css' %}" rel="stylesheet" media="screen">
 {% endblock %}
 
-{% block extrascript %}
-    <!-- <script src="{% static 'js/jquery-ui-1.10.3.custom.js' %}"></script> TODO : importing jquery-ui locally does not have date-picker. -->
+{% block extrascripts %}
+    <script src="{% static 'js/jquery-ui-1.10.3.custom.js' %}"></script> 
     <script src="{% static 'tasks/task.js' %}"></script>
+
+    <script type="text/javascript">
+        function submitform(){
+          Dajaxice.tasks.process_intra_task(Dajax.process,{'serializedform':$('#taskform').serialize(true)});
+          return false;
+        }
+    </script>
+    
 
 {% endblock %}
 
@@ -20,26 +28,19 @@
           <h3> {{title}} </h3>
           <h5> {{info}} </h5>
 
-          <form action="" method="post">
-            {% csrf_token %}
-            {% if form.errors %}<p>Error in form</p>{% endif %}
-            <table class="table zebra-striped" id="form_table">
-              {{ form.as_table }}
-            </table>
-            <p><input type="submit" alt="Add Task" class="btn btn-primary span5" value="{{title}}" /></p>
-          </center>
-        </form>
+            <form action="" method="post" id="taskform">
+                {% csrf_token %}
+                <div id="formerrors"></div>
+                <table class="table zebra-striped" id="form_table">
+                  {{ form.as_table }}
+                </table>
+                <p><input type="submit" alt="Add Task" class="btn btn-primary span5" value="{{title}}" onclick="submitform();"/></p>
+            </form>
+            
+            
+        </center>
       </div>
     </div>
-  <!-- If JQuery is not added here, date-picker doesnt work .. figure out why ... -->
-  <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-  <script>
-  $(function() {
-    $( "#id_deadline" ).datepicker({
-        showAnim: 'slide',
-        dateFormat: 'd M yy',
-    })
-  });
-  </script>
+
 
 {% endblock %}
