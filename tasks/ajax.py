@@ -2,22 +2,35 @@
 from django.utils import simplejson
 from misc.dajaxice.decorators import dajaxice_register
 from misc.dajax.core import Dajax
+from dajaxice.utils import deserialize_form 
+
 # Django imports
 from django.db.models import Q
+
 # For rendering templates
 from django.template import RequestContext
 from django.template.loader import render_to_string
+
 # Decorators
 from django.contrib.auth.decorators import login_required, user_passes_test
+
 # From forms
 from tasks.forms import IntraTaskForm, CrossTaskForm
+
 # From models
 from tasks.models import Task, Comment, TASK_STATUSES
 from users.models import ERPUser
+
 # From Misc to show bootstrap alert
 from misc.utilities import show_alert, get_position, core_or_supercoord_check, core_check
+
 # Python imports
 import datetime
+
+# Messages
+from django.contrib import messages
+
+   
     
 # _____________--- TASK TABLE DISPLAY VIEW ---______________#
 @dajaxice_register(name="tasks.task_table")
@@ -164,7 +177,7 @@ def display_task(request, primkey, comments_field=None):
     
     return dajax.json()
 
-# _____________--- TASK ADD VIEW ---______________#
+# _____________--- TASK UPGRADE VIEW ---______________#
 @dajaxice_register(method="POST", name="tasks.upgrade_task")
 def upgrade_task(request, primkey=None, direc=1):
     """
@@ -175,7 +188,7 @@ def upgrade_task(request, primkey=None, direc=1):
         SUPERCOORD/COORD :
             Can upgrade from approved, ongoing upto Reported complete
             
-        Renders in : alert
+        Renders in: alert
     """
     dajax = Dajax()
     direc = int(direc)
@@ -256,6 +269,89 @@ def upgrade_task(request, primkey=None, direc=1):
         show_alert(dajax, 'error', 'Task was not upgraded. You cannot upgrade this task.') # Gives error message
         
     return dajax.json()
+
+
+
+
+
+
+# _____________--- ADD INTRADEPARTMENTAL TASK -> PROCESS ---______________#
+"""
+DAJAX FUNCTION THAT ACCEPTS THE FORM AND PROCESSES IT, AND EITHER SAVES THE INSTANCE OR 
+RETURNS ERRORS.
+
+MORE INFO:
+Can be created/edited by both Supercoords and Cores
+
+Fields entered by user:
+    'deadline', 'subject', 'description', 'taskforce'
+
+Fields automatically taken care of by model/model save function override:
+    'taskcreator', 'datecreated', 'datelastmodified', 'depthlevel', 'parenttask'
+
+Fields taken care of by the view:
+    'targetsubdepts', 'origindept', 'targetdept', 'isxdepartmental', 'taskstatus'
+"""
+@dajaxice_register
+def process_intra_task(request, serializedform, primkey=None):
+
+    # Get Parent Task
+    if primkey:
+        # Need to figure out the try, except block here
+        parenttask = Task.objects.get(pk=primkey)
+        parentlabel = "\nParent task: " + parenttask.subject
+    else:
+        parentlabel = "\nThis is a top level task."
+        parenttask = None
+    
+    
+    userprofile = request.user.get_profile()
+    department = userprofile.dept
+    title = "Add Intradepartmental Task"
+    info = parentlabel
+    
+    dajax = Dajax()
+    
+    form = IntraTaskForm(department, deserialize_form(serializedform))
+    if form.is_valid():
+        newTask = form.save(commit=False)
+
+        #Set the origin & target departments & approve the task.        
+        newTask.origindept = userprofile.dept
+        newTask.targetdept = userprofile.dept
+        newTask.taskcreator = userprofile
+        newTask.taskstatus = 'O'
+        newTask.parenttask = parenttask
+        
+        #For many to many relationships to be created, the object MUST first exist in the database.
+        newTask.save()
+        #UNCOMMENT THE BELOW LINE IF MANYTOMANY DATA IS BEING SAVED DIRECTLY FROM THE FORM
+        #form.save_m2m()
+                
+        #Get the TaskForce from the form
+        cores = form.cleaned_data['cores']
+        coords = form.cleaned_data['coords']
+        supercoords = form.cleaned_data['supercoords']
+        
+        #Set the TaskForce for the Task
+        for user in coords: 
+            newTask.taskforce.add(user)
+        for user in supercoords: 
+            newTask.taskforce.add(user)
+        for user in cores: 
+            newTask.taskforce.add(user)
+    
+        newTask.save()
+        
+        messages.success(request, "Intra-departmental Task created and saved")
+        dajax.alert("Task saved")
+        return dajax.json()
+        
+    else:
+        dajax.assign("#formerrors", "innerHTML", "Errors in form: %s" % form.errors)
+        dajax.alert("Errors in form: %s" % form.errors)
+        return dajax.json()
+    
 
 
 """ TODO """
