@@ -11,12 +11,12 @@ class IntraTaskForm(ModelForm):
     coords = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple, queryset = ERPUser.objects.none(), required=False)
     supercoords = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple, queryset = ERPUser.objects.none(), required=False )
     cores = forms.ModelMultipleChoiceField(widget=forms.CheckboxSelectMultiple, queryset = ERPUser.objects.none(), required=False)
-
+    
     class Meta:
         model = Task
         fields = ['deadline', 'subject', 'description']
         widgets = {
-            'deadline': forms.DateTimeInput(format='%d %b %Y'),
+            'deadline': forms.DateInput(format='%Y-%m-%d'),
         }
     
     def clean(self):
@@ -27,7 +27,7 @@ class IntraTaskForm(ModelForm):
         
         if ((not cores) and (not coords) and (not supercoords)):
             raise forms.ValidationError("The Task Force cannot be empty.")
-            
+                
         return cleaned_data
             
     #Framework for getting a QuerySet of Coords, Supercoords, and Cores.
@@ -38,10 +38,11 @@ class IntraTaskForm(ModelForm):
         self.fields['cores'].queryset = department.core_set.all()
         
         # Below code is to put the current taskforce into the form if "instance" kwarg is used.
-        try:
-            instance_model = kwargs['instance']
-            print instance_model.taskforce.all()
-            for user_temp in instance_model.taskforce.all():
+        instance = kwargs.pop('instance', None)
+        
+        if instance is not None:
+            print instance.taskforce.all()
+            for user_temp in instance.taskforce.all():
                 print user_temp.dept, user_temp.status
                 if user_temp.dept == department and user_temp.status == 0 \
                         and user_temp in self.fields['coords'].queryset: #Coord in the department
@@ -61,8 +62,8 @@ class IntraTaskForm(ModelForm):
                         self.fields['cores'].initial = [user_temp]
                     else:
                         self.fields['cores'].initial.append(user_temp) 
-        except KeyError:
-            print "No instance passed to TaskForm"
+        else:
+            print "No instance passed."
         
 # _____________--- CROSSDEPARTMENTAL TASK FORM ---______________#
 class CrossTaskForm(ModelForm):
