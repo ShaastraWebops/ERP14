@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from dept.models import Dept, Subdept
 from django.conf import settings
-
+from events.models import GenericEvent
 # Create your models here.
 
 
@@ -35,7 +35,7 @@ class ERPUser(models.Model):
     dept = models.ForeignKey(Dept, related_name='dept_user_set')
     subdept = models.ForeignKey(Subdept, blank=True, null=True, default=None, related_name='subdept_user_set')
     status = models.IntegerField (default=0) # 0 = Coord, 1 = Supercoord, 2 = Core
-    
+    event = models.ForeignKey(GenericEvent, null=True, blank=True)    
     #Handling the Multiple Identity Problem
     multiple_ids = models.BooleanField(default=False)
     coord_relations = models.ManyToManyField(Subdept, null=True, blank=True, related_name='coord_set')
