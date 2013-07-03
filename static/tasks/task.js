@@ -1,4 +1,6 @@
 
 jQuery(function() {
-    jQuery("#id_deadline").datepicker({ dateFormat: 'dd/mm/yy' });
+    jQuery("#id_deadline").datepicker({ dateFormat: 'yy-mm-dd' });
 });
+
+
