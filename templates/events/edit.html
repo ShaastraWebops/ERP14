@@ -5,7 +5,7 @@
 
 <div id="editEventContainer">
 <center>
-    <form method="POST" action="">
+    <form method="POST" action="" id="id_form">
         {% csrf_token %}
         <table>
             <caption style="color:#758FB2;"><h3>Event Details</h3></caption>
@@ -14,8 +14,10 @@
         {% if error%}
             <p class="text-error">{{error}}</p>
         {% endif %}
+    
+
         <br>
-        <input class="btn btn-primary" type="Submit" value="Edit">
+        <a class ="btn btn-info" href="#" onclick="Dajaxice.events.edit_event_post(Dajax.process, {'event_name' : '{{event_name}}', 'edit_form' : $('#id_form').serialize(true)});">Edit</a>
     </form>
     
     <a class="btn btn-inverse" href="/events/"> Back to Event Details </a>        

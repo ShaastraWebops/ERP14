@@ -10,7 +10,7 @@ function display_event(json_got){
                                     '<div id="eventDetails">' + 
                                          '<br />'+
                                     '</div>' +
-                                    '<a class="btn btn-primary" href="/events/edit"> Edit Event Details </a>' + 
+                                    '<a class="btn btn-primary" href="#" onclick="do_dajax(Dajaxice.events.edit_event_get, Dajax.process, {\'event_name\' : \'test\'}, \'id_content\');"> Edit Event Details </a>' + 
                                  '</center>';
         $('#id_content').html(event_details_html);
     }
