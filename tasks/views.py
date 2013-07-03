@@ -33,6 +33,8 @@ PROPOSED/TODO:
 
 # _____________--- INTRADEPARTMENTAL TASK ADD VIEW ---______________#
 """
+ONLY RENDERS THE FORM. THE REST IS HANDLED BY DAJAX. REFER TO THE FUNCTION IN AJAX.PY
+
 MORE INFO:
 Can be created/edited by both Supercoords and Cores
 
@@ -62,47 +64,9 @@ def add_intra_task(request, primkey=None):
     title = "Add Intradepartmental Task"
     info = parentlabel
     
-    if request.method == 'POST':
-        form = IntraTaskForm(department, request.POST)
-        if form.is_valid():
-            newTask = form.save(commit=False)
-
-            #Set the origin & target departments & approve the task.        
-            newTask.origindept = userprofile.dept
-            newTask.targetdept = userprofile.dept
-            newTask.taskcreator = userprofile
-            newTask.taskstatus = 'O'
-            newTask.parenttask = parenttask
-            
-            #For many to many relationships to be created, the object MUST first exist in the database.
-            newTask.save()
-            #UNCOMMENT THE BELOW LINE IF MANYTOMANY DATA IS BEING SAVED DIRECTLY FROM THE FORM
-            #form.save_m2m()
-                    
-            #Get the TaskForce from the form
-            cores = form.cleaned_data['cores']
-            coords = form.cleaned_data['coords']
-            supercoords = form.cleaned_data['supercoords']
-            
-            #Set the TaskForce for the Task
-            for user in coords: 
-                newTask.taskforce.add(user)
-            for user in supercoords: 
-                newTask.taskforce.add(user)
-            for user in cores: 
-                newTask.taskforce.add(user)
-        
-            newTask.save()
-            
-            messages.success(request, "Intra-departmental Task created and saved")
-            return redirect('dash.views.dash_view', permanent=True)
-        else:
-            return render_to_response ('tasks/task_temp.html', {'form': form, 'title':title, 'info':info }, context_instance=RequestContext(request))
-    
-    else:
-        form = IntraTaskForm(department)
-        context = {'form': form, 'title':title }
-        return render_to_response('tasks/task_temp.html', context, context_instance=RequestContext(request))
+    form = IntraTaskForm(department)
+    context = {'form': form, 'title':title }
+    return render_to_response('tasks/task_temp.html', context, context_instance=RequestContext(request))
 
 
 
