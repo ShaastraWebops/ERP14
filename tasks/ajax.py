@@ -294,6 +294,7 @@ Fields taken care of by the view:
 """
 @dajaxice_register
 def process_intra_task(request, serializedform, primkey=None):
+    print ("Primkey: %s" % primkey)
 
     # Get Parent Task
     if primkey:
@@ -345,173 +346,92 @@ def process_intra_task(request, serializedform, primkey=None):
         
         messages.success(request, "Intra-departmental Task created and saved")
         dajax.alert("Task saved")
-        return dajax.json()
         
     else:
-        dajax.assign("#formerrors", "innerHTML", "Errors in form: %s" % form.errors)
+        #Handle Errors. Needs work.
         dajax.alert("Errors in form: %s" % form.errors)
-        return dajax.json()
     
-
-
-""" TODO """
-# _____________--- TASK ADD VIEW ---______________#
-@dajaxice_register(method="GET", name="tasks.add_task_get")
-@dajaxice_register(method="POST", name="tasks.add_task_post")
-@login_required
-def add_task(request, page, primkey=None, edit_form=None):
-    """
-        >>>>>>>>>. NEEDS WORK : it doesnt work .<<<<<<<<<
-        
-        Shows the Add Task form
-        It handles both cross_dept_task and intra_departmental_task using "page"
-        
-        FOR INTRA DEPARTMENTAL FORMS :
-            Intended User : Core/Supercoord
-            
-            Fields entered by user:
-                'deadline', 'subject', 'description', 'taskforce'
-    
-            Fields automatically taken care of by model/model save function override:
-                'taskcreator', 'datecreated', 'datelastmodified', 'depthlevel', 'parenttask'
-        
-            Fields taken care of by the view:
-                'targetsubdepts', 'origindept', 'targetdept', 'isxdepartmental', 'taskstatus'
-        
-        FOR CROSS DEPARTMENTAL FORMS :
-            Intended user : Core
-            
-            Fields entered by user:
-                'deadline', 'subject', 'description', 'parenttask', 'targetsubdepts'
-            
-            Fields automatically taken care of by model/model save function override:
-                'taskcreator', 'datecreated', 'datelastmodified', 'depthlevel'
-            
-            Fields taken care of by the view:
-                'origindept', 'targetdept', 'isxdepartmental', 'taskstatus' 
-                
-            Fields that are unset:
-                 'taskforce'
-        
-    """
-    dajax = Dajax()
-    html_content = ""
-    
-    if page == "new_task": # intra departmental form
-        #Get Parent Task of intra dept form
-        if primkey: # If it is a subtask
-            # Need to figure out the try, except block here
-            parenttask = Task.objects.get(pk=primkey)
-            parentlabel = "\nParent task: " + parenttask.subject # show parent task subject
-        else:
-            parentlabel = "\nThis is a top level task."
-            parenttask = None
-            
-        userprofile = request.user.get_profile()
-        department = userprofile.dept
-        title = "Add Intradepartmental Task"
-        info = parentlabel
-        print edit_form
-        if request.method == 'POST': # Validate submitted form
-            form = IntraTaskForm(department, deserialize_form(edit_form))
-            if form.is_valid():
-                newTask = form.save(commit=False)
-    
-                #Set the origin & target departments & approve the task.        
-                newTask.origindept = userprofile.dept
-                newTask.targetdept = userprofile.dept
-                newTask.taskcreator = userprofile
-                newTask.taskstatus = 'O'
-                newTask.parenttask = parenttask
-                
-                #For many to many relationships to be created, the object MUST first exist in the database.
-                newTask.save()
-                #UNCOMMENT THE BELOW LINE IF MANYTOMANY DATA IS BEING SAVED DIRECTLY FROM THE FORM
-                #form.save_m2m()
-                        
-                #Get the TaskForce from the form
-                cores = form.cleaned_data['cores']
-                coords = form.cleaned_data['coords']
-                supercoords = form.cleaned_data['supercoords']
-                
-                #Set the TaskForce for the Task
-                for user in coords: 
-                    newTask.taskforce.add(user)
-                for user in supercoords: 
-                    newTask.taskforce.add(user)
-                for user in cores: 
-                    newTask.taskforce.add(user)
-            
-                newTask.save()
-                
-                show_alert(dajax, 'success', "Intra-departmental Task created and saved")
-                
-            else: # Show errors for intra dept form
-                context = {'form': form, 'title':title, 'info':info, 'id_form':page }
-                html_content = render (request, 'tasks/task.html', context)
-        
-        else: # Give a new intra dept form
-            form = IntraTaskForm(department)
-            context = {'form': form, 'title':title, 'id_form':page }
-            html_content = render_to_string('tasks/task.html', context, RequestContext(request))
-    
-    elif page == "new_cross_task": # cross-departmental form
-        #Get Parent Task of cross dept form
-        if primkey: # If it is a subtask
-            # Need to figure out the try, except block here
-            parenttask = Task.objects.get(pk=primkey)
-            parentlabel = "\nParent task: " + parenttask.subject # show parent task subject
-        else:
-            parentlabel = "\nThis is a top level task."
-            parenttask = None
-            
-        title = "Add Cross-departmental Task."
-        info = "Subject to approval of the target department's core." + parentlabel
-        
-        userprofile = request.user.get_profile()
-        department = userprofile.dept
-        
-        if request.method == 'POST': # Validate submitted form
-            form = CrossTaskForm(department, deserialize_form(edit_form))
-            if form.is_valid():
-                #Create a task object without writing to the database
-                newTask = form.save(commit=False)
-                
-                #Get selected subdepartment from form and set targetdepartment
-                #There's only one object in the form field - the loop is only going to run once.
-                for subdept in form.cleaned_data['targetsubdepts']:
-                    newTask.targetdept = subdept.dept
-                
-                #Set these variables - Unapproved X-Departmental task
-                newTask.taskcreator = userprofile
-                newTask.isxdepartmental = True
-                newTask.taskstatus = 'U'
-                if primkey:
-                    newTask.parenttask = parenttask
-          
-                #Set the origin & target departments.        
-                newTask.origindept = userprofile.dept
-                
-                #For many to many relationships to be created, the object MUST first exist in the database
-                #Saves newTask and also saves the ManyToMany Data
-                newTask.save()
-                form.save_m2m()
-                
-                messages.success(request, "Successfully saved crodd departmental task")
-                return redirect('dash.views.dash_view', permanent=True)
-            else: # Show errors for cross dept form
-                #Render the form again with all its errors.
-                context = {'form': form, 'title':title, 'info':info, 'id_form':page }
-                html_content = render (request, 'tasks/task.html', context, RequestContext(request))
-        else: # Give a new cross dept form
-            form = CrossTaskForm (department)
-            context = {'form': form, 'title':title, 'info':info, 'id_form':page }
-            html_content = render_to_string('tasks/task.html', context, RequestContext(request))
-    
-    if(html_content != ""):
-        dajax.assign("#id_content_right", "innerHTML", html_content)
     
     return dajax.json()
+    
+
+
+
+
+
+# _____________--- CROSS DEPARTMENTAL TASK ADD VIEW ---______________#
+"""
+CORES ONLY
+
+
+MORE INFO:
+Fields entered by user:
+    'deadline', 'subject', 'description', 'parenttask', 'targetsubdepts'
+
+Fields automatically taken care of by model/model save function override:
+    'taskcreator', 'datecreated', 'datelastmodified', 'depthlevel'
+
+Fields taken care of by the view:
+    'origindept', 'targetdept', 'isxdepartmental', 'taskstatus' 
+    
+Fields that are unset:
+     'taskforce'
+"""
+
+@dajaxice_register
+def process_cross_task(request, serializedform, primkey=None):
+    #Get Parent Task
+    if primkey:
+        parenttask = Task.objects.get(pk=primkey)
+        parentlabel = "\nParent task: " + parenttask.subject
+    else:
+        parentlabel = "\nThis is a top level task."
+        
+        
+    title = "Add Cross-departmental Task."
+    info = "Subject to approval of the target department's core." + parentlabel
+    
+    userprofile = request.user.get_profile()
+    department = userprofile.dept
+    
+    dajax = Dajax()
+
+    form = CrossTaskForm(department, deserialize_form(serializedform))
+    if form.is_valid():
+        #Create a task object without writing to the database
+        newTask = form.save(commit=False)
+        
+        #Get selected subdepartment from form and set targetdepartment
+        #There's only one object in the form field - the loop is only going to run once.
+        for subdept in form.cleaned_data['targetsubdepts']:
+            newTask.targetdept = subdept.dept
+        
+        #Set these variables - Unapproved X-Departmental task
+        newTask.taskcreator = userprofile
+        newTask.isxdepartmental = True
+        newTask.taskstatus = 'U'
+        if primkey:
+            newTask.parenttask = parenttask
+  
+        #Set the origin & target departments.        
+        newTask.origindept = userprofile.dept
+        
+        #For many to many relationships to be created, the object MUST first exist in the database
+        #Saves newTask and also saves the ManyToMany Data
+        newTask.save()
+        form.save_m2m()
+        
+        messages.success(request, "Intra-departmental Task created and saved")
+        dajax.alert("Task saved")
+    else:
+        #Handle Errors. Needs work.
+        dajax.alert("Errors in form: %s" % form.errors)
+    
+    
+    return dajax.json()
+  
+
+
 
 
 # _____________--- TASK DELETE VIEW ---______________#
