@@ -10,7 +10,7 @@ from django.template import RequestContext
 from misc.dajaxice.core import dajaxice_functions
 
 from tasks.models import Task
-
+from users.models import ERPUser
 
 
 # _____________--- DASH VIEW ---______________#

@@ -9,6 +9,8 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 # Decorators
 from django.contrib.auth.decorators import login_required
+# For converting model to a dictionary that can be input into a ModelForm
+from django.forms.models import model_to_dict
 # From forms
 from events.forms import EventDetailsForm, get_json_file_path
 # From models
@@ -69,8 +71,20 @@ def show_event_erp(request, event_name):
     dajax = Dajax()
     json_dict = {}
     event_json_filepath = get_json_file_path(event_name + '.json')
-    if not os.path.exists(event_json_filepath): # No file found, give error message
-        show_alert(dajax, "error", "Event not found")
+    if not os.path.exists(event_json_filepath): # No file found
+        event_query = GenericEvent.objects.filter(title=event_name)
+        # if the event exists, then create a json file with the event details
+        if event_query:
+            event_instance = event_query[0]
+            event_dict = model_to_dict(event_instance)
+            form = EventDetailsForm(event_dict)
+            form.save()
+        # else, return an empty page and let the user add event details
+        else:
+            show_alert(dajax, "error", "Event details not found. Click Edit Event Details button to add details to this event.")
+            html_content = render_to_string('events/show_erp.html', locals(), RequestContext(request))
+            dajax.assign("#id_content_right", "innerHTML", html_content)
+            return dajax.json()
     with open(event_json_filepath) as f:
         json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a json object
         html_content = render_to_string('events/show_erp.html', locals(), RequestContext(request))
