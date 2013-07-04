@@ -12,6 +12,4 @@ urlpatterns = patterns('tasks.views',
     url(r'^display/(?P<primkey>\d+)/$', 'display_task'), 
     url(r'^del/(?P<primkey>\d+)/$', 'delete_task'), 
                                                                                    
-#  url(r'^addcopy/$', 'libauth.views.AddCopy'),
-# url(r'^updatecopy/(?P<primkey>\d+)/$', 'libauth.views.UpdateCopy'),
 )
