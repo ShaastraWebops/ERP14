@@ -79,7 +79,7 @@ function show_table(oTable_element) { // show and initialize datatable
         cols.push(null);
         cols_table_tools.push(col_i)
     }
-    alert(cols_table_tools)
+    
     cols.push({ "bSearchable": false }); // for Edit/Del
     cols.push({ "bSearchable": false }); // for Subtask adding
     

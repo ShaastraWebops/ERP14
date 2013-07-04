@@ -44,3 +44,10 @@ table tbody tr td {
 .sidenav {
     
 }
+
+.sidenav > .active {
+    z-index: 2;
+    text-shadow: 0  3px 0 rgba(0, 0, 0, 0.2);
+    color: #ffffff;
+}
+}
