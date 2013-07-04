@@ -31,11 +31,12 @@ HOSTEL_CHOICES  =(
 
 #User Profile Model
 class ERPUser(models.Model):
-    user = models.OneToOneField(User)
-    dept = models.ForeignKey(Dept, related_name='dept_user_set')
-    subdept = models.ForeignKey(Subdept, blank=True, null=True, default=None, related_name='subdept_user_set')
+    user = models.OneToOneField(User) # The corresponding auth user
+    dept = models.ForeignKey(Dept, related_name='dept_user_set') # The department in which the user is
+    subdept = models.ForeignKey(Subdept, blank=True, null=True, default=None, related_name='subdept_user_set') # The subdept of the user (used in 
     status = models.IntegerField (default=0) # 0 = Coord, 1 = Supercoord, 2 = Core
     event = models.ForeignKey(GenericEvent, null=True, blank=True)    
+
     #Handling the Multiple Identity Problem
     multiple_ids = models.BooleanField(default=False)
     coord_relations = models.ManyToManyField(Subdept, null=True, blank=True, related_name='coord_set')

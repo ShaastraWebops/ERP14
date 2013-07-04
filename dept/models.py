@@ -2,7 +2,10 @@
 from django.db import models
 
 # Create your models here.
-
+DEPT_NAMES = (
+    'Events',
+    'WebOps'
+)
 #Department Model
 class Dept(models.Model):
     name = models.CharField(max_length=30)
