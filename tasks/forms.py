@@ -72,6 +72,7 @@ class CrossTaskForm(ModelForm):
         fields = ['deadline', 'subject', 'description', 'targetsubdepts']
         widgets = {
             'targetsubdepts': forms.CheckboxSelectMultiple,
+            'deadline': forms.DateInput(format='%Y-%m-%d'),
         }
         
     def clean_targetsubdepts(self):
