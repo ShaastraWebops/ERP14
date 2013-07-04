@@ -13,8 +13,8 @@
 
     <script type="text/javascript">
         function submitform(){
-          Dajaxice.tasks.process_intra_task(Dajax.process,{'serializedform':$('#taskform').serialize(true)});
-          return false;
+          Dajaxice.tasks.process_{{tasktype}}_task(Dajax.process,{'serializedform':$('#taskform').serialize(true){% if primkey %}, 'primkey': "{{primkey}}" {% endif %} });
+          alert ("For some reason, if this alert is removed, the page automatically refreshes before Dajax can return a JSON. Will need to figure out why the page is automatically refreshing.");
         }
     </script>
     
