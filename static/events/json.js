@@ -31,7 +31,7 @@ function display_event_erp(json_got){
      * handles the populating of the div with the necessary html
      * This function will just create the fields for the event
      */
-     alert(json_got)
+    json_got = JSON.parse(json_got);
     for (var key in json_got) {
         if (json_got.hasOwnProperty(key)) {
             parse_json_property(key, json_got[key]);

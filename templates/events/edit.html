@@ -12,14 +12,15 @@
             {{form.as_table}}
         </table>
         {% if error%}
-            <p class="text-error">{{error}}</p>
+            <p class="text-error">{{err}}</p>
         {% endif %}
     
 
         <br>
-        <a class ="btn btn-info" href="#" onclick="Dajaxice.events.edit_event_post(Dajax.process, {'event_name' : '{{event_name}}', 'edit_form' : $('#id_form').serialize(true)});">Edit</a>
+        <a class ="btn btn-info" href="#" onclick="Dajaxice.events.edit_event_erp_post(Dajax.process, {'event_name' : '{{event_name}}', 'edit_form' : $('#id_form').serialize(true)});">Edit</a>
     </form>
     
-    <a class="btn btn-inverse" href="#" onclick="javascript:do_dajax(Dajaxice.events.show_event_erp, show_page, {'event_name' : 'test' }, 'id_content_right')"> Back to Event Details </a>        
+    <a class="btn btn-inverse" href="#" onclick="javascript:do_dajax(Dajaxice.events.show_event_erp, show_page, {'event_name' : 'test' }, 'id_content_right')"> Back to Event Details </a>
+    <!-- <a class="btn btn-inverse" href="#" onclick="javascript:do_dajax(Dajaxice.events.show_event_erp, Dajax.process, {'event_name' : 'test' }, 'id_content_right')"> Back to Event Details </a> -->
 </center>
 </div>
