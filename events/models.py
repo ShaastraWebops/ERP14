@@ -25,13 +25,16 @@ UPDATE_CATEGORY = (
     ('Updates', 'Updates'),
     )
 
-
+#Checks if the directory exists and creates it if not
 def upload_handler(name):
     if not os.path.exists('%s/events/' % (MEDIA_ROOT)+name):
         os.makedirs('%s/events/' % (MEDIA_ROOT)+name)
     return '%s/events/' % (MEDIA_ROOT)+name
-
+ 
 class Tag(models.Model):
+    '''
+    For searching
+    '''
     name = models.CharField(max_length=25)
 
     def __unicode__(self):
@@ -55,39 +58,44 @@ class GenericEvent(models.Model):
     events_logo = models.FileField(upload_to=upload_handler('eventslogo'),
         blank=True, null=True)
     spons_logo = models.ForeignKey(SponsLogoUploads, blank=True, null=True)
+        
     
     def __unicode__(self):
         return self.title
     
 
 class ParticipantEvent(GenericEvent):
+    '''
+    Registrable events - which need fields like when registration starts, team size etc
+    '''
     #event = models.ForeignKey(GenericEvent, unique=True)
     #Registration
     registrable_online = models.BooleanField(default=False,
             help_text='Can participants register online')
-    begin_registration = models.BooleanField(default=False) # Varshaa : Based on below 2 fields, this can be got
+    #begin_registration = models.BooleanField(default=False) # Varshaa : Based on below 2 fields, this can be got. DONE 
     registration_starts = models.DateTimeField(blank=True, null=True,
             help_text='Start Registration: YYYY-MM-DD hh:mm')
     registration_ends = models.DateTimeField(blank=True,null=True,
             help_text='End Registration: YYYY-MM-DD hh:mm')
 
     #Teams
-    team_event = models.BooleanField(default=False, # Varshaa : Based on below 2 fields, this can be got.
-            help_text='Is this a team event ?')
+    #team_event = models.BooleanField(default=False, # Varshaa : Based on below 2 fields, this can be got. DONE
+            #help_text='Is this a team event ?')
     team_size_min = models.IntegerField(default=1,
             help_text='Minimum team size')
     team_size_max = models.IntegerField(default=1,
             help_text='Maximum team size')
 
-    #Submissions -- This year, even questionnaire is called a tdp.
+    #Submissions -- This year, even questionnaire is called a tdp. DONE
     has_tdp = models.BooleanField(default=False, 
             help_text='Does this event require participants to submit TDP ?')
-    has_questionnaire = models.BooleanField(default=False,
-            help_text='Does this event require participants to answer a questionnaire ?')
     
     #no need of __unicode__ as it is inherited from GenericEvent
 
 class AudienceEvent(GenericEvent):
+    '''
+    For such events we don't need registration - like Shows etc 
+    '''
     #event = models.ForeignKey(GenericEvent, unique=True)
     video = models.URLField(blank=True, null=True, 
             help_text='URL of teaser')
@@ -95,7 +103,7 @@ class AudienceEvent(GenericEvent):
 
 class Tab(models.Model):
     '''
-    Tabs for a particular event eg - Event Format, FAQ etc
+    Tabs related to an event eg - Event Format, FAQ etc
     '''
     event = models.ForeignKey(GenericEvent,blank=True, null=True)
     title = models.CharField(max_length=100)
@@ -106,8 +114,8 @@ class Tab(models.Model):
     def __unicode__(self):
         return self.title
 
-    def delete(self):
-        tabfiles = self.tabs.all()
+    def delete(self): #For deleting a tab, we need to delete all tabfiles also 
+        tabfiles = self.tabs.all() #'tabs' is the name that relates(backward) Tabs to Tabfiles
         for tabfile in tabfiles:
             tabfile.delete()
         super(Tab,self).delete()
@@ -132,13 +140,17 @@ class TabFile(models.Model):
         super(TabFile,self).delete()
 
 class Update(models.Model):
+    '''
+    Updates - related to an event 
+    '''
     subject = models.CharField(max_length=300)
     description = models.TextField()
     date = models.DateField(default=datetime.now)
     category = models.CharField(max_length=25, choices=UPDATE_CATEGORY,
             help_text='You can add 4 Updates and 1 Major Update.\
             Mark as Major only if info is of utmost importance')
-    event = models.ForeignKey(GenericEvent, blank=True, null=True)  # Varshaa : Give key from event to update (for easy querying)
+    event = models.ForeignKey(GenericEvent, related_name ='updates', blank=True, null=True)  # Varshaa : Give key from event to update (for easy querying)
+    #Querying updates of an event can be done like this - EventObjectName.updates.all() 
     expired = models.BooleanField(default=False,
             help_text='Mark an update expired if it is no longer relevant\
             or if you have more than 4 Updates and 1 Major Update')
@@ -177,6 +189,9 @@ class MCQOption(models.Model):
 
 
 class Sponsor(models.Model):
+    '''
+    Details about Sponsorers
+    '''
     name = models.CharField(max_length=20,
             help_text='Enter Company name')
     index_number = models.IntegerField(blank=True,
