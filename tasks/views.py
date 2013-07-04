@@ -65,7 +65,7 @@ def add_intra_task(request, primkey=None):
     info = parentlabel
     
     form = IntraTaskForm(department)
-    context = {'form': form, 'title':title }
+    context = {'form': form, 'title':title, 'tasktype': "intra", 'primkey': primkey, 'info':info}
     return render_to_response('tasks/task_temp.html', context, context_instance=RequestContext(request))
 
 
@@ -152,7 +152,7 @@ def edit_task(request, primkey):
                 return redirect('dash.views.dash_view', permanent=True)
             else:
                 #Render the form along with all its errors.
-                return render_to_response ('tasks/task_temp.html', {'form': form, 'title':title , 'info':info }, context_instance=RequestContext(request))
+                return render_to_response ('tasks/task_temp.html', {'form': form, 'title':title , 'info':info, 'primkey': primkey, 'info':info }, context_instance=RequestContext(request))
         
         else:
             form = IntraTaskForm(department, instance=task)
@@ -293,41 +293,9 @@ def add_cross_task(request, primkey=None):
     userprofile = request.user.get_profile()
     department = userprofile.dept
     
-    if request.method == 'POST':
-        form = CrossTaskForm(department, request.POST)
-        if form.is_valid():
-            #Create a task object without writing to the database
-            newTask = form.save(commit=False)
-            
-            #Get selected subdepartment from form and set targetdepartment
-            #There's only one object in the form field - the loop is only going to run once.
-            for subdept in form.cleaned_data['targetsubdepts']:
-                newTask.targetdept = subdept.dept
-            
-            #Set these variables - Unapproved X-Departmental task
-            newTask.taskcreator = userprofile
-            newTask.isxdepartmental = True
-            newTask.taskstatus = 'U'
-            if primkey:
-                newTask.parenttask = parenttask
-      
-            #Set the origin & target departments.        
-            newTask.origindept = userprofile.dept
-            
-            #For many to many relationships to be created, the object MUST first exist in the database
-            #Saves newTask and also saves the ManyToMany Data
-            newTask.save()
-            form.save_m2m()
-            
-            messages.success(request, "Successfully saved crodd departmental task")
-            return redirect('dash.views.dash_view', permanent=True)
-        else:
-            #Render the form again with all its errors.
-            return render_to_response ('tasks/task_temp.html', {'form': form, 'title':title, 'info':info  }, context_instance=RequestContext(request))
-    else:
-        form = CrossTaskForm (department)
-        context = {'form': form, 'title':title, 'info':info }
-        return render_to_response('tasks/task_temp.html', context, context_instance=RequestContext(request))
+    form = CrossTaskForm (department)
+    context = {'form': form, 'title':title, 'info':info, 'tasktype':"cross", 'primkey': primkey}
+    return render_to_response('tasks/task_temp.html', context, context_instance=RequestContext(request))
 
 
 
