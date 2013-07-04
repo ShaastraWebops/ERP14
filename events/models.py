@@ -65,22 +65,22 @@ class ParticipantEvent(GenericEvent):
     #Registration
     registrable_online = models.BooleanField(default=False,
             help_text='Can participants register online')
-    begin_registration = models.BooleanField(default=False)
+    begin_registration = models.BooleanField(default=False) # Varshaa : Based on below 2 fields, this can be got
     registration_starts = models.DateTimeField(blank=True, null=True,
             help_text='Start Registration: YYYY-MM-DD hh:mm')
     registration_ends = models.DateTimeField(blank=True,null=True,
             help_text='End Registration: YYYY-MM-DD hh:mm')
 
     #Teams
-    team_event = models.BooleanField(default=False,
+    team_event = models.BooleanField(default=False, # Varshaa : Based on below 2 fields, this can be got.
             help_text='Is this a team event ?')
     team_size_min = models.IntegerField(default=1,
             help_text='Minimum team size')
     team_size_max = models.IntegerField(default=1,
             help_text='Maximum team size')
 
-    #Submissions
-    has_tdp = models.BooleanField(default=False,
+    #Submissions -- This year, even questionnaire is called a tdp.
+    has_tdp = models.BooleanField(default=False, 
             help_text='Does this event require participants to submit TDP ?')
     has_questionnaire = models.BooleanField(default=False,
             help_text='Does this event require participants to answer a questionnaire ?')
@@ -138,7 +138,7 @@ class Update(models.Model):
     category = models.CharField(max_length=25, choices=UPDATE_CATEGORY,
             help_text='You can add 4 Updates and 1 Announcement.\
             Mark as Announcement only if info is of utmost importance')
-    event = models.ForeignKey(GenericEvent, blank=True, null=True)
+    event = models.ForeignKey(GenericEvent, blank=True, null=True) # Varshaa : Give key from event to update (for easy querying)
     expired = models.BooleanField(default=False,
             help_text='Mark an update expired if it is no longer relevant\
             or if you have more than 4 Updates and 1 Announcement')
