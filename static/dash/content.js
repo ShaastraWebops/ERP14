@@ -193,7 +193,7 @@ function show_page(json_got) {
     
     // Check if div or table info -- extra processing ...
     if( oDiv_element.id.match("^form_") ) {
-        if( oDiv_element.id.match("^form_new_task") || oDiv_element.id.match("^form_new_task_cross")) {
+        if( oDiv_element.id.match("^form_new_task") || oDiv_element.id.match("^form_new_cross_task")) {
             $( '#id_deadline' ).datepicker({ 
                 showAnim: 'slide', 
                 dateFormat: 'd M yy', 

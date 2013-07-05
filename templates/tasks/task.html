@@ -15,7 +15,7 @@
             {{ form.as_table }}
           </table>
           <div class="btn-group">
-            <a class ="btn btn-info" href="#" onclick="Dajaxice.tasks.new_{{tasktype}}_task_post(Dajax.process, {'serializedform':$('#id_{{id_form}}').serialize(true) {% if primkey %}, 'primkey': '{{primkey}}' {% endif %} });alert('hi')">{{title}}</a>
+            <a class ="btn btn-info" href="#" onclick="Dajaxice.tasks.new_{{tasktype}}_task_post(Dajax.process, {'serializedform':$('#id_{{id_form}}').serialize(true) {% if primkey %}, 'primkey': '{{primkey}}' {% endif %} });">{{title}}</a>
           </div>
         </center>
       </form>

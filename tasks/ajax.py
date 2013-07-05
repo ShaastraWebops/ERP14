@@ -274,6 +274,7 @@ def upgrade_task(request, primkey=None, direc=1):
 @dajaxice_register(method="GET", name="tasks.new_intra_task_get")
 @dajaxice_register(method="POST", name="tasks.new_intra_task_post")
 @login_required
+@user_passes_test (core_or_supercoord_check)
 def new_intra_task(request, serializedform=None, primkey=None):
     """
         Serves and processes a new intradepartmental task.
@@ -285,7 +286,7 @@ def new_intra_task(request, serializedform=None, primkey=None):
             
         Arguments :
             serializedform - in post request, the form is sent
-            primkey - used for parent task
+            primkey - prinkey of parent task (if any)
         
         Fields entered by user:
             'deadline', 'subject', 'description', 'taskforce'
@@ -300,7 +301,7 @@ def new_intra_task(request, serializedform=None, primkey=None):
     
     print ("Primkey: %s" % primkey)
 
-    # CHECK PARENT TASK AND CREATE HELP STRING
+    # Check parent task and create parent-string
     if primkey:
         # Need to figure out the try, except block here
         parenttask = Task.objects.get(pk=primkey)
@@ -317,11 +318,8 @@ def new_intra_task(request, serializedform=None, primkey=None):
     info = parentlabel
     
     if request.method == 'POST' and serializedform != None:
-        print serializedform
         form = IntraTaskForm(department, deserialize_form(serializedform)) # get form
-        #print form
         if form.is_valid(): # check validity
-            print "valid"
             newTask = form.save(commit=False)
     
             #Set the origin & target departments & approve the task.        
@@ -359,6 +357,7 @@ def new_intra_task(request, serializedform=None, primkey=None):
             for error in form.errors: # tell which parts had errors
                 dajax.add_css_class('#id_%s' % error, 'error')
             print [error for error in form.errors]
+            show_alert(dajax, 'error', "There were some errors : please rectify them") # show alert
     else: # it was a get request
         intra_form = IntraTaskForm(department)
         context = {'form': intra_form, 'id_form' : id_form, 'title':title, 'tasktype': "intra", 'primkey': primkey, 'info':info}
@@ -368,16 +367,23 @@ def new_intra_task(request, serializedform=None, primkey=None):
     return dajax.json()
 
 # _____________--- ADD CROSSDEPARTMENTAL TASK ---______________#
-@dajaxice_register(method="GET", name="tasks.process_cross_task")
-@dajaxice_register(method="POST", name="tasks.process_cross_task")
+@dajaxice_register(method="GET", name="tasks.new_cross_task_get")
+@dajaxice_register(method="POST", name="tasks.new_cross_task_post")
 @login_required
-def process_cross_task(request, serializedform, primkey=None):
+@user_passes_test (core_or_supercoord_check)
+def new_cross_task(request, serializedform=None, primkey=None):
     """
+        Serves and processes a new intradepartmental task.
+         - if processing error, shows errors on same form
+         - if no error, shows success alert
         
-        CORES ONLY
+        CORES: (ONLY)
+            Have access to edit and add tasks
+            
+        Arguments :
+            serializedform - in post request, the form is sent
+            primkey - prinkey of parent task (if any)
         
-        
-        MORE INFO:
         Fields entered by user:
             'deadline', 'subject', 'description', 'parenttask', 'targetsubdepts'
         
@@ -390,54 +396,65 @@ def process_cross_task(request, serializedform, primkey=None):
         Fields that are unset:
              'taskforce'
     """
-
-#Get Parent Task
+    dajax = Dajax()
+    
+    # Check parenttask and create parent-string
     if primkey:
         parenttask = Task.objects.get(pk=primkey)
         parentlabel = "\nParent task: " + parenttask.subject
     else:
         parentlabel = "\nThis is a top level task."
-        
-        
+        parenttask = None
+    
+    # Add some more basic info
     title = "Add Cross-departmental Task."
     info = "Subject to approval of the target department's core." + parentlabel
-    
     userprofile = request.user.get_profile()
     department = userprofile.dept
+    id_form = "new_cross_task"
     
-    dajax = Dajax()
-
-    form = CrossTaskForm(department, deserialize_form(serializedform))
-    if form.is_valid():
-        #Create a task object without writing to the database
-        newTask = form.save(commit=False)
+    if request.method == 'POST' and serializedform != None:
+        form = CrossTaskForm(department, deserialize_form(serializedform))
+        if form.is_valid():
+            #Create a task object without writing to the database
+            newTask = form.save(commit=False)
+            
+            #Get selected subdepartment from form and set targetdepartment
+            #There's only one object in the form field - the loop is only going to run once.
+            for subdept in form.cleaned_data['targetsubdepts']:
+                newTask.targetdept = subdept.dept
+            
+            #Set these variables - Unapproved X-Departmental task
+            newTask.taskcreator = userprofile
+            newTask.isxdepartmental = True
+            newTask.taskstatus = 'U'
+            if primkey:
+                newTask.parenttask = parenttask
+      
+            #Set the origin & target departments.        
+            newTask.origindept = userprofile.dept
+            
+            #For many to many relationships to be created, the object MUST first exist in the database
+            #Saves newTask and also saves the ManyToMany Data
+            newTask.save()
+            form.save_m2m() # Form saved
+            
+            dajax.remove_css_class('#form_' + str(id_form) + ' input', 'error') # remove earlier errors mentioned
+            show_alert(dajax, 'success', "Task saved successfully") # show alert
+        else: # some errors found 
+            errors = True
+            dajax.remove_css_class('#form_' + str(id_form) + ' input', 'error')
+            for error in form.errors: # tell which parts had errors
+                dajax.add_css_class('#id_%s' % error, 'error')
+            print [error for error in form.errors]
+            show_alert(dajax, 'error', "There were some errors : please rectify them") # show alert
+    else: # it was a get request
+        cross_form = CrossTaskForm(department)
+        context = {'form': cross_form, 'id_form' : id_form, 'title':title, 'tasktype': "cross", 'primkey': primkey, 'info':info}
+        html_content = render_to_string('tasks/task.html', context, context_instance=RequestContext(request))
+        dajax.assign("#id_content_right", "innerHTML", html_content) # Populate modal
         
-        #Get selected subdepartment from form and set targetdepartment
-        #There's only one object in the form field - the loop is only going to run once.
-        for subdept in form.cleaned_data['targetsubdepts']:
-            newTask.targetdept = subdept.dept
         
-        #Set these variables - Unapproved X-Departmental task
-        newTask.taskcreator = userprofile
-        newTask.isxdepartmental = True
-        newTask.taskstatus = 'U'
-        if primkey:
-            newTask.parenttask = parenttask
-  
-        #Set the origin & target departments.        
-        newTask.origindept = userprofile.dept
-        
-        #For many to many relationships to be created, the object MUST first exist in the database
-        #Saves newTask and also saves the ManyToMany Data
-        newTask.save()
-        form.save_m2m()
-        
-        messages.success(request, "Intra-departmental Task created and saved")
-        dajax.alert("Task saved")
-    else:
-        #Handle Errors. Needs work.
-        dajax.alert("Errors in form: %s" % form.errors)
-    
     
     return dajax.json()
   

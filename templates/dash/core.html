@@ -79,17 +79,13 @@
           </li>
           <!-- Add task list head -->
           <li id="list_form_new_task" class="list_table_new_task ">
-            <!--<a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.add_task_get, show_page, {'page' : 'new_task'}, 'id_content_right')"><i class="icon-chevron-right"></i> Create Task </a>-->
-            <!--<a href={% url tasks.views.add_intra_task %}>
-              <i class="icon-chevron-right"></i> Create Task 
-            </a>-->
             <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.new_intra_task_get, show_page, {}, 'id_content_right')"> 
               <i class="icon-chevron-right"></i> Create Task
             </a>
           </li>
           <li id="list_form_new_cross_task" class="list_table_new_task ">
-            <a href={% url tasks.views.add_cross_task %}>
-              <i class="icon-chevron-right"></i> Create cross dept Task 
+            <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.new_cross_task_get, show_page, {}, 'id_content_right')"> 
+              <i class="icon-chevron-right"></i> Create CrossDept Task
             </a>
           </li>
         </ul>
