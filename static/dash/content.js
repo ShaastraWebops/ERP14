@@ -187,23 +187,25 @@ function show_page(json_got) {
     
     Dajax.process(json_got) // Process the json
     
-    // Check if div or table info
     var oDiv_element = document.getElementById('id_content_right').getElementsByTagName('div')[0]
+    $("#id_content_left ul.nav li").removeClass("active") // de-activate all other elements
+    $("#list_" + oDiv_element.id).addClass("active") // activate
+    
+    // Check if div or table info -- extra processing ...
     if( oDiv_element.id.match("^form_") ) {
-        /*if( oDiv_element.id.match("^form_add_task") || oDiv_element.id.match("^form_add_task_cross")) {
-            $(function() { 
-                $( '#id_deadline' ).datepicker({ 
-                    showAnim: 'slide', dateFormat: 'd M yy', 
-                }) 
-            }
-        }*/
+        if( oDiv_element.id.match("^form_new_task") || oDiv_element.id.match("^form_new_task_cross")) {
+            $( '#id_deadline' ).datepicker({ 
+                showAnim: 'slide', 
+                dateFormat: 'd M yy', 
+                /*showOn: "button",
+                buttonImage: "images/calendar.gif",
+                buttonImageOnly: true,*/
+            });
+        }
     } else if( oDiv_element.id.match("^table_") ) {
         var oTable_element = oDiv_element.getElementsByTagName('table')[0]
         show_table(oTable_element)
     }
-    
-    $("#id_content_left ul.nav li").removeClass("active") // de-activate all other elements
-    $("#list_" + oDiv_element.id).addClass("active") // activate
 }
 
 function do_accordion(e) {

@@ -270,33 +270,37 @@ def upgrade_task(request, primkey=None, direc=1):
         
     return dajax.json()
 
-
-
-
-
-
-# _____________--- ADD INTRADEPARTMENTAL TASK -> PROCESS ---______________#
-"""
-DAJAX FUNCTION THAT ACCEPTS THE FORM AND PROCESSES IT, AND EITHER SAVES THE INSTANCE OR 
-RETURNS ERRORS.
-
-MORE INFO:
-Can be created/edited by both Supercoords and Cores
-
-Fields entered by user:
-    'deadline', 'subject', 'description', 'taskforce'
-
-Fields automatically taken care of by model/model save function override:
-    'taskcreator', 'datecreated', 'datelastmodified', 'depthlevel', 'parenttask'
-
-Fields taken care of by the view:
-    'targetsubdepts', 'origindept', 'targetdept', 'isxdepartmental', 'taskstatus'
-"""
-@dajaxice_register
-def process_intra_task(request, serializedform, primkey=None):
+# _____________--- ADD INTRADEPARTMENTAL TASK ---______________#
+@dajaxice_register(method="GET", name="tasks.new_intra_task_get")
+@dajaxice_register(method="POST", name="tasks.new_intra_task_post")
+@login_required
+def new_intra_task(request, serializedform=None, primkey=None):
+    """
+        Serves and processes a new intradepartmental task.
+         - if processing error, shows errors on same form
+         - if no error, shows success alert
+        
+        CORES and SUPERS :
+            Have access to edit and add tasks
+            
+        Arguments :
+            serializedform - in post request, the form is sent
+            primkey - used for parent task
+        
+        Fields entered by user:
+            'deadline', 'subject', 'description', 'taskforce'
+        
+        Fields automatically taken care of by model/model save function override:
+            'taskcreator', 'datecreated', 'datelastmodified', 'depthlevel', 'parenttask'
+        
+        Fields taken care of by the view:
+            'targetsubdepts', 'origindept', 'targetdept', 'isxdepartmental', 'taskstatus'
+    """
+    dajax = Dajax()
+    
     print ("Primkey: %s" % primkey)
 
-    # Get Parent Task
+    # CHECK PARENT TASK AND CREATE HELP STRING
     if primkey:
         # Need to figure out the try, except block here
         parenttask = Task.objects.get(pk=primkey)
@@ -305,82 +309,89 @@ def process_intra_task(request, serializedform, primkey=None):
         parentlabel = "\nThis is a top level task."
         parenttask = None
     
-    
+    # Get basic data
+    id_form = "new_task"
     userprofile = request.user.get_profile()
     department = userprofile.dept
     title = "Add Intradepartmental Task"
     info = parentlabel
     
-    dajax = Dajax()
+    if request.method == 'POST' and serializedform != None:
+        print serializedform
+        form = IntraTaskForm(department, deserialize_form(serializedform)) # get form
+        #print form
+        if form.is_valid(): # check validity
+            print "valid"
+            newTask = form.save(commit=False)
     
-    form = IntraTaskForm(department, deserialize_form(serializedform))
-    if form.is_valid():
-        newTask = form.save(commit=False)
-
-        #Set the origin & target departments & approve the task.        
-        newTask.origindept = userprofile.dept
-        newTask.targetdept = userprofile.dept
-        newTask.taskcreator = userprofile
-        newTask.taskstatus = 'O'
-        newTask.parenttask = parenttask
+            #Set the origin & target departments & approve the task.        
+            newTask.origindept = userprofile.dept
+            newTask.targetdept = userprofile.dept
+            newTask.taskcreator = userprofile
+            newTask.taskstatus = 'O'
+            newTask.parenttask = parenttask
+            
+            #For many to many relationships to be created, the object MUST first exist in the database.
+            newTask.save()
+            #UNCOMMENT THE BELOW LINE IF MANYTOMANY DATA IS BEING SAVED DIRECTLY FROM THE FORM
+            #form.save_m2m()
+                    
+            #Get the TaskForce from the form
+            cores = form.cleaned_data['cores']
+            coords = form.cleaned_data['coords']
+            supercoords = form.cleaned_data['supercoords']
+            
+            #Set the TaskForce for the Task
+            for user in coords: 
+                newTask.taskforce.add(user)
+            for user in supercoords: 
+                newTask.taskforce.add(user)
+            for user in cores: 
+                newTask.taskforce.add(user)
         
-        #For many to many relationships to be created, the object MUST first exist in the database.
-        newTask.save()
-        #UNCOMMENT THE BELOW LINE IF MANYTOMANY DATA IS BEING SAVED DIRECTLY FROM THE FORM
-        #form.save_m2m()
-                
-        #Get the TaskForce from the form
-        cores = form.cleaned_data['cores']
-        coords = form.cleaned_data['coords']
-        supercoords = form.cleaned_data['supercoords']
+            newTask.save() # task saved
+            
+            dajax.remove_css_class('#form_' + str(id_form) + ' input', 'error') # remove earlier errors mentioned
+            show_alert(dajax, 'success', "Task saved successfully") # show alert
+        else: # some errors found 
+            errors = True
+            dajax.remove_css_class('#form_' + str(id_form) + ' input', 'error')
+            for error in form.errors: # tell which parts had errors
+                dajax.add_css_class('#id_%s' % error, 'error')
+            print [error for error in form.errors]
+    else: # it was a get request
+        intra_form = IntraTaskForm(department)
+        context = {'form': intra_form, 'id_form' : id_form, 'title':title, 'tasktype': "intra", 'primkey': primkey, 'info':info}
+        html_content = render_to_string('tasks/task.html', context, context_instance=RequestContext(request))
+        dajax.assign("#id_content_right", "innerHTML", html_content) # Populate modal
         
-        #Set the TaskForce for the Task
-        for user in coords: 
-            newTask.taskforce.add(user)
-        for user in supercoords: 
-            newTask.taskforce.add(user)
-        for user in cores: 
-            newTask.taskforce.add(user)
-    
-        newTask.save()
-        
-        messages.success(request, "Intra-departmental Task created and saved")
-        dajax.alert("Task saved")
-        
-    else:
-        #Handle Errors. Needs work.
-        dajax.alert("Errors in form: %s" % form.errors)
-    
-    
     return dajax.json()
-    
 
-
-
-
-
-# _____________--- CROSS DEPARTMENTAL TASK ADD VIEW ---______________#
-"""
-CORES ONLY
-
-
-MORE INFO:
-Fields entered by user:
-    'deadline', 'subject', 'description', 'parenttask', 'targetsubdepts'
-
-Fields automatically taken care of by model/model save function override:
-    'taskcreator', 'datecreated', 'datelastmodified', 'depthlevel'
-
-Fields taken care of by the view:
-    'origindept', 'targetdept', 'isxdepartmental', 'taskstatus' 
-    
-Fields that are unset:
-     'taskforce'
-"""
-
-@dajaxice_register
+# _____________--- ADD CROSSDEPARTMENTAL TASK ---______________#
+@dajaxice_register(method="GET", name="tasks.process_cross_task")
+@dajaxice_register(method="POST", name="tasks.process_cross_task")
+@login_required
 def process_cross_task(request, serializedform, primkey=None):
-    #Get Parent Task
+    """
+        
+        CORES ONLY
+        
+        
+        MORE INFO:
+        Fields entered by user:
+            'deadline', 'subject', 'description', 'parenttask', 'targetsubdepts'
+        
+        Fields automatically taken care of by model/model save function override:
+            'taskcreator', 'datecreated', 'datelastmodified', 'depthlevel'
+        
+        Fields taken care of by the view:
+            'origindept', 'targetdept', 'isxdepartmental', 'taskstatus' 
+            
+        Fields that are unset:
+             'taskforce'
+    """
+
+#Get Parent Task
     if primkey:
         parenttask = Task.objects.get(pk=primkey)
         parentlabel = "\nParent task: " + parenttask.subject

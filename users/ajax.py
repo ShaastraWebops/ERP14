@@ -85,7 +85,6 @@ def edit_profile(request, edit_form=None):
             dajax.script('modal_hide()') # Hide modal
             show_alert(dajax, 'success', 'Profile was edited and saved')
         else:
-            print "form is not valid"
             errors = True
             dajax.remove_css_class('#profile_edit_form input', 'error')
             for error in edit_form.errors:

@@ -14,11 +14,14 @@
 
 {% block extrascripts %}
     <script src="{% static 'js/jquery-ui-1.10.3.custom.js' %}"></script>
+    <script src="{% static 'js/bootstrap/bootstrap-collapse.js' %}"></script>
+    <script src="{% static 'js/bootstrap/bootstrap-transition.js' %}"></script>
     <script src="{% static 'dash/datatables/jquery.dataTables.js' %}"></script>
     <script src="{% static 'dash/datatables/TableTools.js' %}"></script>
     <script src="{% static 'dash/datatables/ZeroClipboard.js' %}"></script>
     <script src="{% static 'dash/content.js' %}"></script>
     <script src="{% static 'dash/core/core.js' %}"></script>
+    
     <!-- <script src="{% static 'dash/dataTables.bootstrap.js' %}"></script> 
         JQuery UI looks better than bootstrap version-->
 {% endblock %}
@@ -77,8 +80,11 @@
           <!-- Add task list head -->
           <li id="list_form_new_task" class="list_table_new_task ">
             <!--<a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.add_task_get, show_page, {'page' : 'new_task'}, 'id_content_right')"><i class="icon-chevron-right"></i> Create Task </a>-->
-            <a href={% url tasks.views.add_intra_task %}>
+            <!--<a href={% url tasks.views.add_intra_task %}>
               <i class="icon-chevron-right"></i> Create Task 
+            </a>-->
+            <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.new_intra_task_get, show_page, {}, 'id_content_right')"> 
+              <i class="icon-chevron-right"></i> Create Task
             </a>
           </li>
           <li id="list_form_new_cross_task" class="list_table_new_task ">
