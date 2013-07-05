@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from events.forms import EventDetailsForm
+from events.forms import EventDetailsForm,UpdateForm
 
 from misc.dajaxice.core import dajaxice_functions
 
@@ -44,3 +44,19 @@ def edit_event(request):
     else:
         form = EventDetailsForm()
     return render_to_response('events/editEvent.html', {'form': form}, context_instance = RequestContext(request))
+
+def add_update(request):
+    if request.method == 'POST':
+        form = UpdateForm()
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('events.views.home'))
+        else:
+            error = 'There seems to be an error. Please fill all the fields and submit the form again.'
+            form = UpdateForm()
+            return render_to_response('events/update.html',{'error': error, 'form': form}, context_instance = RequestContext(request))
+    else:
+        form = UpdateForm()
+    return render_to_response('events/update.html',{'form': form}, context_instance = RequestContext(request))
+
+

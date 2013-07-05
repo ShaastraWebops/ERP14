@@ -4,7 +4,7 @@ from django.forms import ModelForm, Select
 # From erp
 from erp.settings import MEDIA_ROOT
 # From form
-from events.models import GenericEvent, Tab
+from events.models import GenericEvent, Tab, Update
 # Python imports
 import json
 import os
@@ -43,3 +43,26 @@ class EventDetailsForm(ModelForm):
     class Meta:
         model = Tab
         fields = ['event', 'title', 'text', 'pref']'''
+
+class UpdateForm(ModelForm):
+    
+    class Meta:
+
+        model = Update
+        exclude = ('date',)
+        widgets = {'event':forms.HiddenInput()}
+
+    def save(self):
+        clean_form = self.clean()
+        event_json = {}
+        for iden in self.fields.all():
+            print iden, clean_form[iden]
+            event_json[iden] = clean_form[iden]
+        file_path = get_json_file_path(clean_form['event'].title + clean_form['date'] +'.json')
+        print event_json
+        with open(file_path, 'w') as f:
+            json.dump(event_json, f)
+            f.close()
+        return True
+
+

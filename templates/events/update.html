@@ -1,0 +1,14 @@
+<div id="update">
+<center>
+
+<form method="POST" action="" id = "id_form">
+    {% csrf_token %}
+    <table>
+        {{form.as_table}}
+    </table>
+    {% if error %}
+        <p class="text-error">{{error}}</p>
+    {% endif %}
+</form>
+</center>
+</div>
