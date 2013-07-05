@@ -2,8 +2,8 @@
     <!--<link href="{% static 'css/jui_themes/smoothness/jquery-ui-1.10.3.custom.css' %}" rel="stylesheet" media="screen">-->
     <link href="{% static 'tasks/task.css' %}" rel="stylesheet" media="screen">
 
-    <!-- <script src="{% static 'js/jquery-ui-1.10.3.custom.js' %}"></script> TODO : importing jquery-ui locally does not have date-picker. --
-    <script src="{% static 'tasks/task.js' %}"></script>-->
+
+    <script src="{% static 'tasks/task.js' %}"></script>
 
     <div class="span11 well" id="form_{{ id_form }}">
       <center>
@@ -20,10 +20,3 @@
         </center>
       </form>
     </div>
-<!-- If JQuery is not added here, date-picker doesnt work .. figure out why ... -->
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<script type="text/javascript">
-    function submitform(){
-        Dajaxice.tasks.process_{{tasktype}}_task(Dajax.process,{'serializedform':$('#taskform').serialize(true){% if primkey %}, 'primkey': "{{primkey}}" {% endif %} });
-    }
-</script>
