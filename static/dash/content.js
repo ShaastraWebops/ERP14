@@ -210,7 +210,7 @@ function show_page(json_got) {
         }
     if (elem_head_id) {
         $("#" + elem_head_id).addClass("active_head") // activate the head for the collapsible also ...
-        if( $("#list_" + oDiv_element.id).hasClass("collapse") ) { // if accordion for active element is not open, open it.
+        if( ! $("#list_" + oDiv_element.id).hasClass("in") ) { // if accordion for active element is not open, open it.
             do_accordion(elem_str, "show")
         }
     } else {

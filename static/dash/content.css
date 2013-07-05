@@ -45,23 +45,41 @@ table tbody tr td {
     
 }
 
-.nav-tabs.nav-stacked.sidenav > li.active > a {
-    /*text-shadow: 0  3px 0 rgba(0, 0, 0, 0.2);*/
-    color : #ffffff;
-    background-color: #0088cc;
-    
+.nav-tabs.nav-stacked.sidenav > li > a {
+    transition: background-color 0.25s linear;
 }
 
-.sidenav > li.sidenav_head > a {
+.nav-tabs.nav-stacked.sidenav > li > a:hover {
+    transition: background-color 0.25s linear;
+    background-color: #dddddd;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.active > a {
+    color : #ffffff;
+    background-color: #0088cc;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.active > a:hover {
+    background-color: #0077bb;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_head > a {
     text-shadow: 0  3px 3px rgba(0, 0, 0, 0.3);
     background-color: #666666;
+    transition: background-color 0.25s linear;
     color : #ffffff;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_head > a:hover {
+    background-color: #444444;
 }
 
 .nav-tabs.nav-stacked.sidenav > li.active_head > a {
     color : #ffffff;
     background-color: #8888cc;
-    
 }
 
+.nav-tabs.nav-stacked.sidenav > li.active_head > a:hover {
+    background-color: #7777bb;
+}
 
