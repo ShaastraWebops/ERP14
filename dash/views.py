@@ -32,25 +32,6 @@ def dash_view(request):
     # Initialize a blank Query dictionary.
     query_dictionary = {}
     
-    #ALL QUERYSETS OF TASKS FILTERED FOR THE USER MUST BE AGAIN FILTERED BY DEPARTMENT (the way I've done it for user_tasks). THIS HANDLES THE MULTIPLE IDENTITY DISORDER.
-    #Assigning the above values
-    query_dictionary["user_tasks"] = userprofile.task_set.filter(targetdept=userprofile.dept).all()
-    
-    #COORD ONLY
-    #The attribute userprofile.subdept is present only if he's a coord
-    if userprofile.status == 0:
-        query_dictionary["subdept_tasks"] = userprofile.subdept.task_set.exclude(taskstatus='U')
-    
-    #CORE & SUPERCOORD
-    if ((userprofile.status == 1) or (userprofile.status == 2)):
-        query_dictionary["dept_todo_crosstasks"] = userprofile.dept.todo_task_set.filter(isxdepartmental=True).exclude(taskstatus='U') #Remove if necessary.
-        query_dictionary["dept_tasks"] = userprofile.dept.todo_task_set.exclude(taskstatus='U')
-    
-    #CORE ONLY
-    if userprofile.status == 2:
-        query_dictionary["dept_created_crosstasks"] = userprofile.dept.created_task_set.filter(isxdepartmental=True)
-        query_dictionary["approval_pending_tasks"] = userprofile.dept.todo_task_set.filter(taskstatus='U')
-    
     #passing the userprofile
     query_dictionary["userprofile"] = userprofile
     
