@@ -54,10 +54,9 @@ function modal_hide() {
     
     /* On hiding modal, refresh the page's right content based on which 
         tab is active on the left_content
+        * this is done by "virtually calling the click function" ... 
     */
-    str_tab_active = $("#id_content_left ul.nav li.active")[0].id
-    str_tab_active = str_tab_active.substring("list_".length)
-    do_dajax(Dajaxice.tasks.task_table, show_page, {'page' : str_tab_active}, 'id_content_right')
+    $("#id_content_left ul.nav li.active a").click()
 }
 
 // LOADING.GIF FOR DAJAX

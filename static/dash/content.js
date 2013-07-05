@@ -201,15 +201,21 @@ function show_page(json_got) {
     $("#id_content_left ul.nav li").removeClass("active_head") // de-activate all other elements's head also ...
     $("#list_" + oDiv_element.id).addClass("active") // activate
     elem_body_classes = $("#list_" + oDiv_element.id).attr('class').split(" ")
+    elem_str = ""
     elem_head_id = ""
     for ( var i = 0; i < elem_body_classes.length; i++ )
         if ( elem_body_classes[i].match("^list_") ) {
-            elem_head_id = elem_body_classes[i].replace(/_body$/, "_head");
+            elem_str = elem_body_classes[i].replace(/_body$/, ""); // The iden string
+            elem_head_id = elem_body_classes[i].replace(/_body$/, "_head"); // the actual head id
         }
-    if (elem_head_id)
+    if (elem_head_id) {
         $("#" + elem_head_id).addClass("active_head") // activate the head for the collapsible also ...
-    else
+        if( $("#list_" + oDiv_element.id).hasClass("collapse") ) { // if accordion for active element is not open, open it.
+            do_accordion(elem_str, "show")
+        }
+    } else {
         alert( "Not head found in collapsiblle ...")
+    }
     
     // Check if div or table info -- extra processing ...
     if( oDiv_element.id.match("^form_") ) {
