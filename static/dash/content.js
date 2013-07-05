@@ -80,17 +80,20 @@ function show_table(oTable_element) { // show and initialize datatable
         }
     });
     
-    // Last two cols need to be non-Searchable (has buttons)
+    // Get all columns with buttons and handle them in Searches and printing
     var cols = Array(), cols_table_tools = Array()
-        cols_len = oTable_element.getElementsByTagName("thead")[0].getElementsByTagName("th").length
-    for ( var col_i = 0; col_i < cols_len-2; col_i++ ) {
+        th_cols = oTable_element.getElementsByTagName("thead")[0].getElementsByTagName("th")
+        cols_len = th_cols.length
+    for ( var col_i = 0; col_i < cols_len; col_i++ ) {
         // For universality between tables, get length from the table elements itself.
-        cols.push(null);
-        cols_table_tools.push(col_i)
+        if( ! $(th_cols[col_i]).hasClass('button_in_table') ) {
+            cols.push(null);
+            cols_table_tools.push(col_i)
+        } else {
+            cols.push({ "bSearchable": false }); // for Edit/Del & Subtask adding buttons
+        }
     }
     
-    cols.push({ "bSearchable": false }); // for Edit/Del
-    cols.push({ "bSearchable": false }); // for Subtask adding
     
     oTable = $(oTable_element).dataTable( { // Initializes the table with necessary params
         "bJQueryUI" : true, // let jqueryUI handle rendering
@@ -100,7 +103,7 @@ function show_table(oTable_element) { // show and initialize datatable
         "bAutoWidth": true, // Auto fit the table columns
         "oLanguage": { "sSearch": "" } , // Remove the Search Label (for the text-field)
         "aoColumns": cols, // Choose which columns are used in Filter(Search) [[ needed to ignore button columns ]]
-        "sDom": 'R<C>H<"clear"><"ui-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix"<"#button_' + oTable_element.id + '">fr>tT<"ui-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix"ip>',
+        "sDom": 'R<C>H<"clear"><"ui-toolbar ui-widget-header ui-corner-tl ui-corner-tr ui-helper-clearfix"<"#button_' + oTable_element.id + '">lfr>tT<"ui-toolbar ui-widget-header ui-corner-bl ui-corner-br ui-helper-clearfix"ip>',
         "oTableTools": {
             "sSwfPath": "/static/dash/datatables/swf/copy_csv_xls_pdf.swf",
             "aButtons": [ {
@@ -213,8 +216,8 @@ function show_page(json_got) {
         if( ! $("#list_" + oDiv_element.id).hasClass("in") ) { // if accordion for active element is not open, open it.
             do_accordion(elem_str, "show")
         }
-    } else {
-        alert( "Not head found in collapsiblle ...")
+    } else { // this is a lone sidenav link
+        //alert( "Not head found in collapsiblle ...")
     }
     
     // Check if div or table info -- extra processing ...
@@ -229,6 +232,7 @@ function show_page(json_got) {
             });
         }
     } else if( oDiv_element.id.match("^table_") ) {
+        // initiates datatable for task tables
         var oTable_element = oDiv_element.getElementsByTagName('table')[0]
         show_table(oTable_element)
     }

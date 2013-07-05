@@ -81,7 +81,7 @@ def task_table(request, page):
         if userprofile.is_coord():
             html_content = render_to_string("dash/task_tables/coord_you.html", query_dictionary, RequestContext(request))
         elif userprofile.is_supercoord():
-            html_content = render_to_string("dash/task_tables/coord_you.html", query_dictionary, RequestContext(request))
+            html_content = render_to_string("dash/task_tables/supercoord_you.html", query_dictionary, RequestContext(request))
         elif userprofile.is_core():
             html_content = render_to_string("dash/task_tables/core_you.html", query_dictionary, RequestContext(request))
     

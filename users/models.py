@@ -65,6 +65,20 @@ class ERPUser(models.Model):
     def is_core(self):
         return self.status == 2
         
+    def get_position (self):
+        if self.status == 2:
+            return 'Core'
+        if self.status == 1:
+            return 'Supercoord'
+        if self.status == 0:
+            return 'Coord'
+            
+    def get_dept_subdept(self):
+        dept_str = self.dept.name
+        if self.subdept:
+            dept_str += " (" + self.subdept.name + ")"
+        return dept_str
+
         
 class UserPhoto(models.Model):
     user = models.ForeignKey(ERPUser)

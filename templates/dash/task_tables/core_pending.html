@@ -46,8 +46,8 @@
             <td class="button_in_table">
               <div class="btn-group">
                 <a class="btn button_in_table_edit" href="{% url tasks.views.edit_task task.pk %}">Edit</a>
-                <a class="btn button_in_table_status" href="javascript:do_dajax(Dajaxice.tasks.upgrade_task, Dajax.process, { 'primkey':'{{task.id}}' }, 'id_content_right')">Accept</a>
-                <a class="btn button_in_table_del" href="javascript:do_dajax(Dajaxice.tasks.upgrade_task, Dajax.process, { 'primkey':'{{task.id}}', 'direc':'-1' }, 'id_content_right')">Reject</a>
+                <a class="btn button_in_table_status" href="#" onclick="javascript:do_dajax(Dajaxice.tasks.upgrade_task, Dajax.process, { 'primkey':'{{task.id}}' }, 'id_content_right')">Accept</a>
+                <a class="btn button_in_table_del" href="#" onclick="javascript:do_dajax(Dajaxice.tasks.upgrade_task, Dajax.process, { 'primkey':'{{task.id}}', 'direc':'-1' }, 'id_content_right')">Reject</a>
               </div>
             </td>
             <td class="button_in_table">

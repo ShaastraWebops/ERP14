@@ -54,9 +54,27 @@ table tbody tr td {
     background-color: #dddddd;
 }
 
+.nav-tabs.nav-stacked.sidenav > li.sidenav_lone > a {
+    color : #ffffff;
+    background-color: #778899;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_lone > a:hover {
+    background-color: #667788;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_lone.active > a {
+    color : #ffffff;
+    background-color: #5577aa;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_lone.active > a:hover {
+    background-color: #446699;
+}
+
 .nav-tabs.nav-stacked.sidenav > li.active > a {
     color : #ffffff;
-    background-color: #0088cc;
+    background-color: #6688cc;
 }
 
 .nav-tabs.nav-stacked.sidenav > li.active > a:hover {

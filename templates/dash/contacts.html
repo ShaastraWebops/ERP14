@@ -1,0 +1,52 @@
+{% load staticfiles %}
+
+<!-- Extra styles -->
+
+<!-- Extra scripts -->
+
+<!-- Content -->
+<div id="table_contacts" class="span11"> <!-- Holds personal Tasks -->
+  <p><h3>Contact Details:</h3></p>
+  <p> 
+    <table class="table table-bordered table-hover display" id="table_you">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Department</th>
+          <th>Designation</th>
+          <th>Phone(Chennai)</th>
+          <th>Phone(Summer)</th>
+          <!--<th>Email</th>-->
+          {% comment %}
+            All 'th' with class button_in_table are not shown on the screen 
+            If the corresponding tr has a btn-gtoup, it's innerHTML and 
+            href are taken to the topbar of the table.
+            
+            This is done as js cannot get the task.id in any other simple way
+            Currently : edit, del, status, deptSubtask, crossSubtask are 
+                searched for, if others need to be added, js needs to be changed in show_table
+                in templates/tasks/content.js
+            
+          {% endcomment %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users_info %}
+          <tr>
+            <td>
+                <a href="#" onclick="javascript:do_dajax(Dajaxice.users.display_profile, Dajax.process, {'userid':{{ u.iden }}}, 'id_modal');">
+                    {{ u.name }}
+                </a>
+            </td>
+            <td>{{ u.dept }}</td>
+            <td>{{ u.desig }}</td>
+            <td>{{ u.ph_mad }}</td>
+            <td>{{ u.ph_home }}</td>
+            <!--<td>{{ u.email }}</td>-->
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </p>
+</div>
+        

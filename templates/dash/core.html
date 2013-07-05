@@ -19,6 +19,7 @@
     <script src="{% static 'dash/datatables/jquery.dataTables.js' %}"></script>
     <script src="{% static 'dash/datatables/TableTools.js' %}"></script>
     <script src="{% static 'dash/datatables/ZeroClipboard.js' %}"></script>
+    <script src="{% static 'dash/datatables/dataTables.colfuncs.js' %}"></script>
     <script src="{% static 'dash/content.js' %}"></script>
     <script src="{% static 'dash/core/core.js' %}"></script>
     
@@ -69,22 +70,22 @@
               <i class="icon-chevron-up icon-white"></i> Task Tables
             </a>
           </li> <!-- End task list head -->
-          <li id="list_table_you" class="list_task_body active">
+          <li id="list_table_you" class="list_task_body collapse active">
             <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.task_table, show_page, {'page' : this.parentNode.id.substring('list_'.length)}, 'id_content_right')">
               <i class="icon-chevron-right"></i> Your Tasks 
             </a>
           </li>
-          <li id="list_table_dept" class="list_task_body ">
+          <li id="list_table_dept" class="list_task_body collapse">
             <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.task_table, show_page, {'page' : this.parentNode.id.substring('list_'.length)}, 'id_content_right')">
               <i class="icon-chevron-right"></i> {{ userprofile.dept }} Tasks 
             </a>
           </li>
-          <li id="list_table_pending" class="list_task_body ">
+          <li id="list_table_pending" class="list_task_body collapse">
             <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.task_table, show_page, {'page' : this.parentNode.id.substring('list_'.length)}, 'id_content_right')">
               <i class="icon-chevron-right"></i> Tasks pending approval 
             </a>
           </li>
-          <li id="list_table_cross" class="list_task_body ">
+          <li id="list_table_cross" class="list_task_body collapse">
             <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.task_table, show_page, {'page' : this.parentNode.id.substring('list_'.length)}, 'id_content_right')"> 
               <i class="icon-chevron-right"></i> Tasks to other Depts 
             </a>
@@ -97,17 +98,24 @@
             </a>
           </li>
           <!-- END Add task list head -->
-          <li id="list_form_new_task" class="list_new_task_body collapse">
+          <li id="list_form_new_task" class="list_new_task_body collapse in">
             <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.new_intra_task_get, show_page, {}, 'id_content_right')"> 
               <i class="icon-chevron-right"></i> Create Department Task
             </a>
           </li>
-          <li id="list_form_new_cross_task" class="list_new_task_body collapse">
+          <li id="list_form_new_cross_task" class="list_new_task_body collapse in">
             <a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.new_cross_task_get, show_page, {}, 'id_content_right')"> 
               <i class="icon-chevron-right"></i> Create CrossDept Task
             </a>
           </li>
-          <!-- ENDT Add task list -->
+          <!-- END Add task list -->
+          <!-- START Contact -- NO LIST -->
+          <li id="list_table_contacts" class="sidenav_lone ">
+            <a href="#" onclick="javascript:do_dajax(Dajaxice.dash.contacts, show_page, {}, 'id_content_right')"> 
+              <i class="icon-chevron-right"></i> Contact Details
+            </a>
+          </li>
+          <!-- END Contact -->
         </ul>
       </div>
     
