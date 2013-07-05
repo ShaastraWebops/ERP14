@@ -44,22 +44,26 @@ function show_table(oTable_element) { // show and initialize datatable
              * And much more cleaner
              */
             
-            if( sel_tr.getElementsByClassName('button_in_table_edit')[0] ) // Edit button
+            if( sel_tr.getElementsByClassName('button_in_table_edit')[0] ) { // Edit button
                 $("#button_" + oTable_element.id + " a.button_edit")[0].href = sel_tr.getElementsByClassName('button_in_table_edit')[0].href 
                 $("#button_" + oTable_element.id + " a.button_edit")[0].onclick = sel_tr.getElementsByClassName('button_in_table_edit')[0].onclick
-            if( sel_tr.getElementsByClassName('button_in_table_status')[0] ) // Status Upgrade button
-                $("#button_" + oTable_element.id + " a.button_status")[0].href = fnGetSelected(oTable)[0].getElementsByClassName('button_in_table_status')[0].href 
-                $("#button_" + oTable_element.id + " a.button_status")[0].onclick = fnGetSelected(oTable)[0].getElementsByClassName('button_in_table_status')[0].onclick
-            if( sel_tr.getElementsByClassName('button_in_table_del')[0] ) // Status Upgrade button
-                $("#button_" + oTable_element.id + " a.button_del")[0].href = fnGetSelected(oTable)[0].getElementsByClassName('button_in_table_del')[0].href 
-                $("#button_" + oTable_element.id + " a.button_del")[0].onclick = fnGetSelected(oTable)[0].getElementsByClassName('button_in_table_del')[0].onclick
-            if( sel_tr.getElementsByClassName('button_in_table_subtaskDept')[0] ) // Add dept Subtask Button
-                $("#button_" + oTable_element.id + " a.button_subtaskDept")[0].href = fnGetSelected(oTable)[0].getElementsByClassName('button_in_table_subtaskDept')[0].href 
-                $("#button_" + oTable_element.id + " a.button_subtaskDept")[0].onclick = fnGetSelected(oTable)[0].getElementsByClassName('button_in_table_subtaskDept')[0].onclick
-            if( sel_tr.getElementsByClassName('button_in_table_subtaskCross')[0] ) // Add cross Subtask button
-                $("#button_" + oTable_element.id + " a.button_subtaskCross")[0].href = fnGetSelected(oTable)[0].getElementsByClassName('button_in_table_subtaskCross')[0].href 
-                $("#button_" + oTable_element.id + " a.button_subtaskCross")[0].onclick = fnGetSelected(oTable)[0].getElementsByClassName('button_in_table_subtaskCross')[0].onclick 
-            
+            }
+            if( sel_tr.getElementsByClassName('button_in_table_status')[0] ) { // Status Upgrade button
+                $("#button_" + oTable_element.id + " a.button_status")[0].href = sel_tr.getElementsByClassName('button_in_table_status')[0].href
+                $("#button_" + oTable_element.id + " a.button_status")[0].onclick = sel_tr.getElementsByClassName('button_in_table_status')[0].onclick
+            }    
+            if( sel_tr.getElementsByClassName('button_in_table_del')[0] ) { // Status Upgrade button
+                $("#button_" + oTable_element.id + " a.button_del")[0].href = sel_tr.getElementsByClassName('button_in_table_del')[0].href 
+                $("#button_" + oTable_element.id + " a.button_del")[0].onclick = sel_tr.getElementsByClassName('button_in_table_del')[0].onclick
+            }
+            if( sel_tr.getElementsByClassName('button_in_table_subtaskDept')[0] ) { // Add dept Subtask Button
+                $("#button_" + oTable_element.id + " a.button_subtaskDept")[0].href = sel_tr.getElementsByClassName('button_in_table_subtaskDept')[0].href 
+                $("#button_" + oTable_element.id + " a.button_subtaskDept")[0].onclick = sel_tr.getElementsByClassName('button_in_table_subtaskDept')[0].onclick
+            }
+            if( sel_tr.getElementsByClassName('button_in_table_subtaskCross')[0] ) { // Add cross Subtask button
+                $("#button_" + oTable_element.id + " a.button_subtaskCross")[0].href = sel_tr.getElementsByClassName('button_in_table_subtaskCross')[0].href 
+                $("#button_" + oTable_element.id + " a.button_subtaskCross")[0].onclick = sel_tr.getElementsByClassName('button_in_table_subtaskCross')[0].onclick 
+            }
             /* As pending has approve and disapprove buttons, and this makes it more universal,
              * The button's innerHTML is also taken care of by the table column for buttons.
              * 
