@@ -453,22 +453,17 @@ def new_cross_task(request, serializedform=None, primkey=None):
         context = {'form': cross_form, 'id_form' : id_form, 'title':title, 'tasktype': "cross", 'primkey': primkey, 'info':info}
         html_content = render_to_string('tasks/task.html', context, context_instance=RequestContext(request))
         dajax.assign("#id_content_right", "innerHTML", html_content) # Populate modal
-        
-        
-    
     return dajax.json()
-  
 
-
-
-
-# _____________--- TASK DELETE VIEW ---______________#
+# _____________--- DELETE A TASK - INTRA/CROSS ---______________#
 @dajaxice_register(name="tasks.delete_task")
 @login_required
 @user_passes_test (core_check)
 def delete_task(request, primkey):
     """
-        CORES ONLY - ability to delete is only given to cores
+        This function handles deleting any task
+        CORES : (ONLY)
+            Only they can delete tasks.
         
         Renders in : alert
         Refreshes : right_content

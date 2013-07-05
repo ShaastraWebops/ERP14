@@ -33,9 +33,9 @@
       <tbody>
         {% for task in user_tasks %}
           <tr>
-            <td><a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.display_task_get, Dajax.process, {'primkey':{{task.pk}}}, 'id_content_right');">{{task.subject}}</a></td>
+            <td><a href="#" onclick="javascript:do_dajax(Dajaxice.tasks.display_task_get, Dajax.process, {'primkey':{{task.pk}}}, 'id_modal');">{{task.subject}}</a></td>
             <td>
-              <a href="#" onclick="javascript:do_dajax(Dajaxice.users.display_profile, Dajax.process, {'userid':{{task.taskcreator.user.get_profile.id}}}, 'id_content_right');">
+              <a href="#" onclick="javascript:do_dajax(Dajaxice.users.display_profile, Dajax.process, {'userid':{{task.taskcreator.user.get_profile.id}}}, 'id_modal');">
                 {{task.taskcreator.user.first_name}} {{task.taskcreator.user.last_name}}
               </a>
               {% if task.isxdepartmental %}
@@ -52,7 +52,7 @@
             </td>
             <td class='button_in_table'>
               <div class="btn-group">
-                <a class="btn button_in_table_subtaskDept" href="{% url tasks.views.add_intra_task task.pk %}">Add Dept Subtask</a>
+                <a class="btn button_in_table_subtaskDept" href="#" onclick="javascript:do_dajax(Dajaxice.tasks.new_intra_task_get, show_page, {'primkey' : '{{task.pk}}'}, 'id_content_right')">Add Dept Subtask</a>
               </div>
             </td>
           </tr>
