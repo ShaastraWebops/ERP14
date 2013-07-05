@@ -7,7 +7,6 @@ from misc.dajaxice.utils import deserialize_form
 from django.template import RequestContext
 from django.template.loader import render_to_string
 # From views
-from users.views import edit_profile as view_edit_profile
 # From forms
 from users.forms import ChooseIdentityForm, EditProfileForm
 # From models
@@ -70,6 +69,7 @@ def edit_profile(request, edit_form=None):
         Refreshes : right_content
     """
     dajax = Dajax()
+    
     errors = False
     userprofile = request.user.get_profile()
     fullname = userprofile.user.get_full_name()
@@ -93,7 +93,7 @@ def edit_profile(request, edit_form=None):
     else:
         edit_form = EditProfileForm ( instance = userprofile )
         html_content = render_to_string("users/edit_profile.html", locals(), RequestContext(request))
-        dajax.remove_css_class('#id_modal', 'hide') # Show modal
+        #dajax.remove_css_class('#id_modal', 'hide') # Show modal (already done in do_Dajax)
         dajax.assign("#id_modal", "innerHTML", html_content) # Populate modal
     
     return dajax.json()
