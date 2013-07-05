@@ -45,9 +45,23 @@ table tbody tr td {
     
 }
 
-.sidenav > .active {
-    z-index: 2;
-    text-shadow: 0  3px 0 rgba(0, 0, 0, 0.2);
-    color: #ffffff;
+.nav-tabs.nav-stacked.sidenav > li.active > a {
+    /*text-shadow: 0  3px 0 rgba(0, 0, 0, 0.2);*/
+    color : #ffffff;
+    background-color: #0088cc;
+    
 }
+
+.sidenav > li.sidenav_head > a {
+    text-shadow: 0  3px 3px rgba(0, 0, 0, 0.3);
+    background-color: #bbbbbb;
+    color : #ffffff;
 }
+
+.nav-tabs.nav-stacked.sidenav > li.active_head > a {
+    color : #ffffff;
+    background-color: #8888cc;
+    
+}
+
+

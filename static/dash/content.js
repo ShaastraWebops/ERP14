@@ -198,7 +198,18 @@ function show_page(json_got) {
     
     var oDiv_element = document.getElementById('id_content_right').getElementsByTagName('div')[0]
     $("#id_content_left ul.nav li").removeClass("active") // de-activate all other elements
+    $("#id_content_left ul.nav li").removeClass("active_head") // de-activate all other elements's head also ...
     $("#list_" + oDiv_element.id).addClass("active") // activate
+    elem_body_classes = $("#list_" + oDiv_element.id).attr('class').split(" ")
+    elem_head_id = ""
+    for ( var i = 0; i < elem_body_classes.length; i++ )
+        if ( elem_body_classes[i].match("^list_") ) {
+            elem_head_id = elem_body_classes[i].replace(/_body$/, "_head");
+        }
+    if (elem_head_id)
+        $("#" + elem_head_id).addClass("active_head") // activate the head for the collapsible also ...
+    else
+        alert( "Not head found in collapsiblle ...")
     
     // Check if div or table info -- extra processing ...
     if( oDiv_element.id.match("^form_") ) {
@@ -217,8 +228,8 @@ function show_page(json_got) {
     }
 }
 
-function do_accordion(e) {
-    e = e || window.event;
+function do_accordion(elem_str, type) {
+/*    e = e || window.event;
     e = e.target || e.srcElement;
     var ep = $(e).closest('li'), epid = ep.attr('id')
     alert(epid);
@@ -243,6 +254,25 @@ function do_accordion(e) {
         // Change its own class
         $("list_head").removeClass("active-head")
         ep.addClass("active-head")
+        
+    }
+*/
+    elem_id = "#" + elem_str + "_head"
+    elem_class_body = "." + elem_str + "_body"
+    elem_head = $(elem_str)
+    if ( type == "hide" || type == "show" )
+        $(elem_class_body).collapse(type)
+    else
+        $(elem_class_body).collapse('toggle')
+    elem_head.addClass("active_head")
+    
+    elem_head_i = $(elem_id + " a i")
+    if( elem_head_i.hasClass("icon-chevron-down") ) {
+        elem_head_i.removeClass("icon-chevron-down")
+        elem_head_i.addClass("icon-chevron-up")
+    } else {
+        elem_head_i.removeClass("icon-chevron-up")
+        elem_head_i.addClass("icon-chevron-down")
         
     }
     
