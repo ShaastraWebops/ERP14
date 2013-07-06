@@ -81,9 +81,9 @@
             <span class="caret"></span>
           </a>
           <ul class="dropdown-menu">
-            <li><a href="{% url users.views.edit_profile %}"><i class="icon-tag"></i> Edit Profile</a></li>
+            <li><a href=""><i class="icon-tag"></i> Edit Profile</a></li>
             <li>
-              <a href="{% url users.views.logout %}"><i class="icon-off"></i> Sign Out</a>
+              <a href=""><i class="icon-off"></i> Sign Out</a>
             </li>
           </ul>
         </div>
@@ -102,8 +102,9 @@
               </a>
             </li>
             <li id="nav_profile">
-              <!--<a href="{% url users.views.edit_profile %}"><i class="icon-tag icon-white"></i>Edit Profile</a>-->
-              <a href="#" onclick="javascript:do_dajax(Dajaxice.users.edit_profile_get, Dajax.process, {}, 'id_modal');"><i class="icon-tag icon-white"></i>Edit Profile</a>
+              <a href="#" onclick="javascript:do_dajax(Dajaxice.users.edit_profile_get, Dajax.process, {}, 'id_modal');">
+                <i class="icon-user icon-white"></i>Edit Profile
+              </a>
             </li>
             <li>
               <a href="{% url users.views.logout %}"><i class="icon-off icon-white"></i> Sign Out </a>
@@ -117,9 +118,6 @@
             <li id="nav_home">
               <a href="{% url dash.views.dash_view %}"><i class="icon-home icon-white"></i> Home</a>
             </li>
-            <!--<li id="nav_profile">
-              <a href="{% url users.views.view_profile %}"><i class="icon-user icon-white"></i> Profile</a>
-            </li>-->
             <li id="nav_contact">
               <a href="#" onclick="javascript:do_dajax(Dajaxice.users.contact_us, Dajax.process, {}, 'id_modal');"><i class="icon-wrench icon-white"></i> Contact</a>
             </li>

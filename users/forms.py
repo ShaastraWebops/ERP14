@@ -41,3 +41,4 @@ class EditProfileForm (forms.ModelForm):
 
     class Admin:
         pass
+

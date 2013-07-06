@@ -94,10 +94,18 @@ function do_dajax(_dajax_func, _handler_func, _args, _id_content) {
 
 // FORM SENDING -- Needs to be cleaned up unnecessary to have different
 //              functions for all of them
-function save_profile_form(v) { // v is id of the form in question
+function send_form(_func, _form, _arg) { 
+    // _func - Dajaxice function to call
+    // _form the form id to send
+    // _arg - the name of the argument that python expects
     // takes the edit profile form and gives it to dajaxice
-    form_model = $(v).serialize(true);
-    Dajaxice.users.edit_profile_post(Dajax.process, {'edit_form' : form_model});
+    form_model = $(_form).serialize(true);
+    if( _arg ) {
+        alert(_arg + "  ")
+        _func(Dajax.process, {_arg : form_model});
+    } else {
+        _func(Dajax.process, {'form' : form_model});
+    }
 }
 
 function new_task_form(v) { // v is id of the form in question

@@ -36,10 +36,10 @@
     </div>
     <div class="modal-footer">
       <div class="btn-group">
-        <!-- give buttons to : show profile, submit edited profile, close modal -->
-        <a class ="btn btn-info" href="javascript:do_dajax(Dajaxice.users.display_profile, Dajax.process, {}, 'id_modal'));">View Profile</a>
-        <a class ="btn btn-info" href="javascript:do_dajax(Dajaxice.users.edit_profile_password_get, Dajax.process, {}, 'id_modal');">Change password</a>
-        <a class ="btn btn-info" href="javascript:send_form(Dajaxice.users.edit_profile_post, '#profile_edit_form')">Submit Changes</a>
+        <!-- give buttons to : show profile, edit, submit pass-reset, close modal -->
+        <a class ="btn btn-info" href="javascript:do_dajax(Dajaxice.users.display_profile, Dajax.process, {}, 'id_modal');">View Profile</a>
+        <a class ="btn btn-info" href="javascript:do_dajax(Dajaxice.users.edit_profile, Dajax.process, {}, 'id_modal');">Edit Profile</a>
+        <a class ="btn btn-info" href="javascript:send_form(Dajaxice.users.edit_profile_password_post, '#profile_edit_form')">Change Password</a>
         <a class ="btn btn-info" href="javascript:modal_hide()">Close</a>
         
       </div>

@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 # From views
 # From forms
 from users.forms import ChooseIdentityForm, EditProfileForm
+from django.contrib.auth.forms import PasswordChangeForm
 # From models
 from users.models import ERPUser
 # From Misc to show bootstrap alert
@@ -62,7 +63,7 @@ def display_profile(request, userid=None):
 
 @dajaxice_register(method="GET", name="users.edit_profile_get")
 @dajaxice_register(method="POST", name="users.edit_profile_post")
-def edit_profile(request, edit_form=None):
+def edit_profile(request, form=None):
     """
         Used to give Dajax(ice) the edit profile page
         Renders in : modal
@@ -74,12 +75,12 @@ def edit_profile(request, edit_form=None):
     userprofile = request.user.get_profile()
     fullname = userprofile.user.get_full_name()
     nickname = userprofile.nickname
-    if request.method == 'POST' and edit_form != None:
-        edit_form = EditProfileForm(deserialize_form(edit_form), instance=userprofile)
+    if request.method == 'POST' and form != None:
+        form = EditProfileForm(deserialize_form(form), instance=userprofile)
         
-        if edit_form.is_valid():
-            print "form is valid"
-            edit_form.save()
+        if form.is_valid():
+            
+            form.save()
             dajax.assign("#edit_profile_nickname", "innerHTML", edit_form.cleaned_data['nickname'])
             dajax.remove_css_class('#profile_edit_form input', 'error')
             dajax.script('modal_hide()') # Hide modal
@@ -87,14 +88,51 @@ def edit_profile(request, edit_form=None):
         else:
             errors = True
             dajax.remove_css_class('#profile_edit_form input', 'error')
-            for error in edit_form.errors:
+            for error in form.errors:
                 dajax.add_css_class('#id_%s' % error, 'error')
             #show_alert(dajax, 'error', "There were errors in the form") # as it is in modal, not req
     else:
-        edit_form = EditProfileForm ( instance = userprofile )
+        form = EditProfileForm ( instance = userprofile )
         html_content = render_to_string("users/edit_profile.html", locals(), RequestContext(request))
         #dajax.remove_css_class('#id_modal', 'hide') # Show modal (already done in do_Dajax)
         dajax.assign("#id_modal", "innerHTML", html_content) # Populate modal
+    
+    return dajax.json()
+
+@dajaxice_register(method="GET", name="users.edit_profile_password_get")
+@dajaxice_register(method="POST", name="users.edit_profile_password_post")
+def edit_profile_password(request, form=None):
+    """
+        Used to give Dajax(ice) the change password page
+        Renders in : modal
+        Refreshes : right_content
+    """
+    dajax = Dajax()
+    
+    errors = False
+    userprofile = request.user.get_profile()
+    fullname = userprofile.user.get_full_name()
+    nickname = userprofile.nickname
+    if request.method == 'POST' and form != None:
+        form = PasswordChangeForm(userprofile.user, deserialize_form(form))
+        
+        if form.is_valid():
+            form.save()
+            dajax.remove_css_class('#profile_edit_form input', 'error')
+            dajax.script('modal_hide()') # Hide modal
+            show_alert(dajax, 'success', 'Password was changes successfully')
+        else:
+            errors = True
+            dajax.remove_css_class('#profile_edit_form input', 'error')
+            for error in form.errors:
+                dajax.add_css_class('#id_%s' % error, 'error')
+            print "errors :", [i for i in form.errors]
+            #show_alert(dajax, 'error', "There were errors in the form") # as it is in modal, not req
+    else:
+        form = PasswordChangeForm ( userprofile.user )
+        html_content = render_to_string("users/passwd_form.html", locals(), RequestContext(request))
+        dajax.assign("#id_modal", "innerHTML", html_content) # Populate modal
+    
     
     return dajax.json()
 
