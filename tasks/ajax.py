@@ -321,7 +321,7 @@ def new_intra_task(request, serializedform=None, primkey=None):
         form = IntraTaskForm(department, deserialize_form(serializedform)) # get form
         if form.is_valid(): # check validity
             newTask = form.save(commit=False)
-    
+            
             #Set the origin & target departments & approve the task.        
             newTask.origindept = userprofile.dept
             newTask.targetdept = userprofile.dept

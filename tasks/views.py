@@ -1,5 +1,3 @@
-# Temporary i put replace task.html with task_temp.html ... should change this
-
 # ************** ERP - TASKS APP - VIEWS ********************* #
 from tasks.models import Task, Comment, TASK_STATUSES
 from tasks.forms import IntraTaskForm, CrossTaskForm
