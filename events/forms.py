@@ -7,7 +7,7 @@ from erp.settings import MEDIA_ROOT
 from events.models import GenericEvent, Tab, Update, TabFile
 # Python imports
 import json
-import os
+import os, glob
 import datetime
 
 # __________--- Get place to store JSON - for events ---___________#
@@ -29,12 +29,24 @@ class EventDetailsForm(ModelForm):
     def save(self, commit=True):
         clean_form = self.clean()
         event_json = {}
+        # saving the event to db
+        super(EventDetailsForm, self).save()
+        event_pk = GenericEvent.objects.filter(title=clean_form['title'])[0].pk
         for iden in self.fields.keys(): # take all fields in the form
             print iden, clean_form[iden]
             event_json[iden] = clean_form[iden] # add to json
-        file_path = get_json_file_path(clean_form['title']+'.json')
-        print event_json
-        with open(file_path, 'w') as f:
+        # absolute path to the file in which the content has to be saved
+        file_path_full = get_json_file_path(str(event_pk)+'_'+clean_form['title']+'.json')
+        
+        # removing all files except file_path_full that start with this event_pk
+        file_path_pk = get_json_file_path(str(event_pk)+'_*')
+        file_paths = glob.glob(file_path_pk) # gives all files in the dir that start with file_path_pk
+        for path in file_paths:
+            if not (path == file_path_full):
+                os.remove(path)
+                
+        #print event_json
+        with open(file_path_full, 'w') as f:
             json.dump(event_json, f)
             f.close()
         return True

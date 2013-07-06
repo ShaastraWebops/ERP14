@@ -70,15 +70,19 @@ def show_event_erp(request, event_name):
     """
     dajax = Dajax()
     json_dict = {}
-    event_json_filepath = get_json_file_path(event_name + '.json')
+    event_query = GenericEvent.objects.filter(title=event_name)
+    if event_query:
+        event_instance = event_query[0]
+        event_pk = event_instance.pk
+    event_json_filepath = get_json_file_path(str(event_pk) + '_' + event_name + '.json')
+    
     if not os.path.exists(event_json_filepath): # No file found
-        event_query = GenericEvent.objects.filter(title=event_name)
-        # if the event exists, then create a json file with the event details
-        if event_query:
-            event_instance = event_query[0]
+        # if the event exists in db but no json file present, then create a json file with the event details
+        if event_instance:
             event_dict = model_to_dict(event_instance)
             form = EventDetailsForm(event_dict)
-            form.save()
+            if form.is_valid():
+                form.save()
         # else, return an empty page and let the user add event details
         else:
             show_alert(dajax, "error", "Event details not found. Click Edit Event Details button to add details to this event.")
@@ -124,7 +128,10 @@ def edit_event_erp(request, event_name, edit_form=None):
             form.save()
             show_alert(dajax, "success", "Event edited successfully")
             json_dict = {}
-            event_json_filepath = get_json_file_path(event_name + '.json')
+            clean_form = form.clean()
+            event_name = clean_form['title']
+            event_pk = GenericEvent.objects.filter(title=event_name)[0].pk
+            event_json_filepath = get_json_file_path(str(event_pk) + '_'+ event_name + '.json')
             with open(event_json_filepath) as f:
                 json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a json object
                 event_detail_html_content = render_to_string('events/show_erp.html', locals(), RequestContext(request))
