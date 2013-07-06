@@ -4,10 +4,11 @@ from django.forms import ModelForm, Select
 # From erp
 from erp.settings import MEDIA_ROOT
 # From form
-from events.models import GenericEvent, Tab, Update
+from events.models import GenericEvent, Tab, Update, TabFile
 # Python imports
 import json
 import os
+import datetime
 
 # __________--- Get place to store JSON - for events ---___________#
 def get_json_file_path(filename):
@@ -50,19 +51,28 @@ class UpdateForm(ModelForm):
 
         model = Update
         exclude = ('date',)
-        widgets = {'event':forms.HiddenInput()}
+        #widgets = {'event':forms.HiddenInput()}
 
     def save(self):
         clean_form = self.clean()
-        event_json = {}
-        for iden in self.fields.all():
+        date = datetime.datetime.now().strftime(' %d_%B_%I_%M%p')
+
+        update_json = {}
+        for iden in self.fields.keys():
             print iden, clean_form[iden]
-            event_json[iden] = clean_form[iden]
-        file_path = get_json_file_path(clean_form['event'].title + clean_form['date'] +'.json')
-        print event_json
+            if iden == 'event':
+                update_json[iden] = clean_form[iden].title
+            else:
+                update_json[iden] = clean_form[iden]
+        file_path = get_json_file_path(clean_form['event'].title +date+'.json')
+        print update_json
         with open(file_path, 'w') as f:
-            json.dump(event_json, f)
+            json.dump(update_json, f)
             f.close()
         return True
 
+class UploadTabFiles(ModelForm):
 
+    class Meta:
+        model = TabFile
+        exclude = ('tab','url')

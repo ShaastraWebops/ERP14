@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from events.forms import EventDetailsForm,UpdateForm
+from events.forms import EventDetailsForm,UpdateForm,UploadTabFiles
 
 from misc.dajaxice.core import dajaxice_functions
 
@@ -47,7 +47,7 @@ def edit_event(request):
 
 def add_update(request):
     if request.method == 'POST':
-        form = UpdateForm()
+        form = UpdateForm(request.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('events.views.home'))
@@ -59,4 +59,15 @@ def add_update(request):
         form = UpdateForm()
     return render_to_response('events/update.html',{'form': form}, context_instance = RequestContext(request))
 
+def tabfile_submit(request):
+    if request.method == 'POST':
+        form = UploadTabFiles(request.POST, request.FILES)
+        filename = request.FILES['tab_file'].name
+        display_name = request.META['HTTP_X_NAME']
+        print display_name
+        
+    else:
+        form = UploadTabFiles()
+    return render_to_response('events/tabfiles.html',{'form':form}, context_instance = RequestContext(request))
+    
 
