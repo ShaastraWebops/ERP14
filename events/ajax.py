@@ -12,10 +12,10 @@ from django.contrib.auth.decorators import login_required
 # For converting model to a dictionary that can be input into a ModelForm
 from django.forms.models import model_to_dict
 # From forms
-from events.forms import EventDetailsForm, get_json_file_path
+from events.forms import EventDetailsForm, TabDetailsForm, get_json_file_path
 # From models
 from users.models import ERPUser
-from events.models import GenericEvent
+from events.models import GenericEvent, Tab
 # From Misc to show bootstrap alert
 from misc.utilities import show_alert
 # From ERP
@@ -70,19 +70,30 @@ def show_event_erp(request, event_name):
     """
     dajax = Dajax()
     json_dict = {}
+    event_pk = -1
+    event_instance = None
+    
     event_query = GenericEvent.objects.filter(title=event_name)
     if event_query:
         event_instance = event_query[0]
         event_pk = event_instance.pk
+        tab_list = Tab.objects.filter(event=event_instance) # for providing the list of tabs to show_erp.html
     event_json_filepath = get_json_file_path(str(event_pk) + '_' + event_name + '.json')
+    print event_json_filepath
     
     if not os.path.exists(event_json_filepath): # No file found
-        # if the event exists in db but no json file present, then create a json file with the event details
+        # if the event exists in db but no json file present, then create a json file with the event and its tabs' details
         if event_instance:
             event_dict = model_to_dict(event_instance)
-            form = EventDetailsForm(event_dict)
+            form = EventDetailsForm(event_dict, instance=event_instance)
             if form.is_valid():
                 form.save()
+            for tab in tab_list:
+                tab_dict = model_to_dict(tab)
+                print tab_dict
+                tab_form = TabDetailsForm(tab_dict, instance=tab)
+                if tab_form.is_valid():
+                    tab_form.save()
         # else, return an empty page and let the user add event details
         else:
             show_alert(dajax, "error", "Event details not found. Click Edit Event Details button to add details to this event.")
@@ -119,6 +130,7 @@ def edit_event_erp(request, event_name, edit_form=None):
     event_query = GenericEvent.objects.filter(title=event_name)
     if event_query:
         event_instance = event_query[0]
+        tab_list = Tab.objects.filter(event=event_instance) # for providing the list of tabs to show_erp.html
     if request.method == 'POST' and edit_form != None:
         if event_query:
             form = EventDetailsForm(deserialize_form(edit_form), instance=event_instance)

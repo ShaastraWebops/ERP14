@@ -3,18 +3,40 @@
 <script src="{% static 'events/json.js' %}"></script>-->
 
 <div id="page_eventinfo">
-  <div id="eventDetailsContainer">
-    <center>
-        <h3 style="color:#758FB2; text-decoration: underline">Event Details</h3>
-        <div id="eventDetails">
-            <!--<dl id="eventUpdate" class="eventDetailsText dl-horizontal"></dl>-->
-            <br />
-            <input type="hidden" id="json_dict_content" value="{{json_dict}}">
-        </div>
-       <a class="btn btn-primary" href="#" onclick="javascript:do_dajax(Dajaxice.events.edit_event_erp_get, show_page, {'event_name' : '{{event_name}}' }, 'id_content_right')"> Edit Event Details </a>
+  <div class="tabbable" style="margin-bottom: 18px;">
+    <ul class="nav nav-tabs">
+        <li class="active">
+          <a href="#eventDetailsContainer" data-toggle="tab"> {{event_name}} </a>
+        </li>
+        {% for tab in tab_list %}
+          <li> <a href="#tab{{tab.pk}}" data-toggle="tab" onclick="display_tab_erp($('#json_dict_content').val(),{{tab.pk}})"> {{tab.title}} </a> </li>
+        {% endfor %}
+    </ul>
+  </div>
+  <div class="tab-content" style="padding-bottom: 9px; border-bottom: 1px solid #ddd;" id="contentHolder">
+    <div class="tab-pane active" id="eventDetailsContainer">
+      <center>
+          <h3 style="color:#758FB2; text-decoration: underline">Event Details</h3>
+          <div id="eventDetails">
+              <!--<dl id="eventUpdate" class="eventDetailsText dl-horizontal"></dl>-->
+              <br />
+              <input type="hidden" id="json_dict_content" value="{{json_dict}}">
+          </div>
+         <a class="btn btn-primary" href="#" onclick="javascript:do_dajax(Dajaxice.events.edit_event_erp_get, show_page, {'event_name' : '{{event_name}}' }, 'id_content_right')"> Edit Event Details </a>
 
-       <!-- <a class="btn btn-primary" href="#" onclick="javascript:do_dajax(Dajaxice.events.edit_event_erp_get, show_page, {'event_name' : '{{event_name}}' }, 'id_content_right')"> Add Tab </a> -->
-    </center>
+         <!-- <a class="btn btn-primary" href="#" onclick="javascript:do_dajax(Dajaxice.events.edit_event_erp_get, show_page, {'event_name' : '{{event_name}}' }, 'id_content_right')"> Add Tab </a> -->
+      </center>
+    </div>
+    {% for tab in tab_list %}
+    <div class="tab-pane" id="tab{{tab.pk}}">
+        <center>
+          <h3 style="color:#758FB2; text-decoration: underline">Tab Details</h3>
+          <div id='tab{{tab.pk}}Details'>
+            
+          </div>
+        </center>
+      </div>
+    {% endfor %}
   </div>
 </div>
 

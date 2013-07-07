@@ -6,7 +6,7 @@ body {
 label{
     color: #957F38;
 }
-#contentDetailsContainer{
+#eventDetailsContainer{
     width: 600px;
     height: auto;
     position: absolute;
