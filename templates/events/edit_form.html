@@ -9,10 +9,10 @@
     <form method="POST" action="" id="id_form">
         {% csrf_token %}
         <table>
-            <caption style="color:#758FB2;"><h3>Event Details</h3></caption>
+            <caption style="color:#758FB2;"><h3>{{type|title}} Details</h3></caption>
             {{form.as_table}}
         </table>
-        <a class ="btn btn-info" href="#" onclick="Dajaxice.events.edit_event_post(Dajax.process, {'event_pk' : '{{event_instance.pk}}', 'edit_form' : $('#id_form').serialize(true)});">
+        <a class ="btn btn-info" href="#" onclick="Dajaxice.events.edit_{{type}}_post(Dajax.process, {'{{type}}_pk' : '{{model_instance.pk}}', 'edit_form' : $('#id_form').serialize(true)});">
           Save changes
         </a>
     </form>

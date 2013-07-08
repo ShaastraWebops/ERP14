@@ -65,7 +65,7 @@ class TabDetailsForm(ModelForm):
 
     class Meta:
         model = Tab
-        fields = ['event', 'title', 'text', 'pref']
+        fields = ['title', 'text', 'pref']
     
     def save(self, commit=True):
         clean_form = self.clean()
