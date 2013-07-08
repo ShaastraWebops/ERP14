@@ -12,10 +12,10 @@ from django.contrib.auth.decorators import login_required
 # For converting model to a dictionary that can be input into a ModelForm
 from django.forms.models import model_to_dict
 # From forms
-from events.forms import EventDetailsForm, TabDetailsForm, get_json_file_path
+from events.forms import EventDetailsForm, TabDetailsForm, get_json_file_path,UpdateForm
 # From models
 from users.models import ERPUser
-from events.models import GenericEvent, Tab
+from events.models import GenericEvent, Tab, Updates
 # From Misc to show bootstrap alert
 from misc.utilities import show_alert
 # From ERP
@@ -311,4 +311,33 @@ def edit_tab(request, tab_pk=None, edit_form=None):
         else:
             dajax.assign("#tab_new", "innerHTML", html_content) # Populate content
 
+    return dajax.json()
+
+@dajaxice_register
+def update_event(request,form):
+    dajax = Dajax()
+    form = UpdateForm(deserialize_form(form))
+    event_object = request.user.get_profile().event
+    all_updates = Update.objects.filter(event=event_object)
+    major_count = 0
+    update_count = 0
+    if form.is_valid():
+        for u in all_updates:
+            if u.category=='Updates' and u.expired is False:
+                update_count = update_count + 1
+                print update_count
+            elif u.category=='Major Update' and u.expired is False:
+                major_count = major_count + 1
+                print major_count
+            elif update_count>4 and u.category=='Updates':
+                dajax.alert("This event already has 4 Updates.\
+                    Please mark one update as Expired before adding a new update")
+            elif major_count>1 and u.category=='Major Update':
+                dajax.alert("This event already has one Major Update.\
+                    Please mark the Major Update as Expired before adding another one")
+    #Write to json here
+
+    else :
+        template = loader.get_template('events/home.html')
+        t = template.render(RequestContext(request,locals()))
     return dajax.json()

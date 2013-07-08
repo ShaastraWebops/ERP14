@@ -1,15 +1,27 @@
-
-<div id="update">
+{% load staticfiles %}
+{% load dajaxice_templatetags %}
+<html>
+    <head>
+        <title>Updates</title>
+        <meta charset="utf-8">
+        <link href = "{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+        <link href = "{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet" media="screen">
+        <script src="{% static 'js/jquery-1.9.1.js' %}"></script>
+        <script src="{% static 'js/jquery.dajax.core.js' %}"></script>
+        <script src="{% static 'js/bootstrap.js' %}"></script>
+        <script src="{% static 'js/base.js' %}"></script>
+        {% dajaxice_js_import %}
+    </head>
+<div> 
     <center>
-        <form method="POST" action="" id = "id_form">
-            {% csrf_token %}
-            <table>
-                {{form.as_table}}
-            </table>
-            {% if error %}
-                <p class="text-error">{{error}}</p>
-            {% endif %}
-            <input type="submit"/>
-        </form>
-    </center>
+
+<form method="POST" action="" id = "id_form">
+    {% csrf_token %}
+    <table>
+        {{form.as_table}}
+    </table>
+    <a class="btn btn-primary" href="#" onclick="Dajaxice.events.update_event(Dajax.process,{'form':$('#id_form').serialize(true)});">Update</a>
+</form>
+</center>
 </div>
+</html>
