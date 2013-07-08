@@ -191,11 +191,14 @@ def edit_event(request, event_name=None, event_pk=None, edit_form=None):
             if event_name_new != event_name_old: # Rename the json file ! the names are different
                 event_json_filepath_old = get_json_file_path(str(event_pk) + '_'+ event_name_old + '.json')
                 os.rename(event_json_filepath_old, event_json_filepath_new)
-            with open(event_json_filepath_new) as f:
-                json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a json object
-                context_dict = {'model_instance' : event_instance, 'type' : 'event', 'form' : form}
-                html_content = render_to_string('events/edit_form.html', context_dict, RequestContext(request))
-                f.close()
+            #with open(event_json_filepath_new) as f:
+            #    json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a json object
+            #    context_dict = {'model_instance' : event_instance, 'type' : 'event', 'form' : form}
+            #    html_content = render_to_string('events/edit_form.html', context_dict, RequestContext(request))
+            #    f.close()
+            if event_name_new != event_name_old: # Change event - tab title
+                dajax.assign("#a_event_" + str(event_instance.pk), "innerHTML", event_name_new)
+            
             events_being_edited.remove(event_instance.pk)
             dajax.remove_css_class('#id_form input', 'error')
             show_alert(dajax, "success", "Event edited successfully")
@@ -222,7 +225,7 @@ def edit_event(request, event_name=None, event_pk=None, edit_form=None):
 @dajaxice_register(method="GET", name="events.edit_tab_get")
 @dajaxice_register(method="POST", name="events.edit_tab_post")
 # __________--- Send events edit page from json file ---___________#
-def edit_tab(request, tab_pk=None, form=None):
+def edit_tab(request, tab_pk=None, edit_form=None):
     """
         This function renders the "edit event" page for Event coords
         args :
@@ -249,10 +252,10 @@ def edit_tab(request, tab_pk=None, form=None):
     
     if request.method == 'POST' and edit_form != None:
         if tab_instance: # Old tab being edited
-            form = EventDetailsForm(deserialize_form(edit_form), instance = tab_instance)
+            form = TabDetailsForm(deserialize_form(edit_form), instance = tab_instance)
         else: # New tab
-            form = EventDetailsForm(deserialize_form(edit_form))
-            
+            form = TabDetailsForm(deserialize_form(edit_form))
+        print form
         if event_instance.pk in events_being_edited:
             show_alert(dajax, "error", "This event was just updated by another user.")
         elif form.is_valid(): # Save form and json
@@ -262,34 +265,32 @@ def edit_tab(request, tab_pk=None, form=None):
             clean_form = form.clean()
             
             # Handles the form and sql
-            form.save()
+            form.save(event_inst = event_instance)
             
             # Handles the json :
             json_dict = {}
             
             # Check if file title has changed
-            event_name_new = clean_form['title']
-            event_name_old = event_instance.title
-            event_pk = event_instance.pk
-            event_json_filepath_new = get_json_file_path(str(event_pk) + '_'+ event_name_new + '.json')
-            if event_name_new != event_name_old: # Rename the json file if the names are different
-                event_json_filepath_old = get_json_file_path(str(event_pk) + '_'+ event_name_old + '.json')
-                os.rename(event_json_filepath_old, event_json_filepath_new)
-                
-            with open(event_json_filepath_new) as f:
-                json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a json object
-                context_dict = {'model_instance' : tab_instance, 'type' : 'tab', 'form' : form}
-                html_content = render_to_string('events/edit_form.html', locals(), RequestContext(request))
-                f.close()
+            event_json_filepath = get_json_file_path(str(event_instance.pk) + '_'+ event_instance.title + '.json')
             
+            tab_name_new = clean_form['title']
+            tab_name_old = tab_instance.title
+            #with open(event_json_filepath_new) as f:
+            #    json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a json object
+            #    json_dict['tab_' + newTab.pk] = newTab
+            #    f.close()
+            
+            # Note : need to make this better. Currently, it'll refresh the whole left content. It's better to add what's required only...
+            dajax.script("$('list_eventpage_eventinfo').click()")
+                
             events_being_edited.remove(event_instance.pk)
             dajax.remove_css_class('#id_form input', 'error')
             show_alert(dajax, "success", "Event edited successfully")
         else:
             error_string = "<br />"
             dajax.remove_css_class('#id_form input', 'error')
-            for error in edit_form.errors:
-                error_string += error[0].upper() + error[1:] + ": " + edit_orm.errors[error][0] + "<br />"
+            for error in form.errors:
+                error_string += error[0].upper() + error[1:] + ": " + form.errors[error][0] + "<br />"
                 dajax.add_css_class('#id_%s' % error, 'error')
 
             form = EventDetailsForm()
@@ -297,10 +298,11 @@ def edit_tab(request, tab_pk=None, form=None):
             #html_content = render_to_string('events/edit_tab.html', locals(), RequestContext(request)) # show edit form again
     else:
         if tab_instance:
+            context_dict = {'model_instance' : tab_instance, 'type' : 'tab', 'form' : form}
             form = TabDetailsForm(instance = tab_instance)
         else:
             form = TabDetailsForm()
-            context_dict = {'model_instance' : tab_instance, 'type' : 'tab', 'form' : form}
+            context_dict = {'type' : 'tab', 'form' : form}
             html_content = render_to_string('events/edit_form.html', context_dict, RequestContext(request))
 
     if html_content :

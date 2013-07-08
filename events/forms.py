@@ -30,8 +30,12 @@ class EventDetailsForm(ModelForm):
         clean_form = self.clean()
         event_json = {}
         json_data = {}
+        
+        # First, check if the file exists
+        object_jsonified = json.loads(
         # saving the event to db
         super(EventDetailsForm, self).save()
+        
         event_pk = GenericEvent.objects.filter(title=clean_form['title'])[0].pk
         for iden in self.fields.keys(): # take all fields in the form
             #print iden, clean_form[iden]
@@ -67,15 +71,22 @@ class TabDetailsForm(ModelForm):
         model = Tab
         fields = ['title', 'text', 'pref']
     
-    def save(self, commit=True):
+    def save(self, event_inst = None, commit=True):
         clean_form = self.clean()
         json_data = {}
-        #saving the tab to db
-        super(TabDetailsForm, self).save()
+        # Save the tab to db
+        tab_inst = super(TabDetailsForm, self).save()
+        
+        # Add event to the tab
+        if event_inst:
+            instance.event = event_inst
+            instance.save()
+        else:
+            event_inst = tab_inst.event
         tab_pk = Tab.objects.filter(title=clean_form['title'])[0].pk
         
-        event_pk = GenericEvent.objects.filter(title=clean_form['event'].title)[0].pk
-        file_path = get_json_file_path(str(event_pk) + '_' + clean_form['event'].title+'.json')
+        event_pk = event_inst.pk
+        file_path = get_json_file_path(str(event_pk) + '_' + event_inst.title+'.json')
         if not os.path.exists(file_path): # No event file found- error: tab cant exist without the corresponding event
             raise ValidationError(u'Tab cannot be created without creating an event')
         with open(file_path) as f:
@@ -83,7 +94,7 @@ class TabDetailsForm(ModelForm):
             for iden in self.fields.keys(): # take all fields in the form
                 #print iden, clean_form[iden]
                 if iden=='event':
-                    json_data['tab'+str(tab_pk)+'_'+iden] = clean_form[iden].title   # add event name to existing json_data
+                    json_data['tab'+str(tab_pk)+'_'+iden] = event_inst.title   # add event name to existing json_data
                 else:
                     json_data['tab'+str(tab_pk)+'_'+iden] = clean_form[iden] # add to existing json_data
                 f.close()

@@ -12,15 +12,15 @@
     <div id="eventtabs">
       <ul>
         <li>
-          <a href="#event_{{event_instance.pk}}" onclick="javascript:display_tab_event('event_{{event_instance.pk}}');"> {{event_name}} </a>
+          <a id="a_event_{{event_instance.pk}}" href="#event_{{event_instance.pk}}" onclick="javascript:display_tab_event('event_{{event_instance.pk}}');"> {{event_name}} </a>
         </li>
         {% for tab in tab_list %}
           <li> 
-            <a href="#tab_{{tab.pk}}" onclick="javascript:display_tab_event('tab_{{tab.pk}}');"> {{tab.title}} </a> 
+            <a id="a_tab_{{tab.pk}}" href="#tab_{{tab.pk}}" onclick="javascript:display_tab_event('tab_{{tab.pk}}');"> {{tab.title}} </a> 
             </li>
         {% endfor %}
         <li>
-          <a href="#tab_new" onclick="javascript:display_tab_event('tab_new');"> New Tab </a>
+          <a id="a_tab_new" href="#tab_new" onclick="javascript:display_tab_event('tab_new');"> New Tab </a>
         </li>
       </ul>
       <div id="event_{{event_instance.pk}}"></div>
