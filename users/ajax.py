@@ -7,7 +7,6 @@ from misc.dajaxice.utils import deserialize_form
 from django.template import RequestContext
 from django.template.loader import render_to_string
 # From views
-from users.views import edit_profile as view_edit_profile
 # From forms
 from users.forms import EditProfileForm, ChooseIdentityForm
 # From models

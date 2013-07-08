@@ -180,8 +180,18 @@ function show_page(json_got) {
     } else if( oDiv_element.id.match("^table_") ) {
         var oTable_element = oDiv_element.getElementsByTagName('table')[0]
         show_table(oTable_element)
-    } else if( oDiv_element.id.match("^page_") ) { // no extra processing
-        
+    } else if( oDiv_element.id.match("^eventpage_") ) { // for jquery-ui tabs
+        $(function() { // Initiate the tabs
+            var tabs = $( "#eventtabs" ).tabs();
+            /*tabs.find( ".ui-tabs-nav" ).sortable({
+                axis: "x",
+                stop: function() {
+                    tabs.tabs( "refresh" );
+                }
+            });*/
+        });
+        // Run the script to get the first page
+        $( "#eventtabs a" ).first().click()
     } 
     
     $("#id_content_left ul.nav li").removeClass("active") // de-activate all other elements
