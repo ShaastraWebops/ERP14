@@ -12,10 +12,10 @@ from django.contrib.auth.decorators import login_required
 # For converting model to a dictionary that can be input into a ModelForm
 from django.forms.models import model_to_dict
 # From forms
-from events.forms import EventDetailsForm, TabDetailsForm, get_json_file_path,UpdateForm
+from events.forms import EventDetailsForm, TabDetailsForm, UpdateForm, get_json_file_path, EditError
 # From models
 from users.models import ERPUser
-from events.models import GenericEvent, Tab, Updates
+from events.models import GenericEvent, Tab, Update
 # From Misc to show bootstrap alert
 from misc.utilities import show_alert
 # From ERP
@@ -97,7 +97,7 @@ def show_event_erp(request, event_name=None, event_pk=None):
         return dajax.json()
     
     event_json_filepath = get_json_file_path(str(event_instance.pk) + '_' + event_instance.title + '.json')
-    print event_json_filepath
+    #print event_json_filepath
     
     if not os.path.exists(event_json_filepath): # No file found
         # if the event exists in db but no json file present, then create a json file with the event and its tabs' details
@@ -111,7 +111,7 @@ def show_event_erp(request, event_name=None, event_pk=None):
                 print tab_dict
                 tab_form = TabDetailsForm(tab_dict, instance=tab)
                 if tab_form.is_valid():
-                    tab_form.save()
+                    tab_form.save(event_inst = event_instance)
         else: # return an empty page and let the user add event details
             show_alert(dajax, "error", "Event details not found. Click Edit Event Details button to add details to this event.")
             html_content = render_to_string('events/erp_tabs.html', locals(), RequestContext(request))
@@ -141,7 +141,6 @@ def edit_event(request, event_name=None, event_pk=None, edit_form=None):
             edit_Form - The edited form in post requests
         
         Check before savin
-            - check if event in erp.variables.event_being_edited
             - check if name changed, if yes : change file name
     """
     dajax = Dajax()
@@ -153,9 +152,6 @@ def edit_event(request, event_name=None, event_pk=None, edit_form=None):
     if not ( event_name or event_pk ): # Neither arg given
         show_alert(dajax, "error", "There is some error on the site, please report to WebOps team")
         return dajax.json()
-    elif event_name and event_pk: # Both args given ..
-        show_alert(dajax, "error", "There is some error on the site, please report to WebOps team.")
-        return dajax.json()
     elif event_pk:
         event_query = GenericEvent.objects.filter(pk=event_pk)
     elif event_name:
@@ -163,43 +159,29 @@ def edit_event(request, event_name=None, event_pk=None, edit_form=None):
 
     if event_query: # get event details and tab details
         event_instance = event_query[0]
-    else:
-        show_alert(dajax, "error", "This event does not exist on the site, please report to WebOps team.")
-        return dajax.json()
-    
-    # Now, event_instance has the instance of the event passed to this function.
-    # Use it. Nothing else from the top is connected here.
+
     if request.method == 'POST' and edit_form != None:
-        form = EventDetailsForm(deserialize_form(edit_form), instance = event_instance)
-        if event_instance.pk in events_being_edited:
-            show_alert(dajax, "error", "This event was just updated by another user.")
-        elif form.is_valid(): # Save form and json
-            clean_form = form.clean()
-            
-            # Handles the form and sql
-            form.save()
-            
-            # Handles the json :
-            json_dict = {}
-            # Add to global list for file concurrency issue - so no one can open file while it is being used
-            events_being_edited.append(event_instance.pk)
-            # Check if file title has changed
-            event_name_new = clean_form['title']
+        if event_instance:
+            form = EventDetailsForm(deserialize_form(edit_form), instance = event_instance)
             event_name_old = event_instance.title
-            event_pk = event_instance.pk
-            event_json_filepath_new = get_json_file_path(str(event_pk) + '_'+ event_name_new + '.json')
-            if event_name_new != event_name_old: # Rename the json file ! the names are different
-                event_json_filepath_old = get_json_file_path(str(event_pk) + '_'+ event_name_old + '.json')
-                os.rename(event_json_filepath_old, event_json_filepath_new)
-            #with open(event_json_filepath_new) as f:
-            #    json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a json object
-            #    context_dict = {'model_instance' : event_instance, 'type' : 'event', 'form' : form}
-            #    html_content = render_to_string('events/edit_form.html', context_dict, RequestContext(request))
-            #    f.close()
-            if event_name_new != event_name_old: # Change event - tab title
-                dajax.assign("#a_event_" + str(event_instance.pk), "innerHTML", event_name_new)
+        else:
+            form = EventDetailsForm(deserialize_form(edit_form))
+
+        if form.is_valid(): # Save form and json
+            clean_form = form.clean()
+            # Handles the form and sql
+            try:
+                form.save()
+            except EditError as error:
+                show_alert(dajax, "error", error.value)
+                return dajax.json()
             
-            events_being_edited.remove(event_instance.pk)
+            # check if event name has changed, change the event - tab title if yes.
+            if event_instance:
+                event_name_new = clean_form['title']
+                if event_name_new != event_name_old: # Change event - tab title
+                    dajax.assign("#a_event_" + str(event_instance.pk), "innerHTML", event_name_new)
+            
             dajax.remove_css_class('#id_form input', 'error')
             show_alert(dajax, "success", "Event edited successfully")
         else:
@@ -213,27 +195,34 @@ def edit_event(request, event_name=None, event_pk=None, edit_form=None):
             show_alert(dajax, "error", error_string)
             #html_content = render_to_string('events/edit_event.html', locals(), RequestContext(request)) # show edit form again
     else:
-        form = EventDetailsForm(instance = event_instance)
+        if event_instance:
+            form = EventDetailsForm(instance = event_instance)
+        else:
+            form = EventDetailsForm()
+        
         context_dict = {'model_instance' : event_instance, 'type' : 'event', 'form' : form}
         html_content = render_to_string('events/edit_form.html', context_dict, RequestContext(request))
 
-    if html_content :
-        dajax.assign("#event_" + str(event_instance.pk), "innerHTML", html_content) # Populate content
+    if html_content:
+        if event_instance:
+            dajax.assign("#event_" + str(event_instance.pk), "innerHTML", html_content) # Populate content
+        else:
+            dajax.assign("#event_new", "innerHTML", html_content) # Populate content for new event
 
     return dajax.json()
 
 @dajaxice_register(method="GET", name="events.edit_tab_get")
 @dajaxice_register(method="POST", name="events.edit_tab_post")
 # __________--- Send events edit page from json file ---___________#
-def edit_tab(request, tab_pk=None, edit_form=None):
+def edit_tab(request, tab_pk=None, event_pk=None, edit_form=None):
     """
         This function renders the "edit event" page for Event coords
         args :
             tab_pk - the pk of the tab being edited
             form - the form sent in post request
+            event_pk - pk of event the tab belongs to. must exist.
             
         Check before savin
-            - check if event in erp.variables.event_being_edited
             - check if name changed, if yes : change file name
             
         In the form :
@@ -243,49 +232,47 @@ def edit_tab(request, tab_pk=None, edit_form=None):
     """
     dajax = Dajax()
     html_content = ""
+    new_tab_created = False
     if tab_pk:
         tab_instance = Tab.objects.get(pk=tab_pk)
-        event_instance = tab_instance.event
     else:
         tab_instance = None
-        event_instance = request.user.get_profile().event
     
+    if event_pk:
+        event_instance = GenericEvent.objects.get(pk=event_pk)
+    else:
+        show_alert(dajax, "error", "There is some problem with this tab. Contact WebOps team.")
+        return dajax.json()
+        
     if request.method == 'POST' and edit_form != None:
         if tab_instance: # Old tab being edited
             form = TabDetailsForm(deserialize_form(edit_form), instance = tab_instance)
+            tab_name_old = tab_instance.title
         else: # New tab
             form = TabDetailsForm(deserialize_form(edit_form))
-        print form
-        if event_instance.pk in events_being_edited:
-            show_alert(dajax, "error", "This event was just updated by another user.")
-        elif form.is_valid(): # Save form and json
-            # Add to global list for file concurrency issue - so no one can open file while it is being used
-            events_being_edited.append(event_instance.pk)
-            
+            new_tab_created = True
+
+        if form.is_valid(): # Save form and json
             clean_form = form.clean()
-            
             # Handles the form and sql
-            form.save(event_inst = event_instance)
+            try:
+                form.save(event_inst = event_instance)
+            except EditError as error:
+                show_alert(dajax, "error", error.value)
+                return dajax.json()
+                        
+            # change tab name if it has changed
+            if tab_instance:
+                tab_name_new = clean_form['title']
+                if tab_name_new != tab_name_old: # Change tab title
+                    dajax.assign("#a_tab_" + str(tab_instance.pk), "innerHTML", tab_name_new)
             
-            # Handles the json :
-            json_dict = {}
-            
-            # Check if file title has changed
-            event_json_filepath = get_json_file_path(str(event_instance.pk) + '_'+ event_instance.title + '.json')
-            
-            tab_name_new = clean_form['title']
-            tab_name_old = tab_instance.title
-            #with open(event_json_filepath_new) as f:
-            #    json_dict = json.dumps(json.load(f), sort_keys=False, indent=4) # This is a json object
-            #    json_dict['tab_' + newTab.pk] = newTab
-            #    f.close()
-            
-            # Note : need to make this better. Currently, it'll refresh the whole left content. It's better to add what's required only...
-            dajax.script("$('list_eventpage_eventinfo').click()")
+            if new_tab_created:
+                # Note : need to make this better. Currently, it'll refresh the whole left content. It's better to add what's required only...
+                dajax.script("$('#list_eventpage_eventinfo').find('a').click();")
                 
-            events_being_edited.remove(event_instance.pk)
             dajax.remove_css_class('#id_form input', 'error')
-            show_alert(dajax, "success", "Event edited successfully")
+            show_alert(dajax, "success", "Tab edited successfully")
         else:
             error_string = "<br />"
             dajax.remove_css_class('#id_form input', 'error')
@@ -293,17 +280,17 @@ def edit_tab(request, tab_pk=None, edit_form=None):
                 error_string += error[0].upper() + error[1:] + ": " + form.errors[error][0] + "<br />"
                 dajax.add_css_class('#id_%s' % error, 'error')
 
-            form = EventDetailsForm()
+            form = TabDetailsForm()
             show_alert(dajax, "error", error_string)
             #html_content = render_to_string('events/edit_tab.html', locals(), RequestContext(request)) # show edit form again
     else:
         if tab_instance:
-            context_dict = {'model_instance' : tab_instance, 'type' : 'tab', 'form' : form}
             form = TabDetailsForm(instance = tab_instance)
         else:
             form = TabDetailsForm()
-            context_dict = {'type' : 'tab', 'form' : form}
-            html_content = render_to_string('events/edit_form.html', context_dict, RequestContext(request))
+        
+        context_dict = {'model_instance' : tab_instance, 'type' : 'tab', 'tab_event_pk': event_pk, 'form' : form}
+        html_content = render_to_string('events/edit_form.html', context_dict, RequestContext(request))
 
     if html_content :
         if tab_instance:

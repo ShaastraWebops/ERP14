@@ -8,13 +8,14 @@
 
     <form method="POST" action="" id="id_form_{{type}}_{% if model_instance %}{{model_instance.pk}}{% else %}new{% endif %}">
         {% csrf_token %}
-        <table>
+        <table class="table table-bordered table-hover">
             <caption style="color:#758FB2;"><h3>{{type|title}} Details</h3></caption>
             {{form.as_table}}
         </table>
-        <a class ="btn btn-info" href="#" onclick="Dajaxice.events.edit_{{type}}_post(Dajax.process, { {% if model_instance %} '{{type}}_pk' : '{{model_instance.pk}}', {% endif %}'edit_form' : $('#id_form_{{type}}_{% if model_instance %}{{model_instance.pk}}{% else %}new{% endif %}').serialize(true)});">
+        <a class ="btn btn-info" href="#" onclick="Dajaxice.events.edit_{{type}}_post(Dajax.process, { {% if model_instance %} '{{type}}_pk' : '{{model_instance.pk}}', {% endif %} {% if tab_event_pk %} 'event_pk' : '{{tab_event_pk}}', {% endif %} 'edit_form' : $('#id_form_{{type}}_{% if model_instance %}{{model_instance.pk}}{% else %}new{% endif %}').serialize(true)});">
           Save changes
         </a>
+        &nbsp;&nbsp;
+        <!-- code for deleting tab has to be added. the delete button below does nothing as of now. -->
+        {% ifequal type 'tab' %} {% if model_instance %} <a class="btn btn-danger">Delete<a>  {% endif %} {% endifequal %}
     </form>
-    
-    
