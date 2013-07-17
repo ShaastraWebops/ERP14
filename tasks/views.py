@@ -29,44 +29,6 @@ PROPOSED/TODO:
 
 
 
-# _____________--- INTRADEPARTMENTAL TASK ADD VIEW ---______________#
-"""
-ONLY RENDERS THE FORM. THE REST IS HANDLED BY DAJAX. REFER TO THE FUNCTION IN AJAX.PY
-
-MORE INFO:
-Can be created/edited by both Supercoords and Cores
-
-Fields entered by user:
-    'deadline', 'subject', 'description', 'taskforce'
-
-Fields automatically taken care of by model/model save function override:
-    'taskcreator', 'datecreated', 'datelastmodified', 'depthlevel', 'parenttask'
-
-Fields taken care of by the view:
-    'targetsubdepts', 'origindept', 'targetdept', 'isxdepartmental', 'taskstatus'
-"""
-@login_required
-@user_passes_test (core_or_supercoord_check)
-def add_intra_task(request, primkey=None):
-    #Get Parent Task
-    if primkey:
-        #Need to figure out the try, except block here
-        parenttask = Task.objects.get(pk=primkey)
-        parentlabel = "\nParent task: " + parenttask.subject
-    else:
-        parentlabel = "\nThis is a top level task."
-        parenttask = None
-        
-    userprofile = request.user.get_profile()
-    department = userprofile.dept
-    title = "Add Intradepartmental Task"
-    info = parentlabel
-    
-    form = IntraTaskForm(department)
-    context = {'form': form, 'title':title, 'tasktype': "intra", 'primkey': primkey, 'info':info}
-    return render_to_response('tasks/task_temp.html', context, context_instance=RequestContext(request))
-
-
 
 
 # _____________--- UNIFIED TASK EDIT VIEW ---______________#
@@ -120,6 +82,9 @@ def edit_task(request, primkey):
         parentlabel = "\nParent task: " + task.parenttask.subject
     else:
         parentlabel = "\nThis is a top level task."
+        
+        
+        
 
 #___________----INTRADEPARTMENTAL TASK EDIT----__________________
     if ((task.isxdepartmental == False) and (task.origindept == department)):
@@ -157,6 +122,10 @@ def edit_task(request, primkey):
             context = {'form': form, 'title':title }
             return render_to_response('tasks/task_temp.html', context, context_instance=RequestContext(request))
             
+
+
+
+
 #___________----CROSSDEPARTMENTAL TASK EDIT----__________________
 
 #TODO: 
@@ -251,49 +220,8 @@ def edit_task(request, primkey):
     else: 
         messages.error(request, "There seems to have been some error. Please mention this to us !")
         return redirect('dash.views.dash_view', permanent=True)
-    
-
-        
 
 
-# _____________--- CROSS DEPARTMENTAL TASK ADD VIEW ---______________#
-"""
-CORES ONLY
-
-
-MORE INFO:
-Fields entered by user:
-    'deadline', 'subject', 'description', 'parenttask', 'targetsubdepts'
-
-Fields automatically taken care of by model/model save function override:
-    'taskcreator', 'datecreated', 'datelastmodified', 'depthlevel'
-
-Fields taken care of by the view:
-    'origindept', 'targetdept', 'isxdepartmental', 'taskstatus' 
-    
-Fields that are unset:
-     'taskforce'
-"""
-@login_required
-@user_passes_test (core_check)
-def add_cross_task(request, primkey=None):
-    #Get Parent Task
-    if primkey:
-        parenttask = Task.objects.get(pk=primkey)
-        parentlabel = "\nParent task: " + parenttask.subject
-    else:
-        parentlabel = "\nThis is a top level task."
-        
-        
-    title = "Add Cross-departmental Task."
-    info = "Subject to approval of the target department's core." + parentlabel
-    
-    userprofile = request.user.get_profile()
-    department = userprofile.dept
-    
-    form = CrossTaskForm (department)
-    context = {'form': form, 'title':title, 'info':info, 'tasktype':"cross", 'primkey': primkey}
-    return render_to_response('tasks/task_temp.html', context, context_instance=RequestContext(request))
 
 
 
