@@ -214,13 +214,14 @@ def edit_event(request, event_name=None, event_pk=None, edit_form=None):
 @dajaxice_register(method="GET", name="events.edit_tab_get")
 @dajaxice_register(method="POST", name="events.edit_tab_post")
 # __________--- Send events edit page from json file ---___________#
-def edit_tab(request, tab_pk=None, event_pk=None, edit_form=None):
+def edit_tab(request, tab_pk=None, event_pk=None, edit_form=None, delete_tab=None):
     """
         This function renders the "edit event" page for Event coords
         args :
             tab_pk - the pk of the tab being edited
             form - the form sent in post request
             event_pk - pk of event the tab belongs to. must exist.
+            delete_tab - indicates whether to delete the tab or not
             
         Check before savin
             - check if name changed, if yes : change file name
@@ -283,6 +284,19 @@ def edit_tab(request, tab_pk=None, event_pk=None, edit_form=None):
             form = TabDetailsForm()
             show_alert(dajax, "error", error_string)
             #html_content = render_to_string('events/edit_tab.html', locals(), RequestContext(request)) # show edit form again
+    elif request.method == 'POST' and delete_tab == 'delete':
+        if tab_instance:
+            try:
+                tab_instance.delete()
+            except EditError as error:
+                show_alert(dajax, "error", error.value)
+                return dajax.json()
+            # Note : need to make this better. Currently, it'll refresh the whole left content. It's better to add what's required only...
+            show_alert(dajax, "success", "Tab deleted successfully")
+            dajax.script("$('#list_eventpage_eventinfo').find('a').click();")
+        else:
+            show_alert(dajax, "error", "There is some problem with deleting this tab. Contact the WebOps Team.")
+            return dajax.json()
     else:
         if tab_instance:
             form = TabDetailsForm(instance = tab_instance)

@@ -2,8 +2,15 @@ from django.db import models
 from django.contrib.auth.models import User
 from datetime import datetime
 from django.conf import settings
-import os
+# from erp
 from erp.settings import MEDIA_ROOT
+from erp.variables import events_being_edited
+# From form
+#from events.forms import get_json_file_path, EditError
+# python imports
+import json
+import os
+
 # Create your models here.
 EVENT_CATEGORIES = (
     ('Aerofest', 'Aerofest'),
@@ -115,9 +122,42 @@ class Tab(models.Model):
         return self.title
 
     def delete(self): #For deleting a tab, we need to delete all tabfiles also 
+        '''
+            -> delete all tabfiles related to the tab
+            -> delete the keys from the JSON file that belong to this tab
+            -> check if the event JSON file is already being edited
+        '''
         tabfiles = self.tabs.all() #'tabs' is the name that relates(backward) Tabs to Tabfiles
         for tabfile in tabfiles:
             tabfile.delete()
+        
+        # importing the below stuff at the top of this file gives import error. need to find a fix for this.
+        from events.forms import get_json_file_path, EditError
+        tab_pk = self.pk
+        event_inst = self.event
+        event_pk = event_inst.pk
+        event_title = event_inst.title
+        file_path = get_json_file_path(str(event_pk)+'_'+event_title+'.json')
+        
+        if os.path.exists(file_path):
+            with open(file_path) as f:
+                json_data = json.load(f)
+                for key in json_data.keys():
+                    if key.startswith('tab'+str(tab_pk)+'_'):
+                        json_data.pop(key)
+                f.close()
+            
+            if event_pk in events_being_edited:
+                raise EditError('This event is being edited by some other user. Please try again later.')
+            
+            events_being_edited.append(event_pk)
+            with open(file_path, 'w') as f:
+                json.dump(json_data, f)
+                f.close()
+                events_being_edited.remove(event_pk)
+        else:
+            raise EditError('There is some error with this tab. Contact the WebOps Team')
+        
         super(Tab,self).delete()
 
     class Meta:

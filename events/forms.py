@@ -20,6 +20,9 @@ def get_json_file_path(filename):
     
 # __________--- Exception in case of concurrent editing of the JSON file ---___________#
 class EditError(Exception):
+    '''
+       This is the (custom) exception that is raised in case any error occurs during form saving.
+    '''
     def __init__(self, value):
         self.value = value
 
@@ -33,14 +36,30 @@ class EventDetailsForm(ModelForm):
         fields = ['title', 'category']
     
     def save(self, commit=True):
+        '''
+            event_json - dict that holds data from the form
+            json_data - data (python dict) loaded from the JSON file
+            file_path_full - path pointing to the JSON file
+            
+            This fucntion does the following (in the given order):
+            -> saves the ModelForm to the db.
+            -> finds all files with name starting with the pk of the saved event, in media/json/events directory.
+               (ideally only one or no such file should exist) If the found filename doesnt match the new filename (submitted in the form),
+               it renames the found filename to new filename.
+               In case there are more than one files found starting with the same pk, then there is some error, it removes all such files.
+            -> If a file is found in the above step, then only the fields starting with 'event_' are changed (to avoid altering tab data).
+               If no file exists, then a new file is created, which contains the event data.
+            -> before editing the file, the function checks if the event_pk is present in events_being_edited. If yes, EditError is raised.
+        '''
         clean_form = self.clean()
         event_json = {}
         json_data = {}
         
         # saving the event to db
-        super(EventDetailsForm, self).save()
+        event_inst = super(EventDetailsForm, self).save()
         
-        event_pk = GenericEvent.objects.filter(title=clean_form['title'])[0].pk
+        #event_pk = GenericEvent.objects.filter(title=clean_form['title'])[0].pk
+        event_pk = event_inst.pk
         for iden in self.fields.keys(): # take all fields in the form
             event_json['event_'+iden] = clean_form[iden] # add to json
         # absolute path to the file in which the content has to be saved
@@ -83,6 +102,9 @@ class TabDetailsForm(ModelForm):
         fields = ['title', 'text', 'pref']
     
     def save(self, event_inst = None, commit=True):
+        '''
+            event_inst - instance of event the tab belongs to. must exist as tab cannot exist without an event.
+        '''
         clean_form = self.clean()
         json_data = {}
         # Save the tab to db

@@ -7,7 +7,3 @@ function display_tab_event(id_tab, event_id) {
         do_dajax(Dajaxice.events.edit_tab_get, Dajax.process, {'tab_pk' : id_tab.substr("tab_".length), 'event_pk' : event_id.substr("event_".length)}, id_tab)
     } 
 }
-
-function display_tab_event_temp(id_tab, json_data) {
-    display_tab_erp(json_data, id_tab.substr("tab_".length));
-}

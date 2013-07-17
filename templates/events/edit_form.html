@@ -16,6 +16,7 @@
           Save changes
         </a>
         &nbsp;&nbsp;
-        <!-- code for deleting tab has to be added. the delete button below does nothing as of now. -->
-        {% ifequal type 'tab' %} {% if model_instance %} <a class="btn btn-danger">Delete<a>  {% endif %} {% endifequal %}
+        {% ifequal type 'tab' %} {% if model_instance %}
+        <a class="btn btn-danger" href="#" onclick="Dajaxice.events.edit_tab_post(Dajax.process, {'tab_pk' : '{{model_instance.pk}}', 'event_pk' : '{{tab_event_pk}}', 'delete_tab' : 'delete'});">Delete<a>  
+        {% endif %} {% endifequal %}
     </form>
