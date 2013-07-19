@@ -365,12 +365,15 @@ def new_intra_task(request, serializedform=None, primkey=None):
         dajax.assign("#id_content_right", "innerHTML", html_content) # Populate modal
         
     return dajax.json()
+    
+    
+    
 
 # _____________--- ADD CROSSDEPARTMENTAL TASK ---______________#
 @dajaxice_register(method="GET", name="tasks.new_cross_task_get")
 @dajaxice_register(method="POST", name="tasks.new_cross_task_post")
 @login_required
-@user_passes_test (core_or_supercoord_check)
+@user_passes_test (core_check)
 def new_cross_task(request, serializedform=None, primkey=None):
     """
         Serves and processes a new intradepartmental task.
@@ -454,6 +457,8 @@ def new_cross_task(request, serializedform=None, primkey=None):
         html_content = render_to_string('tasks/task.html', context, context_instance=RequestContext(request))
         dajax.assign("#id_content_right", "innerHTML", html_content) # Populate modal
     return dajax.json()
+    
+    
 
 # _____________--- DELETE A TASK - INTRA/CROSS ---______________#
 @dajaxice_register(name="tasks.delete_task")
