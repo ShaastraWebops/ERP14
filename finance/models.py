@@ -2,7 +2,6 @@ from django.db import models
 from users.models import ERPUser
 from dept.models import Subdept
 
-
 ##VOUCHERS MODELS####
 class Vendor(models.Model):
     
