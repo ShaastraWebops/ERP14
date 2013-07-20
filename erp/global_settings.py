@@ -100,6 +100,8 @@ INSTALLED_APPS = (
     'users',
     'dept',
     'dash',
+    'finance',
+#    'file',
     'misc.dajax',
     'misc.dajaxice'
 )
