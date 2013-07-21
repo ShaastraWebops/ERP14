@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<div class="container">
+    <div class="hero-unit">
+	<div class = "row-fluid span6 offset2">
+	    <h2>Welcome to the Finance Portal!</h2>
+	</div>
+	<div class = "row-fluid"> </br> </div>
+	<div class = "row-fluid span6 offset3"><p>Please choose what you wish to visit below.</p>
+	</div>
+	<div class = "row-fluid"> </br> </div>
+	<div class = "row-fluid">
+	    <a href="#" onclick="javascript:do_dajax(Dajaxice.finance.budgeting_modal, Dajax.process, {}, 'id_modal');" class="btn btn-primary btn-large span3">Budgeting&raquo;</a>
+	    <a href="{% url finance.views.vouchers %}" class="btn btn-primary btn-large span3">Vouchers&raquo;</a>
+	    <a href="#" class="btn btn-primary btn-large span3">Advances&raquo;</a>
+	    <a href="#" class="btn btn-primary btn-large span3">Payments&raquo;</a>
+	</div>
+
+    </div>
+</div>
+{% endblock %}

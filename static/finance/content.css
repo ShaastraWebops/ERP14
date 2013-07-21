@@ -1,0 +1,103 @@
+
+table { 
+    width : 80%;
+    border : 0;
+    border-spacing : 0;
+}
+
+table a {
+    color : #000000;
+}
+
+table a:hover {
+    color : #888888;
+}
+
+table {
+    padding : 0;
+    text-align : center;
+}
+table thead tr th, 
+table thead tr td,
+table tbody tr th,
+table tbody tr td {
+    text-align : center;
+}
+
+#button_table_you,
+#button_table_subdept,
+#button_table_dept,
+#button_table_pending,
+#button_table_cross {
+    float : left;
+    width : 70%;
+}
+
+.button_in_table {
+    display : none;
+}
+
+.btn-group > .btn {
+    color : #ffffff;
+}
+
+.sidenav {
+    
+}
+
+.nav-tabs.nav-stacked.sidenav > li > a {
+    transition: background-color 0.25s linear;
+}
+
+.nav-tabs.nav-stacked.sidenav > li > a:hover {
+    transition: background-color 0.25s linear;
+    background-color: #dddddd;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_lone > a {
+    color : #ffffff;
+    background-color: #778899;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_lone > a:hover {
+    background-color: #667788;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_lone.active > a {
+    color : #ffffff;
+    background-color: #5577aa;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_lone.active > a:hover {
+    background-color: #446699;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.active > a {
+    color : #ffffff;
+    background-color: #6688cc;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.active > a:hover {
+    background-color: #0077bb;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_head > a {
+    text-shadow: 0  3px 3px rgba(0, 0, 0, 0.3);
+    background-color: #666666;
+    transition: background-color 0.25s linear;
+    color : #ffffff;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.sidenav_head > a:hover {
+    background-color: #444444;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.active_head > a {
+    color : #ffffff;
+    background-color: #8888cc;
+}
+
+.nav-tabs.nav-stacked.sidenav > li.active_head > a:hover {
+    background-color: #7777bb;
+}
+
