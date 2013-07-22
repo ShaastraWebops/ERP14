@@ -1,0 +1,44 @@
+{% load staticfiles %}
+
+<!-- Extra styles -->
+
+<!-- Extra scripts -->
+
+<!-- Content -->
+<div id="table_{{vendor.name}}" class="span11"> <!-- The approved vouchers -->
+  <p><h3>Approved Vouchers:</h3></p>
+  <p> 
+  <table class="table table-bordered table-hover display" id="table_{{vendor.name}}_approved">
+      <thead>
+        <tr>
+          <th>Number</th>
+          <th>Vendor</th>
+          <th>Approver</th>
+          <th>Amount</th>
+          {% comment %}
+            All 'th' with class button_in_table are not shown on the screen 
+            If the corresponding tr has a btn-gtoup, it's innerHTML and 
+            href are taken to the topbar of the table.
+            
+            This is done as js cannot get the task.id in any other simple way
+            Currently : edit, del, status, deptSubtask, crossSubtask are 
+                searched for, if others need to be added, js needs to be changed in show_table
+                in templates/tasks/content.js
+            
+          {% endcomment %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for voucher in approved_vouchers %}
+          <tr>
+	      <td>{{voucher.id}}  </td>
+            <td>{{ voucher.vendor.name}}</td>
+            <td>{{ voucher.approver}}</td>
+            <td>{{ voucher.amount }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </p>
+</div>
+  
