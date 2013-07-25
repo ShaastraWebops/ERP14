@@ -2,7 +2,7 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from events.forms import EventDetailsForm,UpdateForm,UploadTabFiles
+from events.forms import GenericEventDetailsForm,UpdateForm,UploadTabFiles
 
 from misc.dajaxice.core import dajaxice_functions
 
@@ -33,16 +33,16 @@ def home(request):
 # __________--- Get info for json file ---___________#
 def edit_event(request):
     if request.method == 'POST':
-        form = EventDetailsForm(request.POST)
+        form = GenericEventDetailsForm(request.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect(reverse('events.views.home'))
         else:
             error = 'There seems to be an error. Please fill all the fields and submit the form again.'
-            form = EventDetailsForm()
+            form = GenericEventDetailsForm()
             return render_to_response('events/editEvent.html', {'error': error, 'form': form}, context_instance = RequestContext(request))
     else:
-        form = EventDetailsForm()
+        form = GenericEventDetailsForm()
     return render_to_response('events/editEvent.html', {'form': form}, context_instance = RequestContext(request))
 
 def add_update(request):

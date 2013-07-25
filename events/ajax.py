@@ -12,10 +12,10 @@ from django.contrib.auth.decorators import login_required
 # For converting model to a dictionary that can be input into a ModelForm
 from django.forms.models import model_to_dict
 # From forms
-from events.forms import EventDetailsForm, TabDetailsForm, UpdateForm, get_json_file_path, EditError
+from events.forms import GenericEventDetailsForm, ParticipantEventDetailsForm, AudienceEventDetailsForm, TabDetailsForm, UpdateForm, get_json_file_path, EditError
 # From models
 from users.models import ERPUser
-from events.models import GenericEvent, Tab, Update
+from events.models import GenericEvent, ParticipantEvent, AudienceEvent, Tab, Update
 # From Misc to show bootstrap alert
 from misc.utilities import show_alert
 # From ERP
@@ -70,6 +70,8 @@ def show_event_erp(request, event_name=None, event_pk=None):
         Mainsite may require another template.
         
         You can query based on name or pk.
+        
+        An existing event can be either audience or participant event. The correct event is displayed.
     """
     dajax = Dajax()
     json_dict = {}
@@ -88,9 +90,17 @@ def show_event_erp(request, event_name=None, event_pk=None):
         event_query = GenericEvent.objects.filter(title=event_name)
     
     if event_query:
-        event_instance = event_query[0]
-        event_pk = event_instance.pk
-        event_name = event_instance.title
+        generic_event_instance = event_query[0]
+        event_pk = generic_event_instance.pk
+        event_name = generic_event_instance.title
+        event_type = generic_event_instance.event_type
+        if event_type=='Participant':
+            event_instance = ParticipantEvent.objects.get(pk=event_pk)
+        elif event_type=='Audience':
+            event_instance = AudienceEvent.objects.get(pk=event_pk)
+        else: #if no event type -- show error
+            show_alert(dajax, "error", "There is some error with this event. Contact the WebOps team.")
+            return dajax.json()
         tab_list = Tab.objects.filter(event=event_instance) # for providing the list of tabs to erp_tabs.html
     else:
         show_alert(dajax, "error", "This event has not been created on the site. Contact WebOps team.")
@@ -103,12 +113,16 @@ def show_event_erp(request, event_name=None, event_pk=None):
         # if the event exists in db but no json file present, then create a json file with the event and its tabs' details
         if event_instance:
             event_dict = model_to_dict(event_instance)
-            form = EventDetailsForm(event_dict, instance=event_instance)
+            if event_type=='Participant':
+                form = ParticipantEventDetailsForm(event_dict, instance=event_instance)
+            elif event_type=='Audience':
+                form = AudienceEventDetailsForm(event_dict, instance=event_instance)
+            #form = EventDetailsForm(event_dict, instance=event_instance)
             if form.is_valid():
                 form.save()
             for tab in tab_list:
                 tab_dict = model_to_dict(tab)
-                print tab_dict
+                #print tab_dict
                 tab_form = TabDetailsForm(tab_dict, instance=tab)
                 if tab_form.is_valid():
                     tab_form.save(event_inst = event_instance)
@@ -142,6 +156,9 @@ def edit_event(request, event_name=None, event_pk=None, edit_form=None):
         
         Check before savin
             - check if name changed, if yes : change file name
+            
+        An existing event can be either audience or participant event.
+        If new event is being created, a GenericEventForm is displayed, and it can be saved with event type as audience or participant event.
     """
     dajax = Dajax()
     html_content = ""
@@ -158,14 +175,27 @@ def edit_event(request, event_name=None, event_pk=None, edit_form=None):
         event_query = GenericEvent.objects.filter(title=event_name)
 
     if event_query: # get event details and tab details
-        event_instance = event_query[0]
+        generic_event_instance = event_query[0]
+        event_pk = generic_event_instance.pk
+        event_type = generic_event_instance.event_type
+        if event_type=='Participant':
+            event_instance = ParticipantEvent.objects.get(pk=event_pk)
+        elif event_type=='Audience':
+            event_instance = AudienceEvent.objects.get(pk=event_pk)
+        else: #if no event type -- show error
+            show_alert(dajax, "error", "There is some error with this event. Contact the WebOps team.")
+            return dajax.json()
 
     if request.method == 'POST' and edit_form != None:
         if event_instance:
-            form = EventDetailsForm(deserialize_form(edit_form), instance = event_instance)
+            if event_type=='Participant':
+                form = ParticipantEventDetailsForm(deserialize_form(edit_form), instance = event_instance)
+            elif event_type=='Audience':
+                form = AudienceEventDetailsForm(deserialize_form(edit_form), instance = event_instance)
+            #form = EventDetailsForm(deserialize_form(edit_form), instance = event_instance)
             event_name_old = event_instance.title
         else:
-            form = EventDetailsForm(deserialize_form(edit_form))
+            form = GenericEventDetailsForm(deserialize_form(edit_form))
 
         if form.is_valid(): # Save form and json
             clean_form = form.clean()
@@ -191,14 +221,25 @@ def edit_event(request, event_name=None, event_pk=None, edit_form=None):
                 error_string += error[0].upper() + error[1:] + ": " + form.errors[error][0] + "<br />"
                 dajax.add_css_class('input#id_%s' % error, 'error')
 
-            form = EventDetailsForm()
+            if event_instance:
+                if event_type=='Participant':
+                    form = ParticipantEventDetailsForm()
+                elif event_type=='Audience':
+                    form = AudienceEventDetailsForm()
+            else:
+                form = GenericEventDetailsForm()
+            
             show_alert(dajax, "error", error_string)
             #html_content = render_to_string('events/edit_event.html', locals(), RequestContext(request)) # show edit form again
     else:
         if event_instance:
-            form = EventDetailsForm(instance = event_instance)
+            if event_type=='Participant':
+                form = ParticipantEventDetailsForm(instance = event_instance)
+            elif event_type=='Audience':
+                form = AudienceEventDetailsForm(instance = event_instance)
+            #form = EventDetailsForm(instance = event_instance)
         else:
-            form = EventDetailsForm()
+            form = GenericEventDetailsForm()
         
         context_dict = {'model_instance' : event_instance, 'type' : 'event', 'form' : form}
         html_content = render_to_string('events/edit_form.html', context_dict, RequestContext(request))
@@ -227,7 +268,7 @@ def edit_tab(request, tab_pk=None, event_pk=None, edit_form=None, delete_tab=Non
             - check if name changed, if yes : change file name
             
         In the form :
-            event - got from request.user -> event.pk
+            event - got from event_pk
             title, desc, pref - got from form
             
     """
@@ -240,7 +281,15 @@ def edit_tab(request, tab_pk=None, event_pk=None, edit_form=None, delete_tab=Non
         tab_instance = None
     
     if event_pk:
-        event_instance = GenericEvent.objects.get(pk=event_pk)
+        generic_event_instance = GenericEvent.objects.get(pk=event_pk)
+        event_type = generic_event_instance.event_type
+        if event_type=='Participant':
+            event_instance = ParticipantEvent.objects.get(pk=event_pk)
+        elif event_type=='Audience':
+            event_instance = AudienceEvent.objects.get(pk=event_pk)
+        else:
+            show_alert(dajax, "error", "There is some error with this event. Contact the WebOps team.")
+            return dajax.json()
     else:
         show_alert(dajax, "error", "There is some problem with this tab. Contact WebOps team.")
         return dajax.json()

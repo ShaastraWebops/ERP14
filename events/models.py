@@ -31,6 +31,11 @@ UPDATE_CATEGORY = (
     ('Major Update', 'Major Update'),
     ('Updates', 'Updates'),
     )
+    
+EVENT_TYPE = (
+    ('Audience', 'Audience'),
+    ('Participant', 'Participant'),
+    )
 
 #Checks if the directory exists and creates it if not
 def upload_handler(name):
@@ -62,6 +67,7 @@ class GenericEvent(models.Model):
     title = models.CharField(max_length=100)
     tags = models.ManyToManyField(Tag, blank=True, null=True)
     category = models.CharField(max_length=100, choices=EVENT_CATEGORIES)
+    event_type = models.CharField(max_length=100, choices=EVENT_TYPE, blank=True, null=True)
     events_logo = models.FileField(upload_to=upload_handler('eventslogo'),
         blank=True, null=True)
     spons_logo = models.ForeignKey(SponsLogoUploads, blank=True, null=True)
