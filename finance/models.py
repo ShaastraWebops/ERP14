@@ -21,12 +21,14 @@ class VoucherRequest(models.Model):
     dateapproved = models.DateField ( 'Date Approved' )
     amount = models.IntegerField ( default=0 )
     purpose = models.TextField ( null=True, blank=True )
-    vendor = models.ForeignKey ( Vendor )
-    creator = models.ForeignKey ( ERPUser, related_name = 'voucherrequest_created_set' )
-    approver = models.ForeignKey ( ERPUser, null=True, blank=True, related_name = 'voucherrequest_approved_set' )
     status = models.CharField ( max_length=1, choices = (( 'A', 'Approved' ),( 'P', 'Pending' )) )
+
+    creator = models.ForeignKey ( ERPUser, related_name = 'voucherrequest_created_set' )
+    approver = models.ForeignKey ( ERPUser, null=True, blank=True, related_name = 'voucherrequest_approved_set' )    
     subdept = models.ForeignKey ( Subdept, blank=True, null=True )
     dept = models.ForeignKey ( Dept )
+    
+    vendor = models.ForeignKey ( Vendor )
     uniqueid = models.OneToOneField ( FinUniqueID )
 
     def __unicode__ (self):
@@ -43,10 +45,12 @@ class AdvanceRequest(models.Model):
     dateapproved = models.DateField ( 'Date Approved' )
     amount = models.IntegerField ( default=0 )
     purpose = models.TextField ( null=True, blank=True )
+    status = models.CharField ( max_length=1, choices = (( 'A', 'Approved' ),( 'P', 'Pending' )) )
+    
     creator = models.ForeignKey ( ERPUser, related_name = 'advancerequest_created_set' )
     approver = models.ForeignKey ( ERPUser, related_name = 'advancerequest_approved_set' )
-    status = models.CharField ( max_length=1, choices = (( 'A', 'Approved' ),( 'P', 'Pending' )) )
-    subdept = models.ForeignKey ( Subdept )
+    subdept = models.ForeignKey ( Subdept, blank=True, null=True )
+    dept = models.ForeignKey ( Dept )
 
     def __unicode__ (self):
         return self.creator + ' ' + unicode(self.id)
@@ -63,11 +67,14 @@ class PaymentRequest(models.Model):
     dateapproved = models.DateField ( 'Date Approved' )
     amount = models.IntegerField ( default=0 )
     purpose = models.TextField ( null=True, blank=True )
-    checknumber = models.TextField ( null=True, blank=True )
+    status = models.CharField ( max_length=1, choices = (( 'A', 'Approved' ),( 'P', 'Pending' )) )
+    
     creator = models.ForeignKey ( ERPUser, related_name = 'paymentrequest_created_set' )
     approver = models.ForeignKey ( ERPUser, related_name = 'paymentrequest_approved_set' )
-    status = models.CharField ( max_length=1, choices = (( 'A', 'Approved' ),( 'P', 'Pending' )) )
-    subdept = models.ForeignKey ( Subdept )
+    subdept = models.ForeignKey ( Subdept, blank=True, null=True )
+    dept = models.ForeignKey ( Dept )
+    
+    checknumber = models.TextField ( null=True, blank=True )
         
     def __unicode__ (self):
         return self.creator + ' ' + unicode(self.id)
