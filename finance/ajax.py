@@ -47,4 +47,119 @@ def user_voucher_history(request, curr_vendor):
         dajax.assign('#id_content_right','innerHTML', html_content)
 
     return dajax.json()
+    
+
+#__________-- ADD VOUCHER FUNCTION--___________
+"""
+Accepts a serializedform and a Vendor ID, and creates and saves a voucher request
+"""    
+@dajaxice_register
+@login_required
+def add_voucher_request (request, serializedform=None, vendorid=None):
+    dajax = Dajax()
+    
+    if (serializedform != None) and (vendorid != None):
+        form = AdvanceForm(deserialize_form(serializedform))
+    else:
+#DEBUGGING LINE - ELIMINATE & REFINE LATER
+        print ("No form/vendor ID sent")
+        return dajax.json())
+    
+    if form.is_valid():
+        newVoucher = form.save(commit=False)
+        
+        newVoucher.creator = request.user.get_profile()
+        newVoucher.vendor = Vendor.objects.get(pk=vendorid)
+        newVoucher.status = 'P'
+        
+        newVoucher.dept = request.user.get_profile().dept
+        if request.user.get_profile().subdept:
+            newVoucher.subdept = request.user.get_profile().subdept
  
+        newVoucher.save()
+        
+        dajax.alert("Voucher Request successfully created")
+    else:
+        dajax.remove_css_class('#requestform input', 'error')
+        for error in form.errors:
+            dajax.add_css_class('#id_%s' % error, 'error')   
+        
+    return dajax.json()
+    
+
+
+#__________-- ADD PAYMENT FUNCTION--___________
+"""
+Accepts a serializedform, and creates and saves a payment request
+"""      
+@dajaxice_register
+@login_required
+def add_payment_request (request, serializedform=None):
+    dajax = Dajax()
+    
+    if (serializedform != None):
+        form = AdvanceForm(deserialize_form(serializedform))
+    else:
+#DEBUGGING LINE - ELIMINATE & REFINE LATER
+        print ("No form sent")
+        return dajax.json()
+    
+    if form.is_valid():
+        newPayment = form.save(commit=False)
+        
+        newPayment.creator = request.user.get_profile()
+        newPayment.status = 'P'
+        
+        newPayment.dept = request.user.get_profile().dept
+        if request.user.get_profile().subdept:
+            newPayment.subdept = request.user.get_profile().subdept
+ 
+        newPayment.save()
+        
+        dajax.alert("Payment Request successfully created")
+    else:
+        dajax.remove_css_class('#requestform input', 'error')
+        for error in form.errors:
+            dajax.add_css_class('#id_%s' % error, 'error')    
+    
+        
+    return dajax.json()
+    
+
+
+
+#__________-- ADD ADVANCE FUNCTION--___________
+"""
+Accepts a serializedform, and creates and saves an advance request
+"""      
+@dajaxice_register
+@login_required
+def add_advance_request (request, serializedform=None):
+    dajax = Dajax()
+    
+    if (serializedform != None):
+        form = AdvanceForm(deserialize_form(serializedform))
+    else:
+#DEBUGGING LINE - ELIMINATE & REFINE LATER
+        print ("No form sent")
+        return dajax.json()
+    
+    if form.is_valid():
+        newAdvance = form.save(commit=False)
+        
+        newAdvance.creator = request.user.get_profile()
+        newAdvance.status = 'P'
+        
+        newAdvance.dept = request.user.get_profile().dept
+        if request.user.get_profile().subdept:
+            newAdvance.subdept = request.user.get_profile().subdept
+ 
+        newAdvance.save()
+        
+        dajax.alert("Advance Request successfully created")
+    else:
+        dajax.remove_css_class('#requestform input', 'error')
+        for error in form.errors:
+            dajax.add_css_class('#id_%s' % error, 'error')
+        
+    return dajax.json()
