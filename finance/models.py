@@ -75,6 +75,7 @@ class PaymentRequest(models.Model):
     dept = models.ForeignKey ( Dept )
     
     checknumber = models.TextField ( null=True, blank=True )
+    infavorof = models.TextField ( null=True, blank=True )
         
     def __unicode__ (self):
         return self.creator + ' ' + unicode(self.id)
