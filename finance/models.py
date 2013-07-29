@@ -18,21 +18,21 @@ class FinUniqueID(models.Model):
 
 class VoucherRequest(models.Model):
     datecreated = models.DateField ( 'Date Created', auto_now_add = True )
-    dateapproved = models.DateField ( 'Date Approved' )
+    dateapproved = models.DateField ( 'Date Approved', null=True, blank=True )
     amount = models.IntegerField ( default=0 )
     purpose = models.TextField ( null=True, blank=True )
     status = models.CharField ( max_length=1, choices = (( 'A', 'Approved' ),( 'P', 'Pending' )) )
 
     creator = models.ForeignKey ( ERPUser, related_name = 'voucherrequest_created_set' )
-    approver = models.ForeignKey ( ERPUser, null=True, blank=True, related_name = 'voucherrequest_approved_set' )    
+    approver = models.ForeignKey ( ERPUser, null=True, blank=True, related_name = 'voucherrequest_approved_set')    
     subdept = models.ForeignKey ( Subdept, blank=True, null=True )
     dept = models.ForeignKey ( Dept )
     
     vendor = models.ForeignKey ( Vendor )
-    uniqueid = models.OneToOneField ( FinUniqueID )
+    uniqueid = models.OneToOneField ( FinUniqueID , blank=True, null=True)
 
     def __unicode__ (self):
-        return unicode(self.id)
+        return (self.creator.user.first_name + " " + self.creator.user.last_name + " " + unicode(self.id))
 
 ##VOUCHERS MODELS END##
 
@@ -42,19 +42,18 @@ class VoucherRequest(models.Model):
 ##ADVANCE ALLOCATION MODELS##
 class AdvanceRequest(models.Model):
     datecreated = models.DateField ( 'Date Created', auto_now_add = True )
-    dateapproved = models.DateField ( 'Date Approved' )
+    dateapproved = models.DateField ( 'Date Approved' , null=True, blank=True )
     amount = models.IntegerField ( default=0 )
     purpose = models.TextField ( null=True, blank=True )
     status = models.CharField ( max_length=1, choices = (( 'A', 'Approved' ),( 'P', 'Pending' )) )
     
     creator = models.ForeignKey ( ERPUser, related_name = 'advancerequest_created_set' )
-    approver = models.ForeignKey ( ERPUser, related_name = 'advancerequest_approved_set' )
+    approver = models.ForeignKey ( ERPUser, related_name = 'advancerequest_approved_set'  , null=True, blank=True)
     subdept = models.ForeignKey ( Subdept, blank=True, null=True )
     dept = models.ForeignKey ( Dept )
 
     def __unicode__ (self):
-        return self.creator + ' ' + unicode(self.id)
- 
+        return (self.creator.user.first_name + " " + self.creator.user.last_name + " " + unicode(self.id)) 
 ##ADVANCE ALLOCATION MODELS END##
 
 
@@ -64,18 +63,17 @@ class AdvanceRequest(models.Model):
 ##PAYMENTS MODELS##
 class PaymentRequest(models.Model):
     datecreated = models.DateField ( 'Date Created', auto_now_add = True )
-    dateapproved = models.DateField ( 'Date Approved' )
+    dateapproved = models.DateField ( 'Date Approved', null=True, blank=True )
     amount = models.IntegerField ( default=0 )
     purpose = models.TextField ( null=True, blank=True )
     status = models.CharField ( max_length=1, choices = (( 'A', 'Approved' ),( 'P', 'Pending' )) )
     
     creator = models.ForeignKey ( ERPUser, related_name = 'paymentrequest_created_set' )
-    approver = models.ForeignKey ( ERPUser, related_name = 'paymentrequest_approved_set' )
+    approver = models.ForeignKey ( ERPUser, related_name = 'paymentrequest_approved_set' , null=True, blank=True )
     subdept = models.ForeignKey ( Subdept, blank=True, null=True )
     dept = models.ForeignKey ( Dept )
     
     checknumber = models.TextField ( null=True, blank=True )
-    infavorof = models.TextField ( null=True, blank=True )
         
     def __unicode__ (self):
-        return self.creator + ' ' + unicode(self.id)
+        return (self.creator.user.first_name + " " + self.creator.user.last_name + " " + unicode(self.id))
