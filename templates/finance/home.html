@@ -15,6 +15,14 @@
 	    <a href="{% url finance.views.vouchers %}" class="btn btn-primary btn-large span3">Vouchers&raquo;</a>
 	    <a href="#" class="btn btn-primary btn-large span3">Advances&raquo;</a>
 	    <a href="#" class="btn btn-primary btn-large span3">Payments&raquo;</a>
+        
+        <br>(FOR TESTING ONLY<br>
+        <a onclick="javascript:do_dajax(Dajaxice.finance.newpayment_get, Dajax.process, {}, 'id_modal');">New Payment</a>
+        <br>
+        <a onclick="javascript:do_dajax(Dajaxice.finance.newvoucher_get, Dajax.process, {}, 'id_modal');">New Voucher</a>
+        <br><a onclick="javascript:do_dajax(Dajaxice.finance.newadvance_get, Dajax.process, {}, 'id_modal');">New Advance</a>
+<br>        <a onclick="javascript:do_dajax(Dajaxice.finance.newvoucher_get, Dajax.process, {'vendorid' : '1'}, 'id_modal');">New Voucher for Vendor with ID = 1</a>
+<br>PLEASE REMOVE AFTER TESTING)
 	</div>
 
     </div>
