@@ -63,7 +63,7 @@ def add_voucher_request (request, serializedform=None, vendorid=None):
     else:
 #DEBUGGING LINE - ELIMINATE & REFINE LATER
         print ("No form/vendor ID sent")
-        return dajax.json())
+        return dajax.json()
     
     if form.is_valid():
         newVoucher = form.save(commit=False)
