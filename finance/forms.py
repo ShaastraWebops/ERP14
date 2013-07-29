@@ -6,7 +6,7 @@ from finance.models import PaymentRequest, AdvanceRequest, VoucherRequest
 class VoucherForm(ModelForm):
     class Meta:
         model = VoucherRequest
-        fields = ['amount', 'purpose', 'vendor']
+        fields = ['amount', 'purpose']
 
 
 class PaymentForm(ModelForm):
@@ -18,5 +18,5 @@ class PaymentForm(ModelForm):
 class AdvanceForm(ModelForm):
     class Meta:
         model = AdvanceRequest
-        fields = ['amount', 'purpose', 'infavorof']
+        fields = ['amount', 'purpose']
     
