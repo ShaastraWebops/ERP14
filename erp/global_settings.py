@@ -103,7 +103,7 @@ INSTALLED_APPS = (
     'finance',
 #    'file',
     'misc.dajax',
-    'misc.dajaxice'
+    'misc.dajaxice',
     'events',
     'misc.dajaxice',
     'misc.dajax'
