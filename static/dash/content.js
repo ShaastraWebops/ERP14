@@ -196,10 +196,10 @@ function show_page(json_got) {
      * 
      * e.g. of datatable : #sidebar li.id = "list_table_my_name" , #id_content_right div.id = "table_my_name"
      */
-    
     Dajax.process(json_got) // Process the json
     
     var oDiv_element = document.getElementById('id_content_right').getElementsByTagName('div')[0]
+<<<<<<< HEAD
     $("#id_content_left ul.nav li").removeClass("active") // de-activate all other elements
     $("#id_content_left ul.nav li").removeClass("active_head") // de-activate all other elements's head also ...
     $("#list_" + oDiv_element.id).addClass("active") // activate
@@ -231,10 +231,21 @@ function show_page(json_got) {
                 buttonImageOnly: true,*/
             });
         }
+=======
+    if( oDiv_element.id.match("^form_") ) { // forms may require datepicker
+        /*if( oDiv_element.id.match("^form_add_task") || oDiv_element.id.match("^form_add_task_cross")) {
+            $(function() { 
+                $( '#id_deadline' ).datepicker({ 
+                    showAnim: 'slide', dateFormat: 'd M yy', 
+                }) 
+            }
+        }*/
+>>>>>>> events_portal
     } else if( oDiv_element.id.match("^table_") ) {
         // initiates datatable for task tables
         var oTable_element = oDiv_element.getElementsByTagName('table')[0]
         show_table(oTable_element)
+<<<<<<< HEAD
     }
 }
 
@@ -286,4 +297,23 @@ function do_accordion(elem_str, type) {
         
     }
     
+=======
+    } else if( oDiv_element.id.match("^eventpage_") ) { // for jquery-ui tabs
+        $(function() { // Initiate the tabs
+            var tabs = $( "#eventtabs" ).tabs();
+            /*tabs.find( ".ui-tabs-nav" ).sortable({
+                axis: "x",
+                stop: function() {
+                    tabs.tabs( "refresh" );
+                }
+            });*/
+        });
+        // Run the script to get the first page
+        $( "#eventtabs a" ).first().click()
+    } 
+    
+    $("#id_content_left ul.nav li").removeClass("active") // de-activate all other elements
+    $("#list_" + oDiv_element.id).addClass("active") // activate
+    
+>>>>>>> events_portal
 }

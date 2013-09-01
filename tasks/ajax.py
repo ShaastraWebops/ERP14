@@ -16,14 +16,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 
 # From forms
 from tasks.forms import IntraTaskForm, CrossTaskForm
-
 # From models
 from tasks.models import Task, Comment, TASK_STATUSES
 from users.models import ERPUser
-
 # From Misc to show bootstrap alert
-from misc.utilities import show_alert, get_position, core_or_supercoord_check, core_check
-
+from misc.utilities import core_check, core_or_supercoord_check, show_alert, get_position
 # Python imports
 import datetime
 

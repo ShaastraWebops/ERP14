@@ -24,9 +24,10 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     
     url(r'^tasks/', include('tasks.urls')),
+    url(r'^events/', include('events.urls')),
     url(r'^login/$', 'users.views.login'),
-    url(r'^/$', redirect_to, {'url': '/login/'}),
-    url(r'^$', redirect_to, {'url': '/login/'}),
+    url(r'^/$', 'users.views.redirectToLogin'),#redirect_to, {'url': '/login/'}),
+    url(r'^$', 'users.views.redirectToLogin'),#redirect_to, {'url': '/login/'}),
     url(r'^choose_identity/$', 'users.views.choose_identity'),
     url(r'^logout/$', 'users.views.logout'),
     url(r'^dash/$', 'dash.views.dash_view'),
@@ -43,6 +44,7 @@ urlpatterns = patterns('',
     url(r'^users/changepassword/$',  'django.contrib.auth.views.password_change', {'post_change_redirect' : '/users/changepassword/success/', 'template_name': 'users/password_change_form.html'}),    
     url(r'^users/changepassword/success/$',  'django.contrib.auth.views.password_change_done', {'template_name': 'users/password_change_done.html'}),    
     
+    url(r'^comments/', include('django.contrib.comments.urls')),
     url(dajaxice_config.dajaxice_url, include('misc.dajaxice.urls')), # For dajaxice to function corrently
 )
 

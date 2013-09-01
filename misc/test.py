@@ -4,6 +4,7 @@ from dept.models import Dept, Subdept
 from tasks.models import Task, Comment
 import datetime
 import random
+from events.models import GenericEvent, ParticipantEvent, AudienceEvent, Tab, EVENT_CATEGORIES
 
 DEPT_RANGE = 5
 SUBDEPT_RANGE = 5
@@ -19,6 +20,9 @@ CROSSTASK_ACCEPTED_RANGE = 20
 CROSSTASK_NEARLY_RANGE = 10
 CROSSTASK_REPORTED_RANGE = 5
 CROSSTASK_COMPLETED_RANGE = 2
+PARTICIPANT_EVENT_RANGE = 5
+AUDIENCE_EVENT_RANGE = 5
+TAB_RANGE = 3
 
 
 # _____________--- MAKE USERS ---______________#
@@ -495,3 +499,48 @@ def populate_db():
         t.taskstatus = 'C'
         t.save()
     
+
+
+def populate_events_db():
+    #Participant Events
+    print "Creating", PARTICIPANT_EVENT_RANGE,"Registrable events"
+    for i in range(PARTICIPANT_EVENT_RANGE):
+        if ParticipantEvent.objects.filter(title="_PEvent" + str(i)).count():
+            continue
+        pe = ParticipantEvent()
+        pe.title = "_PEvent" + str(i) #You will soon see why I started with _
+        pe.category = EVENT_CATEGORIES[i%len(EVENT_CATEGORIES)][0]
+        pe.registrable_online = i%2
+        pe.begin_registration = i%2
+        pe.team_event = i%2
+        if pe.team_event:
+            pe.team_size_max = i%10
+        pe.has_tdp = i%2
+        pe.has_questionnaire = i%2
+        pe.save()
+
+    #Audience Events
+    print "Creating", AUDIENCE_EVENT_RANGE,"Audience Events"
+    for i in range(AUDIENCE_EVENT_RANGE):
+        if AudienceEvent.objects.filter(title="_AEvent" + str(i)).count():
+            continue
+        ae = AudienceEvent()
+        ae.title = "_AEvent" + str(i)
+        ae.category = EVENT_CATEGORIES[i%len(EVENT_CATEGORIES)][0]
+        ae.save()
+
+    #Tabs for events
+    print "Creating", TAB_RANGE,"Tabs for each event"
+    for e in GenericEvent.objects.filter(title__startswith='_'):#and here it is :P
+        for i in range(TAB_RANGE):
+            if Tab.objects.filter(title="Tab" + str(i)).count():
+                continue
+            tb = Tab()
+            tb.title = "Tab" + str(i)
+            tb.text = "This is Tab" + str(i)
+            tb.pref = i%10
+            tb.event = e
+            tb.save()
+
+
+ 

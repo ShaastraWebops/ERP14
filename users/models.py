@@ -3,7 +3,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from dept.models import Dept, Subdept
 from django.conf import settings
-
+from events.models import GenericEvent
 # Create your models here.
 
 
@@ -31,13 +31,15 @@ HOSTEL_CHOICES  =(
 
 #User Profile Model
 class ERPUser(models.Model):
-    user = models.OneToOneField(User)
     
     #THIS SET OF ATTRIBUTES REPRESENTS THE CURRENTLY SELECTED PROFILE OF THE USER.
-    dept = models.ForeignKey(Dept, related_name='dept_user_set')
-    subdept = models.ForeignKey(Subdept, blank=True, null=True, default=None, related_name='subdept_user_set')
-    status = models.IntegerField (default=0) # 0 = Coord, 1 = Supercoord, 2 = Core
     
+    user = models.OneToOneField(User) # The corresponding auth user
+    dept = models.ForeignKey(Dept, related_name='dept_user_set') # The department in which the user is
+    subdept = models.ForeignKey(Subdept, blank=True, null=True, default=None, related_name='subdept_user_set') # The subdept of the user (used in 
+    status = models.IntegerField (default=0) # 0 = Coord, 1 = Supercoord, 2 = Core
+    event = models.ForeignKey(GenericEvent, null=True, blank=True)    
+
     #THIS SET OF ATTRIBUTES STORES THE VARIOUS IDENTITIES OF THE USER.
     multiple_ids = models.BooleanField(default=False)
     coord_relations = models.ManyToManyField(Subdept, null=True, blank=True, related_name='coord_set')

@@ -1,0 +1,22 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+    background: #100920;
+}
+label{
+    color: #957F38;
+}
+#contentDetailsContainer{
+    width: 600px;
+    height: auto;
+    position: absolute;
+    left: 350px;
+    border: 2px ridge #641DA7;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.eventDetailsText{
+    color: #80DDCB;
+    font-size: 16px;
+}

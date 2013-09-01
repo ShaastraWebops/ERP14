@@ -19,6 +19,8 @@
     <script src="{% static 'dash/datatables/ZeroClipboard.js' %}"></script>
     <script src="{% static 'dash/content.js' %}"></script>
     <script src="{% static 'dash/coord/coord.js' %}"></script>
+    <script src="{% static 'events/json.js' %}"></script>
+    <script src="{% static 'events/tabify.js' %}"></script>
     <!-- <script src="{% static 'dash/dataTables.bootstrap.js' %}"></script> 
         JQuery UI looks better than bootstrap version-->
 {% endblock %}
@@ -64,6 +66,11 @@
               <i class="icon-chevron-right"></i> {{ userprofile.subdept }} Tasks 
             </a>
           </li>
+          {% if userprofile.event.title %} 
+            <li id="list_eventpage_eventinfo" class="">
+              <a href="#" onclick="javascript:do_dajax(Dajaxice.events.show_event_erp, show_page, {'event_pk' : '{{userprofile.event.pk}}' }, 'id_content_right')"><i class="icon-chevron-right"></i>Edit Event</a>
+            </li>
+          {% endif %}
         </ul>
       </div>
     

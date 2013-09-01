@@ -1,0 +1,34 @@
+{% load staticfiles %}
+
+<!-- Extra styles -->
+<!--<link href="{% static 'events/content.css' %}" rel="stylesheet" media="screen">-->
+
+<!-- Extra scripts -->
+<!--<script src="{% static 'events/json.js' %}"></script>-->
+<script src="{% static 'events/tabify.js' %}"></script>
+
+<!-- Content -->
+<div id="eventpage_eventinfo">
+    <div id="eventtabs">
+      <ul>
+        <li>
+          <a id="a_event_{{event_instance.pk}}" href="#event_{{event_instance.pk}}" onclick="javascript:display_tab_event('event_{{event_instance.pk}}');"> {{event_name}} </a>
+          <!-- <a id="a_event_{{event_instance.pk}}" href="#event_{{event_instance.pk}}" onclick="javascript:display_tab_event_erp({{json_dict}}, 'event_{{event_instance.pk}}');"> {{event_name}} </a> -->
+        </li>
+        {% for tab in tab_list %}
+          <li> 
+            <a id="a_tab_{{tab.pk}}" href="#tab_{{tab.pk}}" onclick="javascript:display_tab_event('tab_{{tab.pk}}', 'event_{{event_instance.pk}}');"> {{tab.title}} </a>
+            <!-- <a id="a_tab_{{tab.pk}}" href="#tab_{{tab.pk}}" onclick="javascript:display_tab_event_erp({{json_dict}}, 'tab_{{tab.pk}}');"> {{tab.title}} </a>  -->
+          </li>
+        {% endfor %}
+        <li>
+          <a id="a_tab_new" href="#tab_new" onclick="javascript:display_tab_event('tab_new', 'event_{{event_instance.pk}}');"> Add Tab </a>
+        </li>
+      </ul>
+      <div id="event_{{event_instance.pk}}"></div>
+      {% for tab in tab_list %}
+        <div id="tab_{{tab.pk}}"></div>
+      {% endfor %}
+      <div id="tab_new"></div>
+    </div>
+</div>

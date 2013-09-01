@@ -8,10 +8,10 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 # From views
 # From forms
-from users.forms import ChooseIdentityForm, EditProfileForm
-from django.contrib.auth.forms import PasswordChangeForm
+from users.forms import EditProfileForm, ChooseIdentityForm
 # From models
 from users.models import ERPUser
+import users.models
 # From Misc to show bootstrap alert
 from misc.utilities import show_alert, get_position
 

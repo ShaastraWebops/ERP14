@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load dajaxice_templatetags %}
+
+<html>
+<head>
+    <title>Events | Home</title>
+    
+    <meta charset="utf-8">
+    
+    <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'events/content.css' %}" rel="stylesheet" media="screen">
+    
+    <script src="{% static 'js/jquery-1.9.1.js' %}"></script>
+    <script src="{% static 'js/jquery.dajax.core.js' %}"></script>
+    <script src="{% static 'js/bootstrap.js' %}"></script><!--make it bootstrap.min.js when deployed-->
+    <script src="{% static 'events/json.js' %}"></script>
+    <script src="{% static 'js/base.js' %}"></script>
+    
+    {% dajaxice_js_import 'nocsrf' %}
+    
+</head>
+
+<body>
+    <div id="id_content">
+      <div id="eventDetailsContainer">
+        <center>
+            <h3 style="color:#758FB2; text-decoration: underline">Event Details</h3>
+            <div id="eventDetails">
+                <!--<dl id="eventUpdate" class="eventDetailsText dl-horizontal"></dl>-->
+                <br />
+                <a class="btn btn-primary" href="#" onclick="do_dajax(Dajaxice.events.edit_event_get, Dajax.process, {'event_name' : 'test'}, 'id_content');"> Edit Event Details </a>
+            </div>
+        </center>
+      </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+    do_dajax(Dajaxice.events.get_event, display_event, {'event_name' : 'test'}, 'id_content');
+    //do_dajax(Dajaxice.events.hello_world, Dajax.process, {}, 'id_content');
+</script>
+
+</html>
