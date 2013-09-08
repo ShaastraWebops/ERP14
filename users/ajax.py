@@ -9,6 +9,7 @@ from django.template.loader import render_to_string
 # From views
 # From forms
 from users.forms import EditProfileForm, ChooseIdentityForm
+from django.contrib.auth.forms import PasswordChangeForm
 # From models
 from users.models import ERPUser
 import users.models
