@@ -80,7 +80,7 @@ def populate_db():
         u.user.save()
         u.save()
         #INSTANCE MUST BE SAVED BEFORE MANY TO MANY RELATIONS CAN BE SET.
-        u.core_relations.add(u.dept)
+        u.core_relations = u.dept
         u.save()
     
     # MAKE COORDS
@@ -518,6 +518,11 @@ def populate_events_db():
         pe.has_tdp = i%2
         pe.has_questionnaire = i%2
         pe.save()
+        # linking this participant event with generic event
+        pe_pk = pe.pk
+        ge = GenericEvent.objects.get(pk=pe_pk)
+        ge.event_type = "Participant"
+        ge.save()
 
     #Audience Events
     print "Creating", AUDIENCE_EVENT_RANGE,"Audience Events"
@@ -528,6 +533,11 @@ def populate_events_db():
         ae.title = "_AEvent" + str(i)
         ae.category = EVENT_CATEGORIES[i%len(EVENT_CATEGORIES)][0]
         ae.save()
+        # linking this audience event with generic event
+        ae_pk = ae.pk
+        ge = GenericEvent.objects.get(pk=ae_pk)
+        ge.event_type = "Audience"
+        ge.save()
 
     #Tabs for events
     print "Creating", TAB_RANGE,"Tabs for each event"
