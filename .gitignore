@@ -4,5 +4,6 @@
 *.py~
 local_settings.py
 accounts.csv
+accscript.py
 
 .DS_Store
