@@ -3,5 +3,6 @@
 *.pyc
 *.py~
 local_settings.py
+accounts.csv
 
 .DS_Store
