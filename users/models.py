@@ -47,11 +47,11 @@ class ERPUser(models.Model):
     core_relations = models.ForeignKey(Dept, null=True, blank=True, related_name='core_set')
 
     #Other information
-    nickname = models.CharField(max_length=30, blank=True)
-    chennai_number = models.CharField(max_length=15, blank=True)
-    summer_number = models.CharField(max_length=15, blank=True)
-    summer_stay = models.CharField(max_length=30, blank=True)
-    hostel = models.CharField(max_length=15, choices = HOSTEL_CHOICES, blank=True)
+    nickname = models.CharField(max_length=100, blank=True, null=True)
+    chennai_number = models.CharField(max_length=15, blank=True, null=True)
+    summer_number = models.CharField(max_length=15, blank=True, null=True)
+    summer_stay = models.CharField(max_length=30, blank=True, null=True)
+    hostel = models.CharField(max_length=15, choices = HOSTEL_CHOICES, blank=True, null=True)
     room_no = models.IntegerField(default=0, blank=True, null=True )
 
     def __unicode__(self):
