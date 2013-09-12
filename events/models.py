@@ -23,7 +23,7 @@ EVENT_CATEGORIES = (
     ('Spotlight', 'Spotlight'),
     ('Workshops', 'Workshops'),
     ('Exhibitions', 'Exhibitions and Shows'),
-    ('Associated Events', 'Associated Events'),
+    ('Miscellaneous', 'Miscellaneous'),
     ('Sampark', 'Sampark'),
     )
 
@@ -35,6 +35,7 @@ UPDATE_CATEGORY = (
 EVENT_TYPE = (
     ('Audience', 'Audience'),
     ('Participant', 'Participant'),
+    ('None','None'),
     )
 
 #Checks if the directory exists and creates it if not
@@ -67,7 +68,8 @@ class GenericEvent(models.Model):
     title = models.CharField(max_length=100)
     tags = models.ManyToManyField(Tag, blank=True, null=True)
     category = models.CharField(max_length=100, choices=EVENT_CATEGORIES)
-    event_type = models.CharField(max_length=100, choices=EVENT_TYPE, blank=True, null=True)
+    event_type = models.CharField(max_length=100, choices=EVENT_TYPE, blank=True, null=True,
+            help_text='Select Participant only if your event is registrable, otherwise select Audience')
     events_logo = models.FileField(upload_to=upload_handler('eventslogo'),
         blank=True, null=True)
     spons_logo = models.ForeignKey(SponsLogoUploads, blank=True, null=True)
@@ -95,9 +97,9 @@ class ParticipantEvent(GenericEvent):
     #team_event = models.BooleanField(default=False, # Varshaa : Based on below 2 fields, this can be got. DONE
             #help_text='Is this a team event ?')
     team_size_min = models.IntegerField(default=1,
-            help_text='Minimum team size')
+            help_text='Minimum team size',blank=True,null=True)
     team_size_max = models.IntegerField(default=1,
-            help_text='Maximum team size')
+            help_text='Maximum team size',blank=True,null=True)
 
     #Submissions -- This year, even questionnaire is called a tdp. DONE
     has_tdp = models.BooleanField(default=False, 
