@@ -11,6 +11,7 @@ import json
 import os, glob
 import datetime
 
+#months = {1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'May',6:'Jun',7:'Jul',8:'Aug',9:'Sep',10:'Oct',11:'Nov','12':'Dec'}
 # __________--- Get place to store JSON - for events ---___________#
 def get_json_file_path(filename):
     file_path = os.path.abspath( os.path.join( MEDIA_ROOT, 'json', 'events') )
@@ -50,7 +51,11 @@ def save_event(self, EventDetailsForm):
     clean_form = self.clean()
     event_json = {}
     json_data = {}
-    
+
+
+   # if 'registration_ends' in self.fields.keys():
+    #    self.convert_to_datetime()
+
     # saving the event to db
     event_inst = super(EventDetailsForm, self).save()
     
@@ -60,11 +65,11 @@ def save_event(self, EventDetailsForm):
         event_json['event_'+iden] = clean_form[iden] # add to json
     # absolute path to the file in which the content has to be saved
     file_path_full = get_json_file_path(str(event_pk)+'_'+clean_form['title']+'.json')
-    print file_path_full
     
     # rename the old file (that starts with this event_pk) to the new filename incase the event name has changed
     file_path_pk = get_json_file_path(str(event_pk)+'_*')
     file_path = glob.glob(file_path_pk) # gives all files in the dir that start with file_path_pk -- ideally returns only a single file
+
     if len(file_path)==1 :
         if not (file_path[0] == file_path_full):
             os.rename(file_path[0], file_path_full)
@@ -117,12 +122,38 @@ class ParticipantEventDetailsForm(ModelForm):
     
     class Meta:
         model = ParticipantEvent
-        exclude = ('event_type', 'events_logo', 'spons_logo', 'tags')
+        exclude = ('event_type', 'events_logo', 'spons_logo', 'tags', 'registration_ends','registration_starts')
         
     def save(self, commit=True):
         save_event(self, ParticipantEventDetailsForm)
-        
-  
+    #def convert_to_datetime(self, commit=True):
+     #   clean_form = self.clean()
+      #  begin_date_string = clean_form['registration_starts']
+       # if begin_date_string is not None:
+        #    print begin_date_string
+         #   year = begin_date_string[0:3]
+          #  month = months[begin_date_string[5:7]]
+           # date = begin_date_string[9:11]
+           # hour = begine_date_string[12:14]
+           # minu = begin_date_string[15:17]
+            #seconds = begin_date_string[18:20]
+            #final_date_string = year+' '+month+' '+date+' '+hour+' '+minu+' '+seconds
+
+            #fermat = '%Y %b %d %H %M %S'
+            #self.registration_starts =  strptime(final_date_string, fermat)
+
+        #date_string = clean_form['registration_ends']
+        #if date_string is not None:
+         #   year = date_string[0:3]
+          #  month = months[date_string[5:7]]
+           # date = date_string[9:11]
+            #hour = date_string[12:14]
+            #minu = date_string[15:17]
+            #seconds = date_string[18:20]
+            #final_date_string_1 = year+' '+month+' '+date+' '+hour+' '+minu+' '+seconds
+
+            #self.registration_ends =  strptime(final_date_string_1, fermat)
+
 class TabDetailsForm(ModelForm):
 
     class Meta:
@@ -148,6 +179,7 @@ class TabDetailsForm(ModelForm):
         
         event_pk = event_inst.pk
         file_path = get_json_file_path(str(event_pk) + '_' + event_inst.title+'.json')
+        print file_path
         if not os.path.exists(file_path): # No event file found- error: tab cant exist without the corresponding event
             raise EditError('Tab cannot be created without creating an event')
         with open(file_path) as f:
