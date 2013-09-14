@@ -15,11 +15,11 @@ import os
 EVENT_CATEGORIES = (
     ('Aerofest', 'Aerofest'),
     ('Coding', 'Coding'),
-    ('Design and Build', 'Design and Build'),
+    ('Design and build', 'Design and build'),
     ('Involve', 'Involve'),
     ('Quizzes', 'Quizzes'),
     ('Online', 'Online'),
-    ('Department Flagship', 'Department Flagship'),
+    ('Department Flagship', 'Department Flagship Event'),
     ('Spotlight', 'Spotlight'),
     ('Workshops', 'Workshops'),
     ('Exhibitions', 'Exhibitions and Shows'),

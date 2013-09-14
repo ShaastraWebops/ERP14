@@ -17,6 +17,7 @@
     <script src="{% static 'dash/datatables/jquery.dataTables.js' %}"></script>
     <script src="{% static 'dash/datatables/TableTools.js' %}"></script>
     <script src="{% static 'dash/datatables/ZeroClipboard.js' %}"></script>
+    <script src="{% static 'js/nicEdit.js' %}"></script>
     <script src="{% static 'dash/content.js' %}"></script>
     <script src="{% static 'dash/coord/coord.js' %}"></script>
     <script src="{% static 'events/json.js' %}"></script>
@@ -66,11 +67,18 @@
               <i class="icon-chevron-right"></i> {{ userprofile.subdept }} Tasks 
             </a>
           </li>
-          {% if userprofile.event.title %} 
-            <li id="list_eventpage_eventinfo" class="">
-              <a href="#" onclick="javascript:do_dajax(Dajaxice.events.show_event_erp, show_page, {'event_pk' : '{{userprofile.event.pk}}' }, 'id_content_right')"><i class="icon-chevron-right"></i>Edit Event</a>
-            </li>
-          {% endif %}
+          <!--<script type="text/javascript">alert( '{{userprofile.event.event_type}}' );</script>-->
+          {% if userprofile.event.event_type %}
+              {% if userprofile.event.title %} 
+                <li id="list_eventpage_eventinfo" class="">
+                  <a href="#" onclick="javascript:do_dajax(Dajaxice.events.show_event_erp, show_page, {'event_pk' : '{{userprofile.event.pk}}' }, 'id_content_right')"><i class="icon-chevron-right"></i>Edit Event</a>
+                </li>
+              {% endif %}
+            {% else %}
+                <li id="list_eventpage_eventinfo" class="">
+                  <a href="#" onclick="javascript:do_dajax(Dajaxice.events.select_event_type, show_page, {'event_pk' : '{{userprofile.event.pk}}' }, 'id_content_right')"><i class="icon-chevron-right"></i>Edit Event</a>
+                </li>
+         {% endif %}
         </ul>
       </div>
     
@@ -85,4 +93,6 @@
     </center>
     </div> <!-- End of row -->
     <script>modal_hide()</script> <!-- display table you at the end -->
+    
+    <input type="hidden" id="nicEditor_icons_path" value="{% static 'img/nicEditorIcons.gif' %}"> <!-- for use in tabify.js -->
 {% endblock %}

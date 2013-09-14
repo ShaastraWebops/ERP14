@@ -1,0 +1,31 @@
+{% load staticfiles %}
+
+<!-- Extra styles -->
+
+<!-- Extra scripts -->
+
+<!-- Content -->
+<div style="position:absolute; left:30%; top:30%;">
+    <p> 
+        <h4>Select your Event Type:</h4>
+        If the event is registrable select 'Participant'<br>
+        Otherwise, select 'Audience'<br>
+        <p class="muted">
+            For example, if your event is 'Manual Robotics' select 'Participant' as one can register for this event.<br>
+            On the other hand, if your event is 'Airshow', select 'Audience'
+        </p>
+    </p>
+    <br>
+    <select id="event_type_option">
+          <option></option>
+          <option>Participant</option>
+          <option>Audience</option>
+    </select>
+    <br>
+    <a class ="btn btn-info" href="#" onclick="Dajaxice.events.select_event_type(Dajax.process, {'event_pk':'{{model_instance.pk}}', 'event_type_selected': $('#event_type_option').val()});">
+    <!-- <a onclick="javascript:alert($('#event_type_option').val()+ {{model_instance.pk}});"> -->
+      Save changes
+    </a>
+
+    <script type="text/javascript"></script>
+</div>

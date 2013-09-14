@@ -60,7 +60,6 @@ def save_event(self, EventDetailsForm):
         event_json['event_'+iden] = clean_form[iden] # add to json
     # absolute path to the file in which the content has to be saved
     file_path_full = get_json_file_path(str(event_pk)+'_'+clean_form['title']+'.json')
-    print file_path_full
     
     # rename the old file (that starts with this event_pk) to the new filename incase the event name has changed
     file_path_pk = get_json_file_path(str(event_pk)+'_*')
@@ -99,10 +98,10 @@ class GenericEventDetailsForm(ModelForm):
 
     class Meta:
         model = GenericEvent
-        fields = ['title', 'category','event_type']
+        fields = ['title', 'category']
         
     def save(self, commit=True):
-        save_event(self, GenericEventDetailsForm)
+        save_event(self, EventDetailsForm)
 
 class AudienceEventDetailsForm(ModelForm):
     
