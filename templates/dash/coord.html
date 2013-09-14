@@ -68,16 +68,16 @@
             </a>
           </li>
           <!--<script type="text/javascript">alert( '{{userprofile.event.event_type}}' );</script>-->
-          {% if userprofile.event.event_type %}
-              {% if userprofile.event.title %} 
+          {% if userprofile.event.title %}
+            {% if userprofile.event.event_type %}
                 <li id="list_eventpage_eventinfo" class="">
                   <a href="#" onclick="javascript:do_dajax(Dajaxice.events.show_event_erp, show_page, {'event_pk' : '{{userprofile.event.pk}}' }, 'id_content_right')"><i class="icon-chevron-right"></i>Edit Event</a>
                 </li>
-              {% endif %}
             {% else %}
                 <li id="list_eventpage_eventinfo" class="">
                   <a href="#" onclick="javascript:do_dajax(Dajaxice.events.select_event_type, show_page, {'event_pk' : '{{userprofile.event.pk}}' }, 'id_content_right')"><i class="icon-chevron-right"></i>Edit Event</a>
                 </li>
+           {% endif %}
          {% endif %}
         </ul>
       </div>
