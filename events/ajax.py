@@ -115,6 +115,7 @@ def show_event_erp(request, event_name=None, event_pk=None):
             event_dict = model_to_dict(event_instance)
             if event_type=='Participant':
                 form = ParticipantEventDetailsForm(event_dict, instance=event_instance)
+
             elif event_type=='Audience':
                 form = AudienceEventDetailsForm(event_dict, instance=event_instance)
             #form = EventDetailsForm(event_dict, instance=event_instance)

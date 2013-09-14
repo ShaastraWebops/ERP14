@@ -116,7 +116,7 @@ class ParticipantEventDetailsForm(ModelForm):
     
     class Meta:
         model = ParticipantEvent
-        exclude = ('event_type', 'events_logo', 'spons_logo', 'tags')
+        exclude = ('event_type', 'events_logo', 'spons_logo', 'tags','registration_starts','registration_ends')
         
     def save(self, commit=True):
         save_event(self, ParticipantEventDetailsForm)
