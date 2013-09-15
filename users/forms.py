@@ -6,12 +6,14 @@ class ChooseIdentityForm(forms.Form):
 
     coordships = forms.ModelChoiceField( queryset = Subdept.objects.none(), required=False)#, help_text = 'Choose a coordship' )
     supercoordships = forms.ModelChoiceField( queryset = Dept.objects.none(), required=False)#, help_text = 'Choose a supercoordship' )
+    coreships = forms.ModelChoiceField( queryset = Dept.objects.none(), required=False)#, help_text = 'Choose a coreship' )
 
     #Framework for getting a QuerySet of Coordships and Supercoordships
     def __init__(self, curruser, *args, **kwargs):
         super (ChooseIdentityForm,self ).__init__(*args,**kwargs) # populates the post
         self.fields['coordships'].queryset = curruser.coord_relations.all() 
         self.fields['supercoordships'].queryset = curruser.supercoord_relations.all()
+        self.fields['coreships'].queryset = curruser.core_relations.all()
  
 class EditProfileForm (forms.ModelForm):
     class Meta:

@@ -63,33 +63,39 @@ def choose_identity ( request ):
     noerror = True
 
     if request.method == 'POST':
-	identity_form = ChooseIdentityForm (request.user.erpuser, request.POST)
+        identity_form = ChooseIdentityForm (request.user.erpuser, request.POST)
+        if identity_form.is_valid():
+            cd = identity_form.cleaned_data
+            userprofile = request.user.erpuser
 
-	if identity_form.is_valid():
-	    cd = identity_form.cleaned_data
-
-	    #if they don't choose anything
-	    if cd['coordships'] == None and cd['supercoordships'] == None:
-		noerror = False
-		return render_to_response ( 'dash/choose_identity.html', locals(), context_instance = RequestContext(request) )
-
-	    #if they make choices in both.
-	    if not cd['coordships'] == None and not cd['supercoordships'] == None:
-		noerror = False
-		return render_to_response ( 'dash/choose_identity.html', locals(), context_instance = RequestContext(request) )
-	    
-	    #if everything is in order, we can now set the identity and let him/her be on his way. :)
-	    userprofile = request.user.erpuser
-
-	    #if he's chosen a coordship
-	    if not cd['coordships'] == None:
-		userprofile.status = 0
-		userprofile.subdept = cd['coordships'] #which coordship he's chosen. Don't know if this is necessary, but it can't hurt
-		
-	    #if he's chosen a supercoordship
-	    else:
-		userprofile.status = 1 #supercoord
-	    userprofile.save()
-	    return HttpResponseRedirect ('/dash/')
+            #if he's chosen only a coordship
+            if (not cd['coordships'] == None) and (cd['supercoordships'] == None) and (cd['coreships'] == None):
+                userprofile.status = 0
+                currentsubdept = cd['coordships']
+                userprofile.subdept = currentsubdept
+                userprofile.dept = currentsubdept.dept
+                userprofile.save()
+                return HttpResponseRedirect ('/dash/')
+            
+            #if he's chosen a supercoordship
+            elif (cd['coordships'] == None) and (not cd['supercoordships'] == None) and (cd['coreships'] == None):
+                userprofile.status = 1 #supercoord
+                userprofile.dept = cd['supercoordships']
+                userprofile.subdept = None
+                userprofile.save()
+                return HttpResponseRedirect ('/dash/')
+                
+            elif (cd['coordships'] == None) and (cd['supercoordships'] == None) and (not cd['coreships'] == None):
+                userprofile.status = 2 #core
+                userprofile.dept = cd['coreships']
+                userprofile.subdept = None
+                userprofile.save()
+                return HttpResponseRedirect ('/dash/')
+                
+            else:
+                noerror = False
+                return render_to_response ( 'dash/choose_identity.html', locals(), context_instance = RequestContext(request) )
+            
+            
     identity_form = ChooseIdentityForm ( curruser = request.user.erpuser )
     return render_to_response ( 'dash/choose_identity.html', locals(), context_instance = RequestContext(request) )
