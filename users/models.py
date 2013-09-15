@@ -44,7 +44,7 @@ class ERPUser(models.Model):
     multiple_ids = models.BooleanField(default=False)
     coord_relations = models.ManyToManyField(Subdept, null=True, blank=True, related_name='coord_set')
     supercoord_relations = models.ManyToManyField(Dept, null=True, blank=True, related_name='supercoord_set')
-    core_relations = models.ForeignKey(Dept, null=True, blank=True, related_name='core_set')
+    core_relations = models.ManyToManyField(Dept, null=True, blank=True, related_name='core_set')
 
     #Other information
     nickname = models.CharField(max_length=100, blank=True, null=True)
