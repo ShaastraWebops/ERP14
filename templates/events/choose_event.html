@@ -1,0 +1,10 @@
+{% load staticfiles %}
+<form method="POST" action="" id="id_form">
+    {% csrf_token %}
+    <table class = "table table-bordered table-hover">
+        <caption style="color:#758FB2;"><h3>Choose Event</h3>
+        </caption>
+        {{form.as_table}}
+    </table>
+    <a class ="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.events.show_event_list(Dajax.process, {'choose_form':$('#id_form').serialize(true)}));">Submit</a>
+</form>

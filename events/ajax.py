@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 # For converting model to a dictionary that can be input into a ModelForm
 from django.forms.models import model_to_dict
 # From forms
-from events.forms import GenericEventDetailsForm, ParticipantEventDetailsForm, AudienceEventDetailsForm, TabDetailsForm, UpdateForm, get_json_file_path, EditError
+from events.forms import GenericEventDetailsForm, ParticipantEventDetailsForm, AudienceEventDetailsForm, TabDetailsForm, UpdateForm, get_json_file_path, EditError,ChooseEventForm
 # From models
 from users.models import ERPUser
 from events.models import GenericEvent, ParticipantEvent, AudienceEvent, Tab, Update
@@ -449,3 +449,37 @@ def select_event_type(request, event_name=None, event_pk=None, event_type_select
         dajax.assign("#id_content_right", "innerHTML", html_content) # Populate content
     
     return dajax.json()
+
+@dajaxice_register
+
+def show_event_list(request,choose_form = None):
+
+    dajax = Dajax()
+    if request.method == 'POST' and choose_form != None:
+        form = ChooseEventForm(deserialize_form(choose_form))
+        if form.is_valid():
+            #Basically emulating show_event_erp without checking for errors
+            clean_form = form.clean()
+            event_name = clean_form['event']
+            generic_event_instance = GenericEvent.objects.get(title = event_name)
+            event_type = generic_event_instance.event_type
+            event_pk = generic_event_instance.pk
+            if event_type == 'Participant':
+                event_instance = ParticipantEvent.objects.get(pk=event_pk)
+                form = ParticipantEventDetailsForm(instance = event_instance)
+            if event_type == 'Audience':
+                event_instance = AudienceEvent.objects.get(pk=event_pk)
+                form = AudienceEventDetailsForm(instance = event_instance)
+            tab_list = Tab.objects.filter(event=event_instance)
+            #context_dict = {'model_instance' : event_instance, 'type' : 'tab', 'form' : form}
+            html_content = render_to_string('events/erp_tabs.html', locals(), RequestContext(request))
+            dajax.assign("#id_content_right", "innerHTML", html_content)
+            return dajax.json()
+
+        else:
+           pass#Put Error Message 
+    else:
+        form = ChooseEventForm()
+        html_content = render_to_string('events/choose_event.html', locals(),RequestContext(request)) 
+        dajax.assign('#id_content_right','innerHTML', html_content)
+        return dajax.json()
