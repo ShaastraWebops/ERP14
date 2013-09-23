@@ -38,12 +38,18 @@ def dash_view(request):
     
     #RENDERING THE TEMPLATE
     # For a Coordinator
-    if userprofile.status == 0:
+    if userprofile.status == 0: 
         return render_to_response ('dash/coord.html', query_dictionary, context_instance=RequestContext(request))
         
     # For a Supercoordinator
     if userprofile.status == 1:
         return render_to_response ('dash/supercoord.html', query_dictionary, context_instance=RequestContext(request))
+    #For Events core
+    if userprofile.status ==2 and userprofile.dept.name == 'Events':
+        subdep_list = (userprofile.dept).subdept_set.all()
+        print subdep_list
+        query_dictionary["subdep_list"] = subdep_list
+        return render_to_response('dash/events_core.html',query_dictionary, context_instance=RequestContext(request))
         
     # For a Core
     if userprofile.status == 2:
