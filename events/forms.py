@@ -5,7 +5,7 @@ from django.forms import ModelForm, Select
 from erp.settings import MEDIA_ROOT
 from erp.variables import events_being_edited
 # From form
-from events.models import GenericEvent, AudienceEvent, ParticipantEvent, Tab, Update, TabFile
+from events.models import GenericEvent, AudienceEvent, ParticipantEvent, Tab, Update, TabFile,EVENT_CATEGORIES
 # Python imports
 import json
 import os, glob
@@ -80,9 +80,10 @@ def save_event(self, EventDetailsForm):
             f.close()
     else:
         json_data = event_json
-            
     if event_pk in events_being_edited:
+        print events_being_edited
         raise EditError('Event is being edited by some other user. Please try again later')
+
     
     events_being_edited.append(event_pk)
     with open(file_path_full, 'w') as f:
@@ -198,3 +199,10 @@ class UploadTabFiles(ModelForm):
     class Meta:
         model = TabFile
         exclude = ('tab','url')
+
+class ChooseEventForm(forms.Form):
+    #event = forms.ModelChoiceField( queryset = GenericEvent.objects.all(), required=False)
+    event_list = GenericEvent.objects.all()
+    event_choices = [('','Airshow')] + [(event,event) for event in event_list]
+
+    event = forms.ChoiceField(event_choices,required=False,widget=forms.Select())
