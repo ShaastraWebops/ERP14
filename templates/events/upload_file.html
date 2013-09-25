@@ -1,0 +1,35 @@
+{% load staticfiles %}
+
+<html>
+    <head>
+        <title>File Uploads</title>
+        <meta charset="utf-8">
+        <link href = "{% static 'css/bootstrap.min.css' %}" rel="stylesheet" media="screen">
+        <link href = "{% static 'css/bootstrap-responsive.css' %}" rel="stylesheet" media="screen">
+    </head>
+    <div>
+        <center>
+    <body>
+        {% if files_for_event %}
+        <ul>
+            {% for file in files_for_event %}
+            <li><a href="{{file.upload_file.url}}">{{file.title }}</a></li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <table>
+                {{form.as_table}}
+                <p>{{ message }}</p>
+            </table>
+            <input type="submit" value="Upload" class="btn btn-primary">
+            {% if error %}
+            <p>{{ error }}</p>
+            {% endif %}
+        </form>
+        <a class = "btn btn-primary" href="/dash/">Back to Dashboard</a>
+    </center>
+</div>
+    </body>
+</html>

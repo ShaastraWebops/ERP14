@@ -19,12 +19,13 @@ EVENT_CATEGORIES = (
     ('Involve', 'Involve'),
     ('Quizzes', 'Quizzes'),
     ('Online', 'Online'),
-    ('Department Flagship', 'Department Flagship Event'),
+    ('Department Flagship Event', 'Department Flagship Event'),
     ('Spotlight', 'Spotlight'),
     ('Workshops', 'Workshops'),
     ('Exhibitions', 'Exhibitions and Shows'),
     ('Miscellaneous', 'Miscellaneous'),
     ('Sampark', 'Sampark'),
+    ('B- Events','B- Events'),
     )
 
 UPDATE_CATEGORY = (
@@ -247,3 +248,11 @@ class Sponsor(models.Model):
 
     def __unicode__(self):
         return self.name
+
+class UploadFile(models.Model):
+    '''
+    For each Event
+    '''
+    title = models.CharField(max_length=100)
+    upload_file = models.FileField(upload_to=upload_handler('files'))
+    event = models.ForeignKey(GenericEvent,related_name='event-file')

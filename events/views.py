@@ -2,7 +2,8 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from events.forms import GenericEventDetailsForm,UpdateForm,UploadTabFiles
+from events.forms import GenericEventDetailsForm,UpdateForm,UploadTabFiles,UploadFileForm
+from events.models import UploadFile
 
 from misc.dajaxice.core import dajaxice_functions
 
@@ -63,6 +64,7 @@ def tabfile_submit(request):
     if request.method == 'POST':
         form = UploadTabFiles(request.POST, request.FILES)
         filename = request.FILES['tab_file'].name
+
         display_name = request.META['HTTP_X_NAME']
         print display_name
         
@@ -70,4 +72,28 @@ def tabfile_submit(request):
         form = UploadTabFiles()
     return render_to_response('events/tabfiles.html',{'form':form}, context_instance = RequestContext(request))
     
+
+def upload_file(request):
+
+    curruser = request.user.get_profile()
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            title = request.POST['title']
+            title_exists = UploadFile.objects.filter(title = title)
+            if title_exists:
+                error = 'Given Title already exists'
+            else:
+                uploaded_file = UploadFile(title = title,upload_file = request.FILES['upload_file'])
+                uploaded_file.event = curruser.event
+                uploaded_file.title = title
+                uploaded_file.save()
+                message = "File Uploaded Successfully"
+                return HttpResponseRedirect('')
+    else:
+        form = UploadFileForm()
+        message = 'Select a File to upload'
+
+    files_for_event = UploadFile.objects.filter(event = curruser.event)
+    return render_to_response('events/upload_file.html',locals(),context_instance = RequestContext(request))
 
