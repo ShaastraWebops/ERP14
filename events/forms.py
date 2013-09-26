@@ -5,7 +5,7 @@ from django.forms import ModelForm, Select
 from erp.settings import MEDIA_ROOT
 from erp.variables import events_being_edited
 # From form
-from events.models import GenericEvent, AudienceEvent, ParticipantEvent, Tab, Update, TabFile,EVENT_CATEGORIES
+from events.models import GenericEvent, AudienceEvent, ParticipantEvent, Tab, Update, TabFile,EVENT_CATEGORIES,UploadFile
 # Python imports
 import json
 import os, glob
@@ -206,3 +206,8 @@ class ChooseEventForm(forms.Form):
     event_choices = [('','Airshow')] + [(event,event) for event in event_list]
 
     event = forms.ChoiceField(event_choices,required=False,widget=forms.Select())
+
+class UploadFileForm(ModelForm):
+    class Meta:
+        model = UploadFile
+        exclude = ('event',)
