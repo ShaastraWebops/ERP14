@@ -11,13 +11,13 @@ import datetime
 from facilities.forms import FacilityItemForm
 
 #Import Utilities
-from misc.utilities import events_core_check, events_coord_check, events_check
+from misc.utilities import facilities_check, events_check, facilities_or_events_check
 
 #Importing necessary models
 from facilities.models import FacilityOrder, ItemEntry, FacilityItem
 
 #Importing Model Formset Factory
-from django.forms.models import modelformset_factory
+from django.forms.models import modelformset_factory, modelform_factory
 
 #Import Django Exception
 from django.core.exceptions import ObjectDoesNotExist
@@ -25,8 +25,11 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 #_______________________---ADD MENU ITEM---_________________________
+"""
+    Add an item to the catalog
+"""
 @login_required
-@user_passes_test(events_core_check)
+@user_passes_test(facilities_check)
 def AddMenuItem(request):
     if request.method == 'POST':
         form = FacilityItemForm(request.POST)
@@ -48,10 +51,7 @@ def AddMenuItem(request):
     PRESENTS AND PROCESSES ORDER FORMSETS
     Presents a formset to a user. This is the user's order. The user then adds entries to his order,
     and submits the form.
-    
-    The submitted form is processed by the same view. It handles repetition of items, and adds entries
-    to the order appropriately.
-    """
+"""
 @login_required
 @user_passes_test(events_check)
 def CreateOrder(request):
@@ -110,7 +110,7 @@ def CreateOrder(request):
 
 #______________________---FACILITIES HOME---_____________________
 @login_required
-@user_passes_test(events_check)
+@user_passes_test(facilities_or_events_check)
 def FacilitiesHome(request):
     userprofile = request.user.get_profile()
 
@@ -120,13 +120,13 @@ def FacilitiesHome(request):
     #Userprofile
     context["userprofile"] = userprofile
     
-    context["isapprover"] = events_core_check(request.user)
+    context["isapprover"] = facilities_check(request.user)
     
     #Facility Items:
     context["facilityitems"] = FacilityItem.objects.all()
     
     #Pending & approved orders:
-    if events_core_check(request.user):
+    if facilities_check(request.user):
         context["pending"] = FacilityOrder.objects.filter(isapproved=False)
         context["approved"] = FacilityOrder.objects.filter(isapproved=True)
     else:
@@ -138,9 +138,11 @@ def FacilitiesHome(request):
 
 
 #______________________---CLEAR AN ORDER---_____________________
-
+"""
+Can be done by anybody in Facilities
+"""
 @login_required
-@user_passes_test(events_core_check)
+@user_passes_test(facilities_check)
 def ApproveOrder(request, primkey):
     try:
         approvedorder = FacilityOrder.objects.get(pk=primkey)
@@ -153,7 +155,90 @@ def ApproveOrder(request, primkey):
         return redirect('facilities.views.FacilitiesHome')
         
         
+#______________________---EDIT AN ENTRY---_____________________
+"""
+If the user is in Events:
+    Can edit only before approval
+    
+If the user is in facilities:
+    Can edit ONLY the FEEDBACK BOX.
+"""
+@login_required
+@user_passes_test(facilities_or_events_check)
+def EditEntry(request, primkey):
+    #Create a form depending on the department
+    if events_check(request.user):
+        ItemEntryForm = modelform_factory(ItemEntry, fields=('quantity', 'description'))
+    elif facilities_check(request.user):
+        ItemEntryForm = modelform_factory(ItemEntry, fields=('feedback', ))
+    
+    try:
+        entry = ItemEntry.objects.get(pk=primkey)
+    except:
+        return redirect('facilities.views.FacilitiesHome')
+    
+    if entry.order.isapproved == True:
+        return redirect('facilities.views.FacilitiesHome')
+    else:
+        if request.method == 'POST':
+            form= ItemEntryForm(request.POST, instance=entry)
+            if form.is_valid():
+                form.save()
+                return redirect('facilities.views.FacilitiesHome')
+            else:
+                return render_to_response ('facilities/editentry.htm', {'form': form }, context_instance=RequestContext(request))
+        else:
+            form=ItemEntryForm(instance=entry)
+            return render_to_response ('facilities/editentry.htm', {'form': form }, context_instance=RequestContext(request))
+            
+            
+#______________________---DELETE AN ENTRY---_____________________
+"""
+Allowed only if:
+    1. The user is in Events
+    2. The order has not been approved
+"""
+@login_required
+@user_passes_test(events_check)
+def DeleteEntry(request, primkey):
+    try:
+        entry = ItemEntry.objects.get(pk=primkey)
+    except:
+        return redirect('facilities.views.FacilitiesHome')
+    
+    if entry.order.isapproved == True:
+        return redirect('facilities.views.FacilitiesHome')
+    else:
+        entry.delete()
+        return redirect('facilities.views.FacilitiesHome')
+        
+        
+        
+#______________________---DELETE AN ORDER---_____________________
+"""
+Allowed only if:
+    1. The user is in Events
+    2. The order has not been approved
+"""
+@login_required
+@user_passes_test(events_check)
+def DeleteOrder(request, primkey):
+    try:
+        order = FacilityOrder.objects.get(pk=primkey)
+    except:
+        return redirect('facilities.views.FacilitiesHome')
+    
+    if order.isapproved == True:
+        return redirect('facilities.views.FacilitiesHome')
+    else:
+        order.delete()
+        return redirect('facilities.views.FacilitiesHome')
+        
+
+        
+        
 #______________________---Redirector---_____________________
 @login_required
+@user_passes_test(facilities_or_events_check)
 def FacilitiesRedirect(request):
     return redirect('facilities.views.FacilitiesHome')
