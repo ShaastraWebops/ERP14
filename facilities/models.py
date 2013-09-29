@@ -17,9 +17,10 @@ class FacilityOrder(models.Model):
     isapproved = models.BooleanField(default = False)
     items = models.ManyToManyField (FacilityItem, through='ItemEntry')
     creator = models.ForeignKey (ERPUser, related_name='facilityorder_created_set')
-    approver = models.ForeignKey (ERPUser, related_name='facilityorder_approved_set')
+    approver = models.ForeignKey (ERPUser, related_name='facilityorder_approved_set', blank=True, null=True)
 
 class ItemEntry(models.Model):
     order = models.ForeignKey (FacilityOrder)
     facilityitem = models.ForeignKey (FacilityItem)
     quantity = models.IntegerField(default=0)
+    description = models.TextField('Description', blank=True, null=True)
