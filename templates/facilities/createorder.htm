@@ -1,0 +1,32 @@
+
+
+<title>Create Order</title>
+
+{% block content %}
+<h1>Create an Order</h1>
+<h2>Select the facility items you want, their description and their quantity.</h2>
+<form method="post" action="">
+    {% csrf_token %}
+    {{ formset.management_form }}
+
+    <table>
+        <tr><td><b>Select Item</b></td><td><b>Enter Quantity</b></td><td></td></tr>
+    {% for form in formset %}
+        {{ form.id }}
+        
+            <tr>
+                <td>{{ form.facilityitem }}</td>
+                <td>{{ form.quantity }}</td>
+                <td>{{ form.description }}</td>
+                <td>{% if showerrors %}{{ form.non_field_errors }} {{ form.facilityitem.errors }} {{ form.quantity.errors }}{% endif %} </td>
+            </tr>
+        
+    {% endfor %}</table>
+     <input title='Submit this form' type='submit' name='submit' value='Submit' />
+     <input title='Add entry' type='submit' name='add' value='Add' />
+     <input title='Remove entry' type='submit' name='remove' value='Remove' />
+
+
+</form>
+
+{% endblock content %}
