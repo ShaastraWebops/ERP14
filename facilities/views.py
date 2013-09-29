@@ -153,7 +153,7 @@ def ApproveOrder(request, primkey):
         return redirect('facilities.views.FacilitiesHome')
         
         
-#______________________---CLEAR AN ORDER---_____________________
+#______________________---Redirector---_____________________
 @login_required
 def FacilitiesRedirect(request):
     return redirect('facilities.views.FacilitiesHome')
