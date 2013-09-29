@@ -4,7 +4,7 @@ from users.models import ERPUser
 
 # Create your models here.
 
-#_________---FACILITY ITEM (An available food item on the menu)---________
+#_________---FACILITY ITEM (An available facility item on the menu)---________
 class FacilityItem(models.Model):
     name = models.CharField(max_length=300)
     def __unicode__(self):
@@ -18,9 +18,12 @@ class FacilityOrder(models.Model):
     items = models.ManyToManyField (FacilityItem, through='ItemEntry')
     creator = models.ForeignKey (ERPUser, related_name='facilityorder_created_set')
     approver = models.ForeignKey (ERPUser, related_name='facilityorder_approved_set', blank=True, null=True)
+    def __unicode__(self):
+        return self.creator
 
 class ItemEntry(models.Model):
     order = models.ForeignKey (FacilityOrder)
     facilityitem = models.ForeignKey (FacilityItem)
     quantity = models.IntegerField(default=0)
     description = models.TextField('Description', blank=True, null=True)
+    
