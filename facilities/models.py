@@ -18,12 +18,13 @@ class FacilityOrder(models.Model):
     items = models.ManyToManyField (FacilityItem, through='ItemEntry')
     creator = models.ForeignKey (ERPUser, related_name='facilityorder_created_set')
     approver = models.ForeignKey (ERPUser, related_name='facilityorder_approved_set', blank=True, null=True)
-    def __unicode__(self):
-        return self.creator
+    
+
 
 class ItemEntry(models.Model):
     order = models.ForeignKey (FacilityOrder)
     facilityitem = models.ForeignKey (FacilityItem)
     quantity = models.IntegerField(default=0)
     description = models.TextField('Description', blank=True, null=True)
+    feedback = models.TextField('Description', blank=True, null=True)
     
