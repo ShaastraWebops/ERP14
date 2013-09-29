@@ -11,9 +11,9 @@
     {% if facilityitems %}<ul>{% for item in facilityitems %}<li>{{ item.name }}</li>{% endfor %}</ul>{% else %}Catalog Empty{% endif %}
     
 {% if isapprover %}<p><a href="{% url facilities.views.AddMenuItem %}">Add Facility Item to Catalog</a></p>
-{% endif %}
+{% else %}
 <p><h2><a href="{% url facilities.views.CreateOrder %}">Place an Order</a></h2></p>
-
+{% endif %}
 
 
 
@@ -23,13 +23,25 @@
         {% for order in pending %}
             <table border="1">
                 <thead>
-                    <td colspan="3"><b>{{ order.creator.user }} - {{ order.datecreated }} {% if isapprover %}<a href="{% url facilities.views.ApproveOrder primkey=order.pk %}">Approve Order</a>{% endif %}</b></td>
+                    <td colspan="{% if isapprover %}5{% else %}6{% endif %}">
+                        <b>{{ order.creator.user }} - {{ order.datecreated }} {% if isapprover %}<a href="{% url facilities.views.ApproveOrder primkey=order.pk %}">Approve Order</a>{% endif %}</b>
+                    </td>
                 </thead>
+                
+                {% if not isapprover %}
+                <tr> 
+                    <td colspan="6"><a href="{% url facilities.views.DeleteOrder primkey=order.pk %}">Delete Order</a></td>
+                </tr>
+                {% endif %}
+                
                 {% for entry in order.itementry_set.all %}
                     <tr>
                         <td>{{entry.facilityitem.name}}</td>
                         <td>{{entry.quantity}}</td>
                         <td>{{entry.description}}</td>
+                        <td>{{entry.feedback}}</td>
+                        <td><a href="{% url facilities.views.EditEntry primkey=entry.pk %}">{% if isapprover %}Give Feedback{% else %}Edit Entry{% endif %}</a></td>
+                        {% if not isapprover %}<td><a href="{% url facilities.views.DeleteEntry primkey=entry.pk %}">Delete Entry</a></td>{% endif %}
                     </tr>
                 {% endfor %}
             </table><br />
@@ -48,12 +60,13 @@
             <p>
             <table border="1">
                 <thead><td colspan="3"><b>{{ order.creator.user }} - {{ order.datecreated }}</b></td></thead>
-                <tr><td colspan="3"><b>Approved by {{ order.approver.user }} on {{ order.dateapproved }}</b></td></tr>
+                <tr><td colspan="4"><b>Approved by {{ order.approver.user }} on {{ order.dateapproved }}</b></td></tr>
                 {% for entry in order.itementry_set.all %}
                 <tr>
                     <td>{{entry.facilityitem.name}}</td>
                     <td>{{entry.quantity}}</td>
                     <td>{{entry.description}}</td>
+                    <td>{{entry.feedback}}</td>
                 </tr>
                 {% endfor %}
             </table>
