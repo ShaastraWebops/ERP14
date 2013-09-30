@@ -18,6 +18,12 @@ def get_json_file_path(filename):
         os.makedirs(file_path)
     return os.path.join(file_path, filename)
     
+def get_category_json_file_path(filename):
+    file_path = os.path.abspath( os.path.join( MEDIA_ROOT, 'json') )
+    if not os.path.exists(file_path):
+        os.makedirs(file_path)
+    return os.path.join(file_path, filename)
+    
 # __________--- Exception in case of concurrent editing of the JSON file ---___________#
 class EditError(Exception):
     '''
@@ -36,6 +42,7 @@ def save_event(self, EventDetailsForm):
         event_json - dict that holds data from the form
         json_data - data (python dict) loaded from the JSON file
         file_path_full - path pointing to the JSON file
+        event_title_new - new (changed) title of the event
         
         This fucntion does the following (in the given order):
         -> saves the ModelForm to the db.
@@ -45,11 +52,14 @@ def save_event(self, EventDetailsForm):
            In case there are more than one files found starting with the same pk, then there is some error, it removes all such files.
         -> If a file is found in the above step, then only the fields starting with 'event_' are changed (to avoid altering tab data).
            If no file exists, then a new file is created, which contains the event data.
+        -> if the title of the event changes, then change the title of the event in event_category.json file (this file holds details about 
+           all events belonging to each category)
         -> before editing the file, the function checks if the event_pk is present in events_being_edited. If yes, EditError is raised.
     '''
     clean_form = self.clean()
     event_json = {}
     json_data = {}
+    event_title_new = None
     
     # saving the event to db
     event_inst = super(EventDetailsForm, self).save()
@@ -60,6 +70,9 @@ def save_event(self, EventDetailsForm):
         event_json['event_'+iden] = clean_form[iden] # add to json
     # absolute path to the file in which the content has to be saved
     file_path_full = get_json_file_path(str(event_pk)+'_'+clean_form['title']+'.json')
+    
+    # absolute path to json file which holds categories
+    category_json_file_path = get_category_json_file_path('event_category.json')
     
     # rename the old file (that starts with this event_pk) to the new filename incase the event name has changed
     file_path_pk = get_json_file_path(str(event_pk)+'_*')
@@ -75,6 +88,8 @@ def save_event(self, EventDetailsForm):
     if os.path.exists(file_path_full):
         with open(file_path_full) as f:
             json_data = json.load(f)
+            if json_data['event_title'] != event_json['event_title']:
+                event_title_new = event_json['event_title']
             for key in event_json.keys():
                 json_data[key] = event_json[key]
             f.close()
@@ -89,7 +104,22 @@ def save_event(self, EventDetailsForm):
     with open(file_path_full, 'w') as f:
         json.dump(json_data, f)
         f.close()
-        events_being_edited.remove(event_pk)
+    
+    if event_title_new and os.path.exists(category_json_file_path):
+        with open(category_json_file_path) as f:
+            category_json_data = json.load(f)
+            # get the event_details from event_category.json file for the given event_pk
+            event_details =  [ d for d in category_json_data[event_inst.category] if d['pk'] == event_pk ][0]
+            event_details_index =  category_json_data[event_inst.category].index(event_details)
+            event_details['title'] = event_title_new
+            category_json_data[event_details_index] = event_details
+            f.close()
+        with open(category_json_file_path, 'w') as f:
+            json.dump(category_json_data, f)
+            f.close()
+
+    events_being_edited.remove(event_pk)
+    
     return True
 
 class GenericEventDetailsForm(ModelForm):
