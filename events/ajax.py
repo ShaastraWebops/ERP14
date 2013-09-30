@@ -7,6 +7,7 @@ from misc.dajaxice.utils import deserialize_form
 # For rendering templates
 from django.template import RequestContext
 from django.template.loader import render_to_string
+from django.template import loader
 # Decorators
 from django.contrib.auth.decorators import login_required
 # For converting model to a dictionary that can be input into a ModelForm
@@ -477,7 +478,10 @@ def show_event_list(request,choose_form = None):
             return dajax.json()
 
         else:
-           pass#Put Error Message 
+            show_alert(dajax,"error","No content has been uploaded for this event")
+
+
+
     else:
         form = ChooseEventForm()
         html_content = render_to_string('events/choose_event.html', locals(),RequestContext(request)) 
