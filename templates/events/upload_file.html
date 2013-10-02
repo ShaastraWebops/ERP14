@@ -14,15 +14,14 @@
         <table border="1">
             <tr>
                 <td>Name</td>
-                <td>Path to File</td>
+                <td>Path to file</td>
             </tr>
             {% for file in files_for_event %}
-                <tr>
-                    <!--<td><a href="{{file.upload_file.url}}">{{file.title }}</a></td>-->
-                    <td>{{ file.upload_file.name }}</td>
-                </tr>
+            <tr>
+                <td>{{file.title }}</td>
+                <td>{{file.upload_file.name}}</td>
             {% endfor %}
-        
+        </table>
         {% endif %}
         <form action="" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
