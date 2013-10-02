@@ -11,11 +11,18 @@
         <center>
     <body>
         {% if files_for_event %}
-        <ul>
+        <table border="1">
+            <tr>
+                <td>Name</td>
+                <td>Path to File</td>
+            </tr>
             {% for file in files_for_event %}
-            <li><a href="{{file.upload_file.url}}">{{file.title }}</a></li>
+                <tr>
+                    <!--<td><a href="{{file.upload_file.url}}">{{file.title }}</a></td>-->
+                    <td>{{ file.upload_file.name }}</td>
+                </tr>
             {% endfor %}
-        </ul>
+        
         {% endif %}
         <form action="" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
