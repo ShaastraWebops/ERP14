@@ -31,7 +31,7 @@ DATABASES = {
 # **************************************************************
 
 TEMPLATE_DIRS = (
-    '/home/viswa/Webops/ERP14/erp/templates/",'
+    '/home/viswa/Webops/ERP14/erp/templates/',
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
@@ -62,6 +62,7 @@ if DEBUG:
     EMAIL_HOST_USER = ''
     EMAIL_HOST_PASSWORD = ''
     EMAIL_USE_TLS = False
-    DEFAULT_FROM_EMAIL = 'root@root.com'!/usr/bin/python
+    DEFAULT_FROM_EMAIL = 'root@root.com'
+# !/usr/bin/python
 # -*- coding: utf-8 -*-
 
