@@ -19,7 +19,7 @@ function display_editor(textarea_id){
     path_to_editor_icons = $('#nicEditor_icons_path').val();
     $("#"+textarea_id).css({'width':'90%'});
 	new nicEditor({iconsPath : '/static/img/nicEditorIcons.gif', maxHeight: 300, buttonList:
-	                ['bold','italic','underline', 'indent', 'outdent']}).panelInstance(textarea_id);
+	                ['bold','italic','underline', 'indent', 'outdent', 'link', 'unlink']}).panelInstance(textarea_id);
 	$(".nicEdit-panel").parent().parent().css({'width':'89.6%'});
 	$('.nicEdit-main').bind('DOMSubtreeModified', function(){
 	    editor_content = $(this).html();
