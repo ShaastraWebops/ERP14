@@ -256,3 +256,6 @@ class UploadFile(models.Model):
     title = models.CharField(max_length=100)
     upload_file = models.FileField(upload_to=upload_handler('files'))
     event = models.ForeignKey(GenericEvent,related_name='event-file')
+
+    def filename(self):
+        return os.path.basename(self.upload_file.name)
