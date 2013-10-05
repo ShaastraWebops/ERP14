@@ -488,3 +488,56 @@ def show_event_list(request,choose_form = None):
         html_content = render_to_string('events/choose_event.html', locals(),RequestContext(request)) 
         dajax.assign('#id_content_right','innerHTML', html_content)
         return dajax.json()
+
+@dajaxice_register
+def add_update(request,event_pk=None,update_form=None,update_pk=None):
+    dajax = Dajax()
+    if request.method == 'POST' and update_form != None:
+        form = UpdateForm(deserialize_form(update_form))
+        generic_event_instance = GenericEvent.objects.get(pk=event_pk)
+        all_updates = Update.objects.filter(event=generic_event_instance)
+        update_count = 0
+        major_count = 0
+        if update_pk:
+            pass
+        else:
+            for u in all_updates:
+                if (update_count>=3) and (u.category=='Updates'):
+                    show_alert(dajax,'error',"This event already has 4 Updates.\
+                                Please mark one update as Expired before adding a new update")
+                    return dajax.json()
+                elif (major_count>=1) and (u.category=='Major Update'):
+                    show_alert(dajax,'error',"This event already has one Major Update.\
+                                Please mark the Major Update as Expired before adding another one")
+                    return dajax.json()
+                elif u.category=='Updates':
+                    if u.expired is False:
+                        update_count = update_count + 1
+                elif u.category=='Major Update': 
+                    if u.expired is False:
+                        major_count = major_count + 1
+        if form.is_valid():
+            try:
+                form.save(event_inst = generic_event_instance,update_pk=update_pk)
+            except EditError as error:
+                show_alert(dajax,"error",error.value)
+                return dajax.json()
+        else:
+            show_alert(dajax,"error","Some information seems to be missing, please fill the form again")
+            return dajax.json()
+        all_updates = Update.objects.filter(event=generic_event_instance)
+        html_content = render_to_string('events/add_update.html',locals(),RequestContext(request))
+        dajax.assign("#id_content_right","innerHTML",html_content)
+        return dajax.json()
+    else:
+        if update_pk:
+            update_instance = Update.objects.get(pk=update_pk)
+            form = UpdateForm(instance = update_instance)
+        else:
+            form = UpdateForm()
+        generic_event_instance = GenericEvent.objects.get(pk=event_pk)
+        all_updates = Update.objects.filter(event=generic_event_instance)
+        html_content = render_to_string('events/add_update.html',locals(),RequestContext(request))
+        dajax.assign('#id_content_right','innerHTML',html_content)
+        return dajax.json()
+

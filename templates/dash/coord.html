@@ -79,7 +79,11 @@
                 </li>
                 {% endif %}
                 <li id="uploadfile" class="">
-                <a href="/events/upload/"><i class="icon-chevrom-right"></i>Upload Files<a>
+                <a href="/events/upload/"><i class="icon-chevrom-right"></i>Upload File</a>
+                </li>
+                <li id="add_update" class="">
+                <a href="#" onclick="javascript:do_dajax(Dajaxice.events.add_update, show_page, {'event_pk' : '{{userprofile.event.pk}}' }, 'id_content_right')"><i class="icon-chevron-right"></i>Add Update</a>
+                </li>
 
 
          {% endif %}
