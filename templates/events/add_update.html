@@ -1,0 +1,22 @@
+{% load staticfiles %}
+<div id="update">
+    {% if all_updates %}
+    <caption style="color:#758FB2;"><h3>List of Updates</h3></caption>
+    {% for u in all_updates %}
+    <ul class="thumbnails">
+    {% if not u.expired %}
+    <a class="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.events.add_update(Dajax.process, {'event_pk':{{event_pk}},'update_pk': {{u.pk}}}));">{{u.subject}}</a>
+    {% endif %}
+    </ul>
+    {% endfor %}
+    {% endif %}
+<form method="POST" action="" id="id_form">
+    {% csrf_token %}
+    <table class ="table table-bordered table-hover">
+        <caption style="color:#758FB2;"><h3>Add Update</h3>
+        </caption>
+        {{form.as_table}}
+    </table>
+    <a class ="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.events.add_update(Dajax.process, {'event_pk': {{event_pk}},'update_form':$('#id_form').serialize(true),{% if update_pk %}'update_pk':{{update_pk}}{% endif %}}));">Submit</a>
+</form>
+</div>
