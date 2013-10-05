@@ -19,7 +19,7 @@
             {% for file in files_for_event %}
             <tr>
                 <td>{{file.title }}</td>
-                <td>{{file.upload_file.name}}</td>
+                <td>http://erp.shaastra.org/media/events/files/{{file.filename}}</td>
             {% endfor %}
         </table>
         {% endif %}
