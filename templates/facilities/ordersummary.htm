@@ -1,81 +1,166 @@
+{% extends "base.html" %}
 
+{% load staticfiles %}
 
-<title>{% if isapprover %}Approval{% else %}Coordinator{% endif %} Page</title>
+{% block extrastyle %}
+    <link href="{% static 'dash/coord/coord.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/sidenav.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/table_style.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/datatables/TableTools.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/datatables/TableTools_JUI.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/jui_themes/smoothness/jquery-ui-1.10.3.custom.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/content.css' %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block extrascripts %}
+    <script src="{% static 'js/jquery-ui-1.10.3.custom.js' %}"></script>
+    <script src="{% static 'dash/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'dash/datatables/TableTools.js' %}"></script>
+    <script src="{% static 'dash/datatables/ZeroClipboard.js' %}"></script>
+    <script src="{% static 'dash/content.js' %}"></script>
+    <script src="{% static 'dash/coord/coord.js' %}"></script>
+    <!-- <script src="{% static 'dash/dataTables.bootstrap.js' %}"></script> 
+        JQuery UI looks better than bootstrap version-->
+{% endblock %}
 
 {% block content %}
 
-<p><h1>{% if isapprover %}Approval{% else %}Coordinator{% endif %} Portal</h1></p>
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url facilities.views.FacilitiesHome %}"><i class="icon-chevron-right"></i>Facilities</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
 
-<p><h2>Facility Catalog:</h2></p>
+    <div class="span9" id="id_content_right">
+        <h2>{% if isapprover %}Approval{% else %}Coordinator{% endif %} Portal</h2>
 
-    {% if facilityitems %}<ul>{% for item in facilityitems %}<li>{{ item.name }}</li>{% endfor %}</ul>{% else %}Catalog Empty{% endif %}
-    
-{% if isapprover %}<p><a href="{% url facilities.views.AddMenuItem %}">Add Facility Item to Catalog</a></p>
-{% else %}
-<p><h2><a href="{% url facilities.views.CreateOrder %}">Place an Order</a></h2></p>
-{% endif %}
-
-
-
-<p><h2>{% if isapprover %}All{% else %}Your{% endif %} Pending Orders:</h2></p>
-<p>
-    {% if pending %}
-        {% for order in pending %}
-            <table border="1">
-                <thead>
-                    <td colspan="{% if isapprover %}5{% else %}6{% endif %}">
-                        <b>{{ order.creator.user }} - {{ order.datecreated }} {% if isapprover %}<a href="{% url facilities.views.ApproveOrder primkey=order.pk %}">Approve Order</a>{% endif %}</b>
-                    </td>
-                </thead>
-                
-                {% if not isapprover %}
-                <tr> 
-                    <td colspan="6"><a href="{% url facilities.views.DeleteOrder primkey=order.pk %}">Delete Order</a></td>
-                </tr>
+        <div class="well" style="width:87%; padding:5%">
+            <div class="well" style="background:#fff;">
+            <h3>Facility Catalog:</h3>
+            <table style="font-size:20px; width:auto;" class="table table-bordered table-hover">
+                {% if facilityitems %}
+                        {% for item in facilityitems %}
+                            {% if forloop.counter0|divisibleby:"3" %}
+                                {% if forloop.first %}<tr>{% else %}</tr> <tr>{% endif %}
+                            {% endif %}
+                                    <td><center> {{ item.name }} </center></td>
+                            {% if forloop.last %}
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                {% else %}
+                    <p class="text-warning">Catalog Empty</p>
                 {% endif %}
                 
-                {% for entry in order.itementry_set.all %}
-                    <tr>
-                        <td>{{entry.facilityitem.name}}</td>
-                        <td>{{entry.quantity}}</td>
-                        <td>{{entry.description}}</td>
-                        <td>{{entry.feedback}}</td>
-                        <td><a href="{% url facilities.views.EditEntry primkey=entry.pk %}">{% if isapprover %}Give Feedback{% else %}Edit Entry{% endif %}</a></td>
-                        {% if not isapprover %}<td><a href="{% url facilities.views.DeleteEntry primkey=entry.pk %}">Delete Entry</a></td>{% endif %}
-                    </tr>
-                {% endfor %}
-            </table><br />
-        {% endfor %}
-    {% else %}
-        No Pending Orders.
-    {% endif %}
-</p>
-
-
-
-<p><h2>{% if isapprover %}All{% else %}Your{% endif %} Approved Orders:</h2></p>
-<p>
-    {% if approved %}
-        {% for order in approved %}
-            <p>
-            <table border="1">
-                <thead><td colspan="3"><b>{{ order.creator.user }} - {{ order.datecreated }}</b></td></thead>
-                <tr><td colspan="4"><b>Approved by {{ order.approver.user }} on {{ order.dateapproved }}</b></td></tr>
-                {% for entry in order.itementry_set.all %}
-                <tr>
-                    <td>{{entry.facilityitem.name}}</td>
-                    <td>{{entry.quantity}}</td>
-                    <td>{{entry.description}}</td>
-                    <td>{{entry.feedback}}</td>
-                </tr>
-                {% endfor %}
+            {% if isapprover %}
+                <tr><td colspan="3"><h4><center> <a href="{% url facilities.views.AddMenuItem %}">Add Facility Item to Catalog</a> </center></h4></td></tr>
+            {% else %}
+                <tr><th colspan="3"><h4><center> <a href="{% url facilities.views.CreateOrder %}">Place an Order</a> </center></h4></th></tr>
+            {% endif %}
             </table>
-            </p>
-        {% endfor %}
-    {% else %}
-        No Approved Orders.
-    {% endif %}
-</p>
+            </div>
+        </div>
+
+
+        <div class="well" style="width:87%; padding:5%">
+            <div class="well" style="background:#fff;">
+            <h3>{% if isapprover %}All{% else %}Your{% endif %} Pending Orders:</h3>
+
+            {% if pending %}
+                <table class="table table-bordered table-hover" style="width:95%">
+                {% for order in pending %}
+                        <thead>
+                            <td colspan="{% if isapprover %}5{% else %}6{% endif %}">
+                                <center>
+                                    <p class="pull-left"><b> {{forloop.counter}}. </b></p>
+                                    <b>{{ order.creator.user }} - {{ order.datecreated }}</b>
+                                </center>
+                            </td>
+                        </thead>
+                        
+                        <tbody>
+                        <tr> 
+                            <td colspan="6">
+                                <center>
+                                    {% if isapprover %}
+                                        <a href="{% url facilities.views.ApproveOrder primkey=order.pk %}">Approve Order</a>
+                                    {% endif %}
+                                    {% if not isapprover %}
+                                        <a href="{% url facilities.views.DeleteOrder primkey=order.pk %}">Delete Order</a>
+                                    {% endif %}
+                                </center>
+                            </td> 
+                        </tr>
+                        
+                        {% for entry in order.itementry_set.all %}
+                            <tr>
+                                <td>{{entry.facilityitem.name}}</td>
+                                <td>{{entry.quantity}}</td>
+                                <td>{{entry.description}}</td>
+                                <td>{{entry.feedback}}</td>
+                                <td><a href="{% url facilities.views.EditEntry primkey=entry.pk %}">{% if isapprover %}Give Feedback{% else %}Edit Entry{% endif %}</a></td>
+                                {% if not isapprover %}<td><a href="{% url facilities.views.DeleteEntry primkey=entry.pk %}">Delete Entry</a></td>{% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                {% endfor %}
+                </table><br />
+            {% else %}
+                <p class="text-warning">No Pending Orders</p>
+            {% endif %}
+            </div>
+        </div>
+
+
+        <div class="well" style="width:87%; padding:5%">
+            <div class="well" style="background:#fff;">
+            <h3>{% if isapprover %}All{% else %}Your{% endif %} Approved Orders:</h3>
+
+            {% if approved %}
+                <table class="table table-bordered table-hover" style="width:95%">
+                {% for order in approved %}
+                        <thead>
+                            <td colspan="4">
+                                <center>
+                                    <p class="pull-left"><b> {{forloop.counter}}. </b></p>
+                                    <b>{{ order.creator.user }} - {{ order.datecreated }}</b>
+                                </center>
+                            </td>
+                        </thead>
+                        <tr>
+                            <td colspan="4">
+                                <center>
+                                    <b>Approved by {{ order.approver.user }} on {{ order.dateapproved }}</b>
+                                </center>
+                            </td>
+                        </tr>
+                        {% for entry in order.itementry_set.all %}
+                        <tr>
+                            <td>{{entry.facilityitem.name}}</td>
+                            <td>{{entry.quantity}}</td>
+                            <td>{{entry.description}}</td>
+                            <td>{{entry.feedback}}</td>
+                        </tr>
+                        {% endfor %}
+                {% endfor %}
+                </table>
+            {% else %}
+                <p class="text-warning">No Approved Orders</p>
+            {% endif %}
+            </div>
+        </div>
+
+    </div>
+    </center>
+</div>
 
 
 

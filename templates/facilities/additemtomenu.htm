@@ -1,16 +1,70 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block extrastyle %}
+    <link href="{% static 'dash/coord/coord.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/sidenav.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/table_style.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/datatables/TableTools.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/datatables/TableTools_JUI.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/jui_themes/smoothness/jquery-ui-1.10.3.custom.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/content.css' %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block extrascripts %}
+    <script src="{% static 'js/jquery-ui-1.10.3.custom.js' %}"></script>
+    <script src="{% static 'dash/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'dash/datatables/TableTools.js' %}"></script>
+    <script src="{% static 'dash/datatables/ZeroClipboard.js' %}"></script>
+    <script src="{% static 'dash/content.js' %}"></script>
+    <script src="{% static 'dash/coord/coord.js' %}"></script>
+    <!-- <script src="{% static 'dash/dataTables.bootstrap.js' %}"></script> 
+        JQuery UI looks better than bootstrap version-->
+{% endblock %}
+	
 {% block content %}
-<p><h1>Add Facility Items to the Catalog:</h1></p>
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url facilities.views.AddMenuItem %}"><i class="icon-chevron-right"></i>Add Items</a>
+          </li>
+          <li>
+              <a href="{% url facilities.views.FacilitiesHome %}"><i class="icon-chevron-right"></i>Facilities</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
 
-<form action="" method="post">
-{% csrf_token %}
+    <div class="span9" id="id_content_right">
+		<h2>Add Facility Items to the Catalog:</h2>
+		<br>
+		<form action="" method="post" style="position:absolute; right:30%;">
+		{% csrf_token %}
 
+		{% if form.errors %}
+			<div class="alert alert-error" style="height:15%; width:130%; padding:2%; position:relative; right:30%;">
+				<button type='button' class='close' onclick='javascript:this.parentNode.className="alert hide";this.innerHTML="";' style="position:relative; right:2%;">&times;</button>
+				<strong>ERROR!</strong><br>
+				Error in form: Please fill all fields.
+			</div>
+			<br>
+		{% endif %}
+		<table style="width:100%;">
+			{{ form.as_table }}
+		</table>
+		<center><input type="submit" class="btn btn-info" /></center>
+		</form>
+	</div>
 
-{% if form.errors %}<p>Error in form</p>{% endif %}
-<table>
-{{ form.as_table }}</table>
-<p><input type="submit"  /></p>
-</form>
-
-
-
+	</center>
+	<script type="text/javascript">
+		$(".errorlist").hide()
+	</script>
+</div>
 {% endblock %} 
