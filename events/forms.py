@@ -31,6 +31,10 @@ class EditError(Exception):
     '''
     def __init__(self, value):
         self.value = value
+
+def datetime_handler(obj):
+    return obj.strftime('%Y-%m-%d') if hasattr(obj,'isoformat') else obj
+
         
 def save_event(self, EventDetailsForm):
     '''
@@ -102,7 +106,7 @@ def save_event(self, EventDetailsForm):
     
     events_being_edited.append(event_pk)
     with open(file_path_full, 'w') as f:
-        json.dump(json_data, f)
+        json.dump(json_data, f,default=datetime_handler)
         f.close()
     
     if event_title_new and os.path.exists(category_json_file_path):
@@ -144,13 +148,18 @@ class AudienceEventDetailsForm(ModelForm):
         save_event(self, AudienceEventDetailsForm)
         
 class ParticipantEventDetailsForm(ModelForm):
-    
     class Meta:
         model = ParticipantEvent
-        exclude = ('event_type', 'events_logo', 'spons_logo', 'tags','registration_starts','registration_ends')
+        exclude = ('event_type', 'events_logo', 'spons_logo', 'tags',)
+   
+    def __init__(self,*args,**kwargs):
+        super(ParticipantEventDetailsForm, self).__init__(*args,**kwargs)
+        self.fields['registration_starts'].help_text = 'Start Registration: YYYY-MM-DD'
+        self.fields['registration_ends'].help_text = 'End Registration : YYYY-MM-DD'
         
     def save(self, commit=True):
         save_event(self, ParticipantEventDetailsForm)
+
         
   
 class TabDetailsForm(ModelForm):
@@ -203,26 +212,44 @@ class UpdateForm(ModelForm):
     class Meta:
 
         model = Update
-        exclude = ('date',)
+        exclude = ('date','event')
         #widgets = {'event':forms.HiddenInput()}
 
-    def save(self):
+    def save(self, event_inst,update_pk=None):
         clean_form = self.clean()
-        date = datetime.datetime.now().strftime(' %d_%B_%I_%M%p')
+        json_data = {}
+        if update_pk:
+            update_inst = super(UpdateForm, self).save()
+            update_inst.pk = update_pk
+            update_inst.event = event_inst
+            update_inst.save()
+        else:
+            update_inst = super(UpdateForm, self).save()
+            update_inst.event = event_inst
+            update_inst.save()
+        event_pk = event_inst.pk
+        update_pk = update_inst.pk
+        
+        #date = datetime.datetime.now().strftime(' %d_%B_%I_%M%p')
+        file_path = get_json_file_path(str(event_pk) + '_' +event_inst.title + '.json')
+        if not os.path.exists(file_path):
+            raise EditError('Update cannot be created without creating Event')
+        with open(file_path) as f:
+            json_data = json.load(f)
+            for iden in self.fields.keys():
+            #print iden, clean_form[iden]
+                json_data['update'+str(update_pk)+'_'+iden] = clean_form[iden]
 
-        update_json = {}
-        for iden in self.fields.keys():
-            print iden, clean_form[iden]
-            if iden == 'event':
-                update_json[iden] = clean_form[iden].title
-            else:
-                update_json[iden] = clean_form[iden]
-        file_path = get_json_file_path(clean_form['event'].title +date+'.json')
-        print update_json
-        with open(file_path, 'w') as f:
-            json.dump(update_json, f)
+        if event_pk in events_being_edited:
+            raise EditError('Event is being edited by some other user. Please try again later')
+        events_being_edited.append(event_pk)
+        with open(file_path,'w') as f:
+            json.dump(json_data, f)
             f.close()
+            events_being_edited.remove(event_pk)
         return True
+                
+        
 
 class UploadTabFiles(ModelForm):
 
