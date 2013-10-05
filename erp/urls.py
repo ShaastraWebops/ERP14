@@ -33,6 +33,7 @@ urlpatterns = patterns('',
     url(r'^dash/$', 'dash.views.dash_view'),
     url(r'^finance/', include('finance.urls')),
     url(r'^users/', include('users.urls')),
+    url(r'^facilities/', include('facilities.urls')),
     
     #Password Reset Handling
     url(r'^forgotpassword/reset/$', 'django.contrib.auth.views.password_reset',  {'post_reset_redirect' : '/forgotpassword/reset/done/', 'template_name': 'users/password_reset_form.html', 'email_template_name': 'user/password_email_template.html'}, name="password_reset"),

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block extrastyle %}
+    <link href="{% static 'dash/coord/coord.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/sidenav.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/table_style.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/datatables/TableTools.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/datatables/TableTools_JUI.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/jui_themes/smoothness/jquery-ui-1.10.3.custom.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/content.css' %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block extrascripts %}
+    <script src="{% static 'js/jquery-ui-1.10.3.custom.js' %}"></script>
+    <script src="{% static 'dash/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'dash/datatables/TableTools.js' %}"></script>
+    <script src="{% static 'dash/datatables/ZeroClipboard.js' %}"></script>
+    <script src="{% static 'dash/content.js' %}"></script>
+    <script src="{% static 'dash/coord/coord.js' %}"></script>
+    <!-- <script src="{% static 'dash/dataTables.bootstrap.js' %}"></script> 
+        JQuery UI looks better than bootstrap version-->
+{% endblock %}
+
+{% block content %}
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url facilities.views.CreateOrder %}"><i class="icon-chevron-right"></i>Create Order</a>
+          </li>
+          <li>
+              <a href="{% url facilities.views.FacilitiesHome %}"><i class="icon-chevron-right"></i>Facilities</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+
+    <div class="span9" id="id_content_right">
+        <h1>Create an Order</h1>
+        <h3>Select the facility items you want, their description and their quantity.</h3>
+        <form method="post" action="">
+            {% csrf_token %}
+            {{ formset.management_form }}
+
+            <table class="table table-bordered table-hover table-striped" id="table_createOrder" style="width:90%">
+                <thead>
+                <tr>
+                    <th>Select Item</th>
+                    <th>Enter Quantity</th>
+                    <th>Description</th>
+                    <th>Errors</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for form in formset %}
+                    {{ form.id }}
+                    
+                        <tr>
+                            <td>{{ form.facilityitem }}</td>
+                            <td>{{ form.quantity }}</td>
+                            <td>{{ form.description }}</td>
+                            <td>{% if showerrors %}{{ form.non_field_errors }} {{ form.facilityitem.errors }} {{ form.quantity.errors }}{% endif %} </td>
+                        </tr>
+                    
+                {% endfor %}
+            </tbody>
+            </table>
+             <br>
+             <input title='Submit this form' type='submit' name='submit' value='Submit' class="btn btn-info" />
+             <input title='Add entry' type='submit' name='add' value='Add' class="btn btn-info" />
+             <input title='Remove entry' type='submit' name='remove' value='Remove' class="btn btn-info" />
+        </form>
+    </div>
+
+    </center>
+</div>
+{% endblock content %}

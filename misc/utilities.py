@@ -10,6 +10,15 @@ def core_check (user):
 def core_or_supercoord_check (user):
     return user.get_profile().status == 2 or user.get_profile().status == 1
 
+def events_check (user):
+    return user.get_profile().dept.name == "Events"
+    
+def facilities_check (user):
+    return user.get_profile().dept.name == "Facilities"
+    
+def facilities_or_events_check (user):
+    return user.get_profile().dept.name == "Facilities" or user.get_profile().dept.name == "Events"
+
 #This returns the position of the ERPUser as a string.
 def get_position (userprofile):
     if userprofile.status == 2:
