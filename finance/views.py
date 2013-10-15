@@ -31,12 +31,12 @@ def create_budget(request):
             
             return redirect('finance.views.home')
         else:
-            return render_to_response ('finance/createbudget.htm', {'form': form }, context_instance=RequestContext(request))
+            return render_to_response ('finance/createbudget.html', {'form': form }, context_instance=RequestContext(request))
     else:
         #Display Blank Form
         form = BudgetForm()
         context = {'form': form}
-        return render_to_response('finance/createbudget.htm', context, context_instance=RequestContext(request))
+        return render_to_response('finance/createbudget.html', context, context_instance=RequestContext(request))
         
 
 @login_required
@@ -46,7 +46,7 @@ def approve_budget(request, primkey, option):
         
         #Validate
         if (approvedbudget.isapproved == True) or (int(option) > 2) or (int(option) < 1):
-            return HttpResponse("ERROR")
+            return redirect('finance.views.home')
         
         approvedbudget.isapproved = True
         approvedbudget.dateapproved = datetime.datetime.now()
@@ -54,9 +54,40 @@ def approve_budget(request, primkey, option):
         approvedbudget.selectedplan = option
         approvedbudget.save()
         
-        return HttpResponse("Peace.")
+        return redirect('finance.views.home')
     except ObjectDoesNotExist:
-        return HttpResponse("No object.")
+        return redirect('finance.views.home')
+        
+        
+@login_required
+def finance_budget_portal(request):
+    #Passing a context of information to the template
+    context = {}
+    
+    #Userprofile
+    context["userprofile"] = request.user.get_profile()
+    
+    #Unapproved Budgets
+    context["unapproved"] = BudgetProposal.objects.filter(isapproved=False)
+    
+    #Approved Budgets
+    context["approved"] = BudgetProposal.objects.filter(isapproved=True)
+    
+    return render_to_response('finance/financebudgetportal.html', context, context_instance=RequestContext(request))
+    
+
+
+@login_required
+def budget_page(request, primkey):
+    try:
+        approvedbudget = BudgetProposal.objects.get(pk=primkey)
+        
+        context = {}
+        context["budget"] = approvedbudget
+        
+        return render_to_response('finance/budgetpage.html', context, context_instance=RequestContext(request))
+    except ObjectDoesNotExist:
+        return redirect('finance.views.home')
 
 
 
