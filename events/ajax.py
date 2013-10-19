@@ -540,4 +540,21 @@ def add_update(request,event_pk=None,update_form=None,update_pk=None):
         html_content = render_to_string('events/add_update.html',locals(),RequestContext(request))
         dajax.assign('#id_content_right','innerHTML',html_content)
         return dajax.json()
+def view_tdp(request,event_pk=None):
+    dajax = Dajax()
+    #get tdp objects from mainsite code
+    #import get_tdp_event on top and this takes in event as argument
+    #display in a table name and path to file
+    event = ParticipantEvent.objects.get(pk=event_pk)
+    tdplist = []
+    for tdp in TDP.objects.using(mainsite_db).filter(teamevent.event_id = event_pk):
+        print tdp.file_tdp.name
+        tdplist.append((tdp,tdp.teamevent.team_id))
+    print tdplist
+    for tdp in tdplist:
+        print tdp[0].teamevent.team_name
+        print tdp[0].file_tdp.url
 
+    html_content = render_to_string('events/view_tdp.html',locals(),RequestContext(request))
+    dajax.assign('#id_content_right','innerHTML',html_content)
+    return dajax.json()

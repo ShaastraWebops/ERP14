@@ -84,6 +84,12 @@
                 <li id="add_update" class="">
                     <a href="#" onclick="javascript:do_dajax(Dajaxice.events.add_update, show_page, {'event_pk' : '{{userprofile.event.pk}}' }, 'id_content_right')"><i class="icon-chevron-right"></i>Add Update</a>
                 </li>
+                {% ifequal userprofile.event.event_type 'Participant' %}
+                    <li id="tdp">
+                    <a href="#" onclick="javascript:do_dajax(Dajaxice.events.view_tdp, show_page, {'event_pk' : '{{userprofile.event.pk}}'}, 'id_content_right')"><i class="icon-chevron-right"></i>View TDP Submissions</a>
+                    </li>
+                {% endifequal %}
+
                 <li>
                     <a href="{% url facilities.views.FacilitiesHome %}"><i class="icon-chevron-right"></i>Facilities</a>
                 </li>
