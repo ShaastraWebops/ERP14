@@ -17,11 +17,14 @@ from events.forms import GenericEventDetailsForm, ParticipantEventDetailsForm, A
 # From models
 from users.models import ERPUser
 from events.models import GenericEvent, ParticipantEvent, AudienceEvent, Tab, Update
+from dashboard.models import TDP, TeamEvent
 # From Misc to show bootstrap alert
 from misc.utilities import show_alert
 # From ERP
 from erp.settings import MEDIA_ROOT
 from erp.variables import events_being_edited
+from erp.settings import DATABASES
+mainsite_db = DATABASES.keys()[1]
 # Python imports
 import json
 import os
@@ -547,7 +550,7 @@ def view_tdp(request,event_pk=None):
     #display in a table name and path to file
     event = ParticipantEvent.objects.get(pk=event_pk)
     tdplist = []
-    for tdp in TDP.objects.using(mainsite_db).filter(teamevent.event_id = event_pk):
+    for tdp in TDP.objects.using(mainsite_db).all():
         print tdp.file_tdp.name
         tdplist.append((tdp,tdp.teamevent.team_id))
     print tdplist
