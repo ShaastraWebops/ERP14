@@ -550,7 +550,7 @@ def view_tdp(request,event_pk=None):
     #display in a table name and path to file
     event = ParticipantEvent.objects.get(pk=event_pk)
     tdplist = []
-    for tdp in TDP.objects.using(mainsite_db).all():
+    for tdp in TDP.objects.using(mainsite_db).filter(teamevent__event_id = event_pk):
         print tdp.file_tdp.name
         tdplist.append((tdp,tdp.teamevent.team_id))
     print tdplist
