@@ -1,0 +1,36 @@
+{% block content %}
+<p><h1>Create Budget:</h1></p>
+
+<form action="" method="post">
+{% csrf_token %}
+
+
+<h1>Budget Page</h1>
+
+<table border="1">
+    <tr><td colspan="4"><b>{{budget}}</b></td></tr>
+    
+    <tr><td colspan="4"><b>Comment:</b><br>{{budget.comment}}</td></tr>
+    
+    <tr>
+    <td colspan="2">Plan A:</td>
+    <td colspan="2">Plan B:</td>
+    </tr>
+    
+    
+    <tr>
+    <td colspan="2">Total = {{budget.plan_1_total}}</td>
+    <td colspan="2">Total = {{budget.plan_2_total}}</td>
+    </tr>
+    
+    <tr>
+    <td colspan="2">{{budget.plan_1_description}}</td>
+    <td colspan="2">{{budget.plan_2_description}}</td>
+    </tr>
+    
+    <tr>
+    <td colspan="2"><a href="{% url finance.views.approve_budget primkey=budget.pk option=1 %}">Approve Plan A</a></td>
+    <td colspan="2"><a href="{% url finance.views.approve_budget primkey=budget.pk option=2 %}">Approve Plan B</a></td>
+
+
+{% endblock %} 

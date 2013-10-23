@@ -1,0 +1,40 @@
+
+<p><h1>Budgeting Portal</h1></p>
+
+<title>Budgeting Portal</title>
+
+<p>
+
+    {% if unapproved %}
+    <table><th>
+    <td><b>Unapproved Budgets</b></td></th>
+    
+        {% for budget in unapproved %}
+            <tr>
+                <td><a href="{% url finance.views.budget_page primkey=budget.pk %}">{{ budget }}</a></td>
+            </tr>
+        {% endfor %}
+        
+    {% else %}
+        No Unapproved Budgets.
+    {% endif %}
+</p>
+
+
+
+<p>
+
+{% if approved %}
+<table><th>
+    <td><b>Approved Budgets</b></td></th>
+
+{% for budget in approved %}
+<tr>
+    <td><a href="{% url finance.views.budget_page primkey=budget.pk %}">{{ budget }}</a></td>
+</tr>
+{% endfor %}
+
+{% else %}
+No Unapproved Budgets.
+{% endif %}
+</p>
