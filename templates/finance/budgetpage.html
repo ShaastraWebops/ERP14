@@ -1,36 +1,68 @@
+{% extends "dash/coord.html" %}
+
+{% load staticfiles %}
+
 {% block content %}
-<p><h1>Create Budget:</h1></p>
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+            {% ifequal userprofile.dept.name 'Events' %}
+              <a href="{% url finance.views.create_budget %}"><i class="icon-chevron-right"></i>Create Budget</a>
+            {% endifequal %}
+            {% ifequal user_dept 'Finance' %}
+              <a href="{% url finance.views.budget_page primkey=budget.pk %}"><i class="icon-chevron-right"></i>Budget</a>
+            </li>
+            <li>
+                <a href="{% url finance.views.finance_budget_portal %}"><i class="icon-chevron-right"></i>Budget Portal</a>
+            </li>
+            {% endifequal %}
+          </li>
+          <li>
+              <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
 
-<form action="" method="post">
-{% csrf_token %}
+    <div class="span9" id="id_content_right">
+        <h2>Create Budget:</h2>
 
+        <form action="" method="post">
+        {% csrf_token %}
 
-<h1>Budget Page</h1>
+        <h3>Budget Page</h3>
 
-<table border="1">
-    <tr><td colspan="4"><b>{{budget}}</b></td></tr>
-    
-    <tr><td colspan="4"><b>Comment:</b><br>{{budget.comment}}</td></tr>
-    
-    <tr>
-    <td colspan="2">Plan A:</td>
-    <td colspan="2">Plan B:</td>
-    </tr>
-    
-    
-    <tr>
-    <td colspan="2">Total = {{budget.plan_1_total}}</td>
-    <td colspan="2">Total = {{budget.plan_2_total}}</td>
-    </tr>
-    
-    <tr>
-    <td colspan="2">{{budget.plan_1_description}}</td>
-    <td colspan="2">{{budget.plan_2_description}}</td>
-    </tr>
-    
-    <tr>
-    <td colspan="2"><a href="{% url finance.views.approve_budget primkey=budget.pk option=1 %}">Approve Plan A</a></td>
-    <td colspan="2"><a href="{% url finance.views.approve_budget primkey=budget.pk option=2 %}">Approve Plan B</a></td>
-
-
+        <table class="table table-striped table-bordered table-hover" style="width:90%">
+            <tr><td colspan="4"><center><b>{{budget}}</b></center></td></tr>
+            
+            <tr><td colspan="4"><center><b>Comment:</b><br>{{budget.comment}}</center></td></tr>
+            
+            <tr>
+                <td colspan="2"><center>Plan A:</center></td>
+                <td colspan="2"><center>Plan B:</center></td>
+            </tr>
+            
+            
+            <tr>
+                <td colspan="2"><center>Total = {{budget.plan_1_total}}</center></td>
+                <td colspan="2"><center>Total = {{budget.plan_2_total}}</center></td>
+            </tr>
+            
+            <tr>
+                <td colspan="2"><center>{{budget.plan_1_description}}</center></td>
+                <td colspan="2"><center>{{budget.plan_2_description}}</center></td>
+            </tr>
+            
+            <tr>
+                <td colspan="2"><center><a href="{% url finance.views.approve_budget primkey=budget.pk option=1 %}">Approve Plan A</a></center></td>
+                <td colspan="2"><center><a href="{% url finance.views.approve_budget primkey=budget.pk option=2 %}">Approve Plan B</a></center></td>
+            </tr>
+        </table>
+    </div>
+    </center>
 {% endblock %} 

@@ -31,8 +31,24 @@ JQuery UI looks better than bootstrap version-->
 
 <!-- Docs nav
 ================================================== -->
-<div class="row-fluid"><center>
+<div class="row-fluid">
+	<center>
 	<div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url finance.views.vouchers %}"><i class="icon-chevron-right"></i>Vouchers</a>
+          </li>
+          <li>
+              <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+
+	<div class="span9" id="id_content_right">
 	    <!-- Left content holds the sidebar-nav -->
 	    {% comment %}
 	    The processing done by show_page : 
@@ -63,26 +79,37 @@ JQuery UI looks better than bootstrap version-->
 	    On clicking the _head, the _body will un-collapse or 
 	    collapse.
 	    {% endcomment %}
-	    
-	    <ul class="nav nav-tabs nav-stacked sidenav affix-top">
-		{% for vendor in vendors %}
-		<li id="list_table_{{vendor.name}}" class="sidenav_lone ">
-		<a href="#" onclick="javascript:do_dajax(Dajaxice.finance.user_voucher_history, show_page, {curr_vendor: '{{vendor.name}}'}, 'id_content_right')"> 
-		    <i class="icon-chevron-right"></i>{{vendor.name}} 
-		</a>
-		</li>
-		{% endfor %}
-	    </ul>
+	    {% if vendors %}
+	    <h2>Vendors</h2>
+	    <div class="container well" style="width:90%;">
+		    <div class="span3">
+			    <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+				{% for vendor in vendors %}
+					<li id="list_table_{{vendor.name}}" class="sidenav_lone ">
+					<a href="#" onclick="javascript:do_dajax(Dajaxice.finance.user_voucher_history, show_page, {curr_vendor: '{{vendor.name}}'}, 'vendor_content')">
+					    <i class="icon-chevron-right"></i>{{vendor.name}} 
+					</a>
+					</li>
+				{% endfor %}
+			    </ul>
+			</div>
+			<div class="span6" id="vendor_content"></div>
+		</div>
+		{% else %}
+			<p class="text-warning">Vendors list empty</p>
+		{% endif %}
+		
 	</div>
 
-	<div class="span9" id="id_content_right"> <!-- Content -->
+	<!-- Content -->
+	<!-- <div class="span9" id="id_content_right"> 
 	    {% comment %}
 	    Will hold the content which needs to be shown based on content_left.
 	    Note : 'modal_hide();' is a javascript function that is defined in base.js
 	    which will close any modal open and refresh this div based
 	    on which sidenav li is active
 	    {% endcomment %}
-	</div> <!-- End of content -->
+	</div> --> <!-- End of content -->
     </center>
 </div> <!-- End of row -->
 <script>modal_hide()</script> <!-- display table you at the end -->

@@ -31,11 +31,13 @@ def create_budget(request):
             
             return redirect('finance.views.home')
         else:
-            return render_to_response ('finance/createbudget.html', {'form': form }, context_instance=RequestContext(request))
+            user_dept = str(request.user.get_profile().dept)
+            return render_to_response ('finance/createbudget.html', {'form': form, 'user_dept': user_dept}, context_instance=RequestContext(request))
     else:
         #Display Blank Form
         form = BudgetForm()
-        context = {'form': form}
+        user_dept = str(request.user.get_profile().dept)
+        context = {'form': form, 'user_dept':user_dept}
         return render_to_response('finance/createbudget.html', context, context_instance=RequestContext(request))
         
 
@@ -84,6 +86,7 @@ def budget_page(request, primkey):
         
         context = {}
         context["budget"] = approvedbudget
+        context["user_dept"] = str(request.user.get_profile().dept)
         
         return render_to_response('finance/budgetpage.html', context, context_instance=RequestContext(request))
     except ObjectDoesNotExist:

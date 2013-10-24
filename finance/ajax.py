@@ -45,7 +45,8 @@ def user_voucher_history(request, curr_vendor):
     if html_content != "": 
         # put html generated above into json if not null
         # if null, alert has already been taken care of
-        dajax.assign('#id_content_right','innerHTML', html_content)
+        dajax.assign('#vendor_content','innerHTML', html_content)
+#        dajax.script("$($('#id_content_left').children().children()[0]).addClass('active')")
 
     return dajax.json()
     
