@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block extrastyle %}
+    <link href="{% static 'dash/coord/coord.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/sidenav.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/table_style.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/datatables/TableTools.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/datatables/TableTools_JUI.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/jui_themes/smoothness/jquery-ui-1.10.3.custom.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/content.css' %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block extrascripts %}
+    <script src="{% static 'js/jquery-ui-1.10.3.custom.js' %}"></script>
+    <script src="{% static 'dash/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'dash/datatables/TableTools.js' %}"></script>
+    <script src="{% static 'dash/datatables/ZeroClipboard.js' %}"></script>
+    <script src="{% static 'dash/content.js' %}"></script>
+    <script src="{% static 'dash/coord/coord.js' %}"></script>
+    <!-- <script src="{% static 'dash/dataTables.bootstrap.js' %}"></script> 
+        JQuery UI looks better than bootstrap version-->
+{% endblock %}
+
+{% block content %}
+
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="/events/reg"><i class="icon-chevron-right"></i>Participants</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+
+    <div class="span9" id="id_content_right">
+        <caption style="color:#758FB2;"><h2>Registered Participants</h2></caption>
+        <table class="table-striped table-bordered table-condensed table-hover">
+            <tr>
+                <td>Name</td>
+                <td>Username</td>
+                <td>Email</td>
+                <td>Mobile number</td>
+            </tr>
+            {% for user1 in userlist %}
+            <tr>
+                <td>{{user1.user.first_name}}</td>
+                <td>{{user1.user.username}}</td>
+                <td>{{user1.user.email}}</td>
+                <td>{{user1.mobile_number}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="/events/csv/">Export as CSV</a>
+{% endblock content %}
+        
+    

@@ -86,7 +86,10 @@
                 </li>
                 {% ifequal userprofile.event.event_type 'Participant' %}
                     <li id="tdp">
-                    <a href="#" onclick="javascript:do_dajax(Dajaxice.events.view_tdp, show_page, {'event_pk' : '{{userprofile.event.pk}}'}, 'id_content_right')"><i class="icon-chevron-right"></i>View TDP Submissions</a>
+                    <a href="#" onclick="javascript:do_dajax(Dajaxice.events.view_tdp, show_page, {'event_pk' : '{{userprofile.event.pk}}'}, 'id_content_right')"><i class="icon-chevron-right"></i>TDP Submissions</a>
+                    </li>
+                    <li id="reg">
+                    <a href="/events/reg/"><i class="icon-chevron-right"></i>View Registered Participants</a>
                     </li>
                 {% endifequal %}
 

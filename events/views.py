@@ -1,13 +1,16 @@
 from django.shortcuts import render_to_response
 from django.template import RequestContext
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import reverse
 from events.forms import GenericEventDetailsForm,UpdateForm,UploadTabFiles,UploadFileForm
 from events.models import UploadFile
-
+from dashboard.models import TeamEvent
+from users.models import UserProfile
 from misc.dajaxice.core import dajaxice_functions
-
+from erp.settings import DATABASES
+mainsite_db = DATABASES.keys()[1]
 import os
+import csv
 from erp.settings import MEDIA_ROOT
 
 import json
@@ -96,4 +99,26 @@ def upload_file(request):
 
     files_for_event = UploadFile.objects.filter(event = curruser.event)
     return render_to_response('events/upload_file.html',locals(),context_instance = RequestContext(request))
+
+def registered_participants(request,exportCSV=False):
+    curruser = request.user.get_profile()
+    event_pk = curruser.event.pk
+    teameventlist = TeamEvent.objects.using(mainsite_db).filter(event_id = event_pk)
+    userlist =[]
+    for team in teameventlist:
+        userlist.extend(team.users)
+    if exportCSV:
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="participants.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['Name','Username','Email','Mobile'])
+        for user1 in userlist:
+            writer.writerow([user1.user.first_name,user1.user.username,user1.user.email,user1.mobile_number])
+        print response
+        return response
+    else:
+        return render_to_response('events/reg_part.html',locals(),context_instance = RequestContext(request))
+
+    
+
 
