@@ -46,14 +46,12 @@
                 <td>Name</td>
                 <td>Username</td>
                 <td>Email</td>
-                <td>Mobile number</td>
             </tr>
             {% for user1 in userlist %}
             <tr>
-                <td>{{user1.user.first_name}}</td>
-                <td>{{user1.user.username}}</td>
-                <td>{{user1.user.email}}</td>
-                <td>{{user1.mobile_number}}</td>
+                <td>{{user1.first_name}}</td>
+                <td>{{user1.username}}</td>
+                <td>{{user1.email}}</td>
             </tr>
             {% endfor %}
         </table>

@@ -106,14 +106,14 @@ def registered_participants(request,exportCSV=False):
     teameventlist = TeamEvent.objects.using(mainsite_db).filter(event_id = event_pk)
     userlist =[]
     for team in teameventlist:
-        userlist.extend(team.users)
+        userlist.extend(team.users.all())
     if exportCSV:
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="participants.csv"'
         writer = csv.writer(response)
-        writer.writerow(['Name','Username','Email','Mobile'])
+        writer.writerow(['Name','Username','Email'])
         for user1 in userlist:
-            writer.writerow([user1.user.first_name,user1.user.username,user1.user.email,user1.mobile_number])
+            writer.writerow([user1.first_name,user1.username,user1.email])
         print response
         return response
     else:
