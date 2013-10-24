@@ -17,7 +17,7 @@ from events.forms import GenericEventDetailsForm, ParticipantEventDetailsForm, A
 # From models
 from users.models import ERPUser
 from events.models import GenericEvent, ParticipantEvent, AudienceEvent, Tab, Update
-from dashboard.models import TDP, TeamEvent
+from dashboard.models import TDP,TeamEvent
 # From Misc to show bootstrap alert
 from misc.utilities import show_alert
 # From ERP
@@ -543,6 +543,8 @@ def add_update(request,event_pk=None,update_form=None,update_pk=None):
         html_content = render_to_string('events/add_update.html',locals(),RequestContext(request))
         dajax.assign('#id_content_right','innerHTML',html_content)
         return dajax.json()
+
+@dajaxice_register    
 def view_tdp(request,event_pk=None):
     dajax = Dajax()
     #get tdp objects from mainsite code
