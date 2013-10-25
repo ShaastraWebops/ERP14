@@ -9,7 +9,7 @@
         <!-- Left content holds the sidebar-nav -->
         <ul class="nav nav-tabs nav-stacked sidenav affix-top">
           <li class="active">
-          	  <a href="{% url finance.views.budgeting %}"><i class="icon-chevron-right"></i>Budgeting</a>
+          	  <a href="{% url finance.views.vouchers %}"><i class="icon-chevron-right"></i>Vouchers</a>
           </li>
           <li>	
               <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
@@ -21,7 +21,7 @@
     </div>
 
     <div class="span9" id="id_content_right">
-		<p><h1>Create Budget:</h1></p>
+		<p><h1>Create Voucher:</h1></p>
 
 		<form action="" method="post">
 		{% csrf_token %}

@@ -254,12 +254,12 @@ def add_voucher_request (request, vendorid):
             return redirect('finance.views.vouchers')
         else:
             context = {'form': form, 'vendorid': vendorid, 'title': "New Voucher Request"}
-            return render_to_response ('finance/form.html', context, context_instance=RequestContext(request))   
+            return render_to_response ('finance/createvoucher.html', context, context_instance=RequestContext(request))   
     
     else:
         form = VoucherForm()
         context = {'form': form, 'vendorid': vendorid, 'title': "New Voucher Request"}
-        return render_to_response ('finance/form.html', context, context_instance=RequestContext(request))
+        return render_to_response ('finance/createvoucher.html', context, context_instance=RequestContext(request))
 
 
 
@@ -360,12 +360,12 @@ def add_payment_request (request):
             return redirect('finance.views.payments')
         else:
             context = {'form': form, 'title': "New Payment Request"}
-            return render_to_response ('finance/form.html', context, context_instance=RequestContext(request))    
+            return render_to_response ('finance/createpayment.html', context, context_instance=RequestContext(request))    
     
     elif request.method == 'GET':
         form = PaymentForm()
         context = {'form': form, 'title': "New Payment Request"}
-        return render_to_response ('finance/form.html', context, context_instance=RequestContext(request))
+        return render_to_response ('finance/createpayment.html', context, context_instance=RequestContext(request))
         
         
         
@@ -465,10 +465,10 @@ def add_advance_request (request):
             return redirect('finance.views.advances')
         else:
             context = {'form': form, 'title': "New Advance Request"}
-            return render_to_response ('finance/form.html', context, context_instance=RequestContext(request)) 
+            return render_to_response ('finance/createadvance.html', context, context_instance=RequestContext(request)) 
     
     
     else:
         form = AdvanceForm()
         context = {'form': form, 'title': "New Advance Request"}
-        return render_to_response ('finance/form.html', context, context_instance=RequestContext(request)) 
+        return render_to_response ('finance/createadvance.html', context, context_instance=RequestContext(request)) 
