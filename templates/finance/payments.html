@@ -37,7 +37,7 @@ JQuery UI looks better than bootstrap version-->
         <!-- Left content holds the sidebar-nav -->
         <ul class="nav nav-tabs nav-stacked sidenav affix-top">
           <li class="active">
-              <a href="{% url finance.views.vouchers %}"><i class="icon-chevron-right"></i>Vouchers</a>
+              <a href="{% url finance.views.payments %}"><i class="icon-chevron-right"></i>Payments</a>
           </li>
           <li>
               <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
@@ -79,25 +79,47 @@ JQuery UI looks better than bootstrap version-->
 	    On clicking the _head, the _body will un-collapse or 
 	    collapse.
 	    {% endcomment %}
-	    {% if vendors %}
-	    <h2>Vendors</h2>
-	    <div class="container well" style="width:90%;">
-		    <div class="span3">
-			    <ul class="nav nav-tabs nav-stacked sidenav affix-top">
-				{% for vendor in vendors %}
-					<li id="list_table_{{vendor.name}}" class="sidenav_lone ">
-					<a href="#" onclick="javascript:do_dajax(Dajaxice.finance.user_voucher_history, show_page, {curr_vendor: '{{vendor.name}}'}, 'vendor_content')">
-					    <i class="icon-chevron-right"></i>{{vendor.name}} 
-					</a>
-					</li>
-				{% endfor %}
-			    </ul>
-			</div>
-			<div class="span6" id="vendor_content"></div>
-		</div>
-		{% else %}
-			<p class="text-warning">Vendors list empty</p>
-		{% endif %}
+	    
+        <h2>Payments Portal</h2>
+        <p><a href="{% url finance.views.add_payment_request %}">New Payment</a></p>
+
+        {% if unapproved %}
+            <table class="table table-bordered table-hover" style="width:90%">
+                <thead>
+                    <td><center><b>Unapproved Payments</b></center></td>
+                </thead>
+            
+                {% for payment in unapproved %}
+                    <tr>
+                        <td><center><a href="{% url finance.views.payment_page primkey=payment.pk %}">{{ payment }}</a></center></td>
+                    </tr>
+                {% endfor %}
+                
+        {% else %}
+            <div class="well" style="width:50%">
+                <p class="text-warning"> No Unapproved Payments. </p>
+            </div>
+        {% endif %}
+
+
+        {% if approved %}
+            <table>
+                <thead>
+                    <td><b>Approved Payments</b></td>
+                </thead>
+
+            {% for payment in approved %}
+            <tr>
+                <td><a href="{% url finance.views.payment_page primkey=payment.pk %}">{{ payment }}</a></td>
+            </tr>
+            {% endfor %}
+
+        {% else %}
+            <div class="well" style="width:50%">
+               <p class="text-warning"> No Approved Payments. </p>
+            </div>
+        {% endif %}
+         
 		
 	</div>
 

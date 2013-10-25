@@ -21,18 +21,10 @@
         <h2>Welcome to the Finance Portal!</h2>
         <br />
         <div class = "row-fluid">
-            <a href="#" onclick="javascript:do_dajax(Dajaxice.finance.budgeting_modal, Dajax.process, {}, 'id_modal');" class="btn btn-primary btn-large offset2 span2">Budgeting&raquo;</a>
-            {% comment %}
-            {% ifequal user_dept 'Events' %}
-                <a href="{% url finance.views.create_budget %}" class="btn btn-primary btn-large offset2 span2">Budgeting&raquo;</a>
-            {% endifequal %}
-            {% ifequal user_dept 'Finance' %}
-                <a href="{% url finance.views.finance_budget_portal %}" class="btn btn-primary btn-large offset2 span2">Budgeting&raquo;</a>
-            {% endifequal %}
-            {% endcomment %}
+            <a href="{% url finance.views.budgeting %}" class="btn btn-primary btn-large offset2 span2">Budgeting&raquo;</a>
             <a href="{% url finance.views.vouchers %}" class="btn btn-primary btn-large span2">Vouchers&raquo;</a>
-            <a href="#" class="btn btn-primary btn-large span2">Advances&raquo;</a>
-            <a href="#" class="btn btn-primary btn-large span2">Payments&raquo;</a>
+            <a href="{% url finance.views.advances %}" class="btn btn-primary btn-large span2">Advances&raquo;</a>
+            <a href="{% url finance.views.payments %}" class="btn btn-primary btn-large span2">Payments&raquo;</a>
         
             <!-- <br>(FOR TESTING ONLY<br>
             <a onclick="javascript:do_dajax(Dajaxice.finance.newpayment_get, Dajax.process, {}, 'id_modal');">New Payment</a>
