@@ -4,6 +4,9 @@ from django.template import RequestContext
 from misc.dajaxice.core import dajaxice_functions
 import datetime
 
+#Importing Decorators
+from misc.utilities import finance_check, events_check
+
 #Importing Model Formset Factory
 from django.forms.models import modelform_factory
 
@@ -35,8 +38,10 @@ def home ( request ) :
 
 #######################################----------BUDGETING VIEWS----------###############################################
 
+
 #__________-- CREATE BUDGET --___________        
 @login_required
+@user_passes_test (events_check)
 def create_budget(request):
     BudgetForm = modelform_factory(BudgetProposal, fields=('comment', 'plan_1_total', 'plan_2_total', 'plan_1_description', 'plan_2_description') )
     
@@ -68,6 +73,7 @@ def create_budget(request):
 
 #__________-- APPROVE BUDGET --___________        
 @login_required
+@user_passes_test (finance_check)
 def approve_budget(request, primkey, option):
     try:
         approvedbudget = BudgetProposal.objects.get(pk=primkey)
@@ -92,6 +98,8 @@ def approve_budget(request, primkey, option):
 
 #__________-- BUDGETING HOME --___________        
 @login_required
+@user_passes_test (events_check)
+@user_passes_test (finance_check)
 def budgeting(request):
     #Passing a context of information to the template
     context = {}
@@ -99,6 +107,7 @@ def budgeting(request):
     #Userprofile
     userprofile = request.user.get_profile()
     context["userprofile"] = userprofile
+    context["isevents"] = userprofile.dept.name == 'Events'
     
     if ( context["userprofile"].dept.name == 'Finance' ):
         #Unapproved Budgets
@@ -122,6 +131,8 @@ def budgeting(request):
 
 #__________-- VIEW A BUDGET --___________        
 @login_required
+@user_passes_test (events_check)
+@user_passes_test (finance_check)
 def budget_page(request, primkey):
     try:
         approvedbudget = BudgetProposal.objects.get(pk=primkey)
@@ -203,6 +214,7 @@ def voucher_page(request, primkey):
 
 #__________-- APPROVE VOUCHER FUNCTION--___________
 @login_required
+@user_passes_test (finance_check)
 def approve_voucher(request, primkey):
     try:
         approvedvoucher = VoucherRequest.objects.get(pk=primkey)
@@ -308,6 +320,7 @@ def payment_page(request, primkey):
     
 #__________-- APPROVE PAYMENT FUNCTION--___________
 @login_required
+@user_passes_test (finance_check)
 def approve_payment(request, primkey):
     try:
         approvedpayment = PaymentRequest.objects.get(pk=primkey)
@@ -413,6 +426,7 @@ def advance_page(request, primkey):
 
 #__________-- APPROVE ADVANCE FUNCTION--___________
 @login_required
+@user_passes_test (finance_check)
 def approve_advance(request, primkey):
     try:
         approvedadvance = AdvanceRequest.objects.get(pk=primkey)

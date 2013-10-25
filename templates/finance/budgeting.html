@@ -23,7 +23,7 @@
     <div class="span9" id="id_content_right">
         <h2>Budgeting Portal</h2>
         
-        <p><a href="{% url finance.views.create_budget %}">Propose a New Budget</a></p>
+        {% if isevents %}<p><a href="{% url finance.views.create_budget %}">Propose a New Budget</a></p>{% endif %}
 
         {% if unapproved %}
             <table class="table table-bordered table-hover" style="width:90%">
