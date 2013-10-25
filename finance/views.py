@@ -1,11 +1,11 @@
 from django.shortcuts import render_to_response, render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.template import RequestContext
 from misc.dajaxice.core import dajaxice_functions
 import datetime
 
 #Importing Decorators
-from misc.utilities import finance_check, events_check
+from misc.utilities import finance_check, events_check, finance_or_events_check
 
 #Importing Model Formset Factory
 from django.forms.models import modelform_factory
@@ -98,8 +98,7 @@ def approve_budget(request, primkey, option):
 
 #__________-- BUDGETING HOME --___________        
 @login_required
-@user_passes_test (events_check)
-@user_passes_test (finance_check)
+@user_passes_test (finance_or_events_check)
 def budgeting(request):
     #Passing a context of information to the template
     context = {}
@@ -131,8 +130,7 @@ def budgeting(request):
 
 #__________-- VIEW A BUDGET --___________        
 @login_required
-@user_passes_test (events_check)
-@user_passes_test (finance_check)
+@user_passes_test (finance_or_events_check)
 def budget_page(request, primkey):
     try:
         approvedbudget = BudgetProposal.objects.get(pk=primkey)
