@@ -65,7 +65,11 @@
                             <td>{{ form.facilityitem }}</td>
                             <td>{{ form.quantity }}</td>
                             <td>{{ form.description }}</td>
-                            <td>{% if showerrors %}{{ form.non_field_errors }} {{ form.facilityitem.errors }} {{ form.quantity.errors }}{% endif %} </td>
+                            <td>
+                                {% if showerrors %}
+                                    {{ form.non_field_errors }} {{ form.facilityitem.errors }} {{ form.quantity.errors }}
+                                {% endif %}
+                            </td>
                         </tr>
                     
                 {% endfor %}

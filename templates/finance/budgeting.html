@@ -1,13 +1,66 @@
-<center>
-  <div class="modal-header">
-    <button type="button" class="close" onclick="javascript:modal_hide()">&times;</button>
-    <h3>Budgeting Unavailable At This Time</h3>
-  </div>
+{% extends "dash/coord.html" %}
 
-  <div class="modal-body">
-    <br />
-    <p>Please check back here for updates!</p>
-    <br />
-  </div>
+{% load staticfiles %}
 
-</center>
+{% block content %}
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url finance.views.budgeting %}"><i class="icon-chevron-right"></i>Budget Portal</a>
+          </li>
+          <li>
+              <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+
+    <div class="span9" id="id_content_right">
+        <h2>Budgeting Portal</h2>
+        
+        {% if isevents %}<p><a href="{% url finance.views.create_budget %}">Propose a New Budget</a></p>{% endif %}
+
+        {% if unapproved %}
+            <table class="table table-bordered table-hover" style="width:90%">
+                <thead>
+                    <td><center><b>Unapproved Budgets</b></center></td>
+                </thead>
+            
+                {% for budget in unapproved %}
+                    <tr>
+                        <td><center><a href="{% url finance.views.budget_page primkey=budget.pk %}">{{ budget }}</a></center></td>
+                    </tr>
+                {% endfor %}
+                
+        {% else %}
+            <div class="well" style="width:50%">
+                <p class="text-warning"> No Unapproved Budgets. </p>
+            </div>
+        {% endif %}
+
+
+        {% if approved %}
+            <table>
+                <thead>
+                    <td><b>Approved Budgets</b></td>
+                </thead>
+
+            {% for budget in approved %}
+            <tr>
+                <td><a href="{% url finance.views.budget_page primkey=budget.pk %}">{{ budget }}</a></td>
+            </tr>
+            {% endfor %}
+
+        {% else %}
+            <div class="well" style="width:50%">
+               <p class="text-warning"> No Approved Budgets. </p>
+            </div>
+        {% endif %}
+    </div>    
+    </center>
+{% endblock %}

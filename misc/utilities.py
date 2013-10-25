@@ -18,6 +18,12 @@ def facilities_check (user):
     
 def facilities_or_events_check (user):
     return user.get_profile().dept.name == "Facilities" or user.get_profile().dept.name == "Events"
+    
+def finance_check (user):
+    return user.get_profile().dept.name == "Finance"
+    
+def finance_or_events_check (user):
+    return user.get_profile().dept.name == "Finance" or user.get_profile().dept.name == "Events"
 
 #This returns the position of the ERPUser as a string.
 def get_position (userprofile):

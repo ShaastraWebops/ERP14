@@ -1,0 +1,75 @@
+{% extends "dash/coord.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url finance.views.payment_page primkey=payment.pk %}"><i class="icon-chevron-right"></i>View Payment</a>
+          </li>
+          <li>
+              <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+
+    <div class="span9" id="id_content_right">
+        <h2>View Payment:</h2>
+
+        <form action="" method="post">
+        {% csrf_token %}
+
+        <h3>Payment Page</h3>
+
+        <table class="table table-striped table-bordered table-hover" style="width:90%">
+                <tr>
+                <td></td>
+                <td>{{ payment }}</td>
+                </tr>
+                
+                <tr>
+                <td>Date Created</td>
+                <td>{{ payment.datecreated }}</td>
+                </tr>
+                
+                <tr>
+                <td>Amount</td>
+                <td>{{ payment.amount }}</td>
+                </tr>
+                
+                <tr>
+                <td>Purpose</td>
+                <td>{{ payment.purpose }}</td>
+                </tr>
+                
+                {% if isapproved %}
+                <tr>
+                <td>Check Number</td>
+                <td>{{ payment.checknumber }}</td>
+                </tr>
+                {% endif %}
+                
+                <tr>
+                <td>Status</td>
+                <td>
+                {% if isapproved %}
+                <p>Approved already on {{ payment.dateapproved }} by {{ payment.approver }}</p>
+                {% else %}
+                <p>Currently Unapproved<br>
+                {% if isfinance %}<b><a href="{% url finance.views.approve_payment primkey=payment.pk %}">Click here to Approve</a></b>{% endif %}</p>
+                {% endif %}
+                
+                </td>
+                </tr>
+                    
+        </table>
+    </div>
+    </center>
+{% endblock %} 

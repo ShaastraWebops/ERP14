@@ -1,6 +1,33 @@
 from django.db import models
 from users.models import ERPUser
 from dept.models import Subdept, Dept
+from events.models import GenericEvent
+
+
+##BUDGETING MODELS##
+class BudgetProposal(models.Model):
+    creator = models.ForeignKey(ERPUser, related_name='created_budget_set')
+    datecreated = models.DateField ('Date Created', auto_now_add = True )
+    dateapproved = models.DateField (null=True, blank=True)
+    
+    event = models.ForeignKey(GenericEvent)
+    
+    comment = models.TextField()
+    
+    plan_1_total = models.IntegerField (default=0)
+    plan_2_total = models.IntegerField (default=0)
+    plan_1_description = models.TextField()
+    plan_2_description = models.TextField()
+    
+    selectedplan = models.IntegerField (default=0)
+    isapproved = models.BooleanField (default=False)
+    approver = models.ForeignKey(ERPUser, related_name='approved_budget_set', null=True, blank=True)
+    
+    def __unicode__ (self):
+        return '%s (%s)' %(self.event.title, self.creator)
+        
+        
+        
 
 ##VOUCHERS MODELS####
 class Vendor(models.Model):

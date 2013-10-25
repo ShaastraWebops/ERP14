@@ -1,0 +1,167 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block extrastyle %}
+<link href="{% static 'dash/core/core.css' %}" rel="stylesheet" media="screen">
+<link href="{% static 'finance/sidenav.css' %}" rel="stylesheet" media="screen">
+<link href="{% static 'dash/table_style.css' %}" rel="stylesheet" media="screen">
+<link href="{% static 'dash/datatables/TableTools.css' %}" rel="stylesheet" media="screen">
+<link href="{% static 'dash/datatables/TableTools_JUI.css' %}" rel="stylesheet" media="screen">
+<link href="{% static 'css/jui_themes/smoothness/jquery-ui-1.10.3.custom.css' %}" rel="stylesheet" media="screen">
+<link href="{% static 'finance/content.css' %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block extrascripts %}
+<script src="{% static 'js/jquery-ui-1.10.3.custom.js' %}"></script>
+<script src="{% static 'js/bootstrap/bootstrap-collapse.js' %}"></script>
+<script src="{% static 'js/bootstrap/bootstrap-transition.js' %}"></script>
+<script src="{% static 'dash/datatables/jquery.dataTables.js' %}"></script>
+<script src="{% static 'dash/datatables/TableTools.js' %}"></script>
+<script src="{% static 'dash/datatables/ZeroClipboard.js' %}"></script>
+<script src="{% static 'dash/datatables/dataTables.colfuncs.js' %}"></script>
+<script src="{% static 'finance/content.js' %}"></script>
+<script src="{% static 'dash/core/core.js' %}"></script>
+
+<!-- <script src="{% static 'dash/dataTables.bootstrap.js' %}"></script> 
+JQuery UI looks better than bootstrap version-->
+{% endblock %}
+
+{% block content %}
+
+<!-- Docs nav
+================================================== -->
+<div class="row-fluid">
+	<center>
+	<div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url finance.views.vouchers %}"><i class="icon-chevron-right"></i>Vouchers</a>
+          </li>
+          <li>
+              <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+
+	<div class="span9" id="id_content_right">
+	    <!-- Left content holds the sidebar-nav -->
+	    {% comment %}
+	    The processing done by show_page : 
+	    It automatically changes the sidebar option to active.
+	    It automatically  enables a data-table and date-picker
+	    (date-picker needs to be implemented)
+
+	    It uses a set of pre-determined ids to do this.
+
+	    Convention :
+	    If the list has an id : "list_abcdef", the top div in 
+	    the rendered page (by dajax) should have the id "abcdef".
+
+	    If the list has an id : "list_table_abcdef", the top div 
+	    should have "table_abcdef" as id. And the "table_" keyword
+	    is used to enable data-table in the first table seen in the 
+	    div which is rendered (by dajax)
+
+	    If the list has an id : "list_form_abcdef", the top div 
+	    should have "form_abcdef" as id. And the "form_" keyword
+	    is used to enable date-picker in any input tag with class 
+	    date picker ... needs to be implemented
+
+	    For accordion :
+	    Now, to add accordion, there is another convention :
+	    i.e. a list_abc_head is the head of the accordion, and
+	    the list_abc_body are the body elements of it.
+	    On clicking the _head, the _body will un-collapse or 
+	    collapse.
+	    {% endcomment %}
+	    {% if vendors %}
+	    <h2>Vendors</h2>
+	    <div class="container well" style="width:90%;">
+		    <div class="span3">
+			    <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+				{% for vendor in vendors %}
+					<li id="list_table_{{vendor.name}}" class="sidenav_lone ">
+					<a href="{% url finance.views.vouchers vendorid=vendor.pk %}">
+					    <i class="icon-chevron-right"></i>{{vendor.name}} 
+					</a>
+					</li>
+				{% endfor %}
+			    </ul>
+			</div>
+			<div class="span6" id="vendor_content">
+                
+         {% if vendor %}  
+         <p><a href="{% url finance.views.add_voucher_request vendorid=vendor.pk %}">New Voucher for {{ vendor.name }}</a></p>
+                
+                
+        {% if unapproved %}
+            <table class="table table-bordered table-hover" style="width:90%">
+                <thead>
+                    <td><center><b>Unapproved Vouchers</b></center></td>
+                </thead>
+            
+                {% for voucher in unapproved %}
+                    <tr>
+                        <td><center><a href="{% url finance.views.voucher_page primkey=voucher.pk %}">{{ voucher  }}</a></center></td>
+                    </tr>
+                {% endfor %}
+                
+        {% else %}
+            <div class="well" style="width:50%">
+                <p class="text-warning"> No Unapproved Vouchers. </p>
+            </div>
+        {% endif %}
+
+
+        {% if approved %}
+            <table>
+                <thead>
+                    <td><b>Approved Vouchers</b></td>
+                </thead>
+
+            {% for voucher in approved %}
+            <tr>
+                <td><center><a href="{% url finance.views.voucher_page primkey=voucher.pk %}">{{ voucher  }}</a></center></td>
+            </tr>
+            {% endfor %}
+
+        {% else %}
+            <div class="well" style="width:50%">
+               <p class="text-warning"> No Approved Vouchers </p>
+            </div>
+        {% endif %}
+        
+        {% else %}
+        <p>Select a vendor.</p>
+            {% endif %}
+            
+            
+            
+            </div>
+		</div>
+		{% else %}
+			<p class="text-warning">Vendors list empty</p>
+		{% endif %}
+        
+         
+		
+	</div>
+
+	<!-- Content -->
+	<!-- <div class="span9" id="id_content_right"> 
+	    {% comment %}
+	    Will hold the content which needs to be shown based on content_left.
+	    Note : 'modal_hide();' is a javascript function that is defined in base.js
+	    which will close any modal open and refresh this div based
+	    on which sidenav li is active
+	    {% endcomment %}
+	</div> --> <!-- End of content -->
+    </center>
+</div> <!-- End of row -->
+<script>modal_hide()</script> <!-- display table you at the end -->
+{% endblock %}

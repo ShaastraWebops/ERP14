@@ -31,8 +31,24 @@ JQuery UI looks better than bootstrap version-->
 
 <!-- Docs nav
 ================================================== -->
-<div class="row-fluid"><center>
+<div class="row-fluid">
+	<center>
 	<div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url finance.views.payments %}"><i class="icon-chevron-right"></i>Payments</a>
+          </li>
+          <li>
+              <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+
+	<div class="span9" id="id_content_right">
 	    <!-- Left content holds the sidebar-nav -->
 	    {% comment %}
 	    The processing done by show_page : 
@@ -64,25 +80,58 @@ JQuery UI looks better than bootstrap version-->
 	    collapse.
 	    {% endcomment %}
 	    
-	    <ul class="nav nav-tabs nav-stacked sidenav affix-top">
-		{% for vendor in vendors %}
-		<li id="list_table_{{vendor.name}}" class="sidenav_lone ">
-		<a href="#" onclick="javascript:do_dajax(Dajaxice.finance.user_voucher_history, show_page, {curr_vendor: '{{vendor.name}}'}, 'id_content_right')"> 
-		    <i class="icon-chevron-right"></i>{{vendor.name}} 
-		</a>
-		</li>
-		{% endfor %}
-	    </ul>
+        <h2>Payments Portal</h2>
+        <p><a href="{% url finance.views.add_payment_request %}">New Payment</a></p>
+
+        {% if unapproved %}
+            <table class="table table-bordered table-hover" style="width:90%">
+                <thead>
+                    <td><center><b>Unapproved Payments</b></center></td>
+                </thead>
+            
+                {% for payment in unapproved %}
+                    <tr>
+                        <td><center><a href="{% url finance.views.payment_page primkey=payment.pk %}">{{ payment }}</a></center></td>
+                    </tr>
+                {% endfor %}
+                
+        {% else %}
+            <div class="well" style="width:50%">
+                <p class="text-warning"> No Unapproved Payments. </p>
+            </div>
+        {% endif %}
+
+
+        {% if approved %}
+            <table>
+                <thead>
+                    <td><b>Approved Payments</b></td>
+                </thead>
+
+            {% for payment in approved %}
+            <tr>
+                <td><a href="{% url finance.views.payment_page primkey=payment.pk %}">{{ payment }}</a></td>
+            </tr>
+            {% endfor %}
+
+        {% else %}
+            <div class="well" style="width:50%">
+               <p class="text-warning"> No Approved Payments. </p>
+            </div>
+        {% endif %}
+         
+		
 	</div>
 
-	<div class="span9" id="id_content_right"> <!-- Content -->
+	<!-- Content -->
+	<!-- <div class="span9" id="id_content_right"> 
 	    {% comment %}
 	    Will hold the content which needs to be shown based on content_left.
 	    Note : 'modal_hide();' is a javascript function that is defined in base.js
 	    which will close any modal open and refresh this div based
 	    on which sidenav li is active
 	    {% endcomment %}
-	</div> <!-- End of content -->
+	</div> --> <!-- End of content -->
     </center>
 </div> <!-- End of row -->
 <script>modal_hide()</script> <!-- display table you at the end -->

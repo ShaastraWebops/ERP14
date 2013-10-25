@@ -1,0 +1,70 @@
+{% extends "dash/coord.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url finance.views.create_budget %}"><i class="icon-chevron-right"></i>Create Budget</a>
+            {% ifequal user_dept 'Finance' %}
+              <a href="{% url finance.views.budget_page primkey=budget.pk %}"><i class="icon-chevron-right"></i>Budget</a>
+            </li>
+            <li>
+                <a href="{% url finance.views.budgeting %}"><i class="icon-chevron-right"></i>Budget Portal</a>
+            </li>
+            {% endifequal %}
+          </li>
+          <li>
+              <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+
+    <div class="span9" id="id_content_right">
+        <h2>Create Budget:</h2>
+
+        <form action="" method="post">
+        {% csrf_token %}
+
+        <h3>Budget Page</h3>
+
+        <table class="table table-striped table-bordered table-hover" style="width:90%">
+            <tr><td colspan="4"><center><b>{{budget}}</b></center></td></tr>
+            
+            <tr><td colspan="4"><center><b>Comment:</b><br>{{budget.comment}}</center></td></tr>
+            
+            <tr>
+                <td colspan="2"><center>Plan 1:</center></td>
+                <td colspan="2"><center>Plan 2:</center></td>
+            </tr>
+            
+            
+            <tr>
+                <td colspan="2"><center>Total = {{budget.plan_1_total}}</center></td>
+                <td colspan="2"><center>Total = {{budget.plan_2_total}}</center></td>
+            </tr>
+            
+            <tr>
+                <td colspan="2"><center>{{budget.plan_1_description}}</center></td>
+                <td colspan="2"><center>{{budget.plan_2_description}}</center></td>
+            </tr>
+            
+            <tr>
+                {% if not budget.isapproved %}
+                <td colspan="2"><center><a href="{% url finance.views.approve_budget primkey=budget.pk option=1 %}"><b>Approve Plan 1</b></a></center></td>
+                <td colspan="2"><center><a href="{% url finance.views.approve_budget primkey=budget.pk option=2 %}"><b>Approve Plan 2</b></a></center></td>
+                {% else %}
+                <td colspan="4"><center><p>Plan {{budget.selectedplan}} already approved on {{ budget.dateapproved }} by {{ budget.approver }}! </p></center></td>
+                {% endif %}
+            </tr>
+        </table>
+    </div>
+    </center>
+{% endblock %} 

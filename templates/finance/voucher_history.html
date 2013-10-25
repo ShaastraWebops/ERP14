@@ -5,9 +5,10 @@
 <!-- Extra scripts -->
 
 <!-- Content -->
-<div id="table_{{vendor.name}}" class="span11"> <!-- The approved vouchers -->
-  <p><h3>Approved Vouchers:</h3></p>
-  <p> 
+<div id="table_{{vendor.name}}" style="position:relative; left:30%"> <!-- The approved vouchers -->
+  <center>
+  <h3>Approved Vouchers:</h3>
+  {% if approved_vouchers %}
   <table class="table table-bordered table-hover display" id="table_{{vendor.name}}_approved">
       <thead>
         <tr>
@@ -31,14 +32,17 @@
       <tbody>
         {% for voucher in approved_vouchers %}
           <tr>
-	      <td>{{voucher.id}}  </td>
+	          <td>{{voucher.id}}</td>
             <td>{{ voucher.vendor.name}}</td>
             <td>{{ voucher.approver}}</td>
             <td>{{ voucher.amount }}</td>
           </tr>
         {% endfor %}
       </tbody>
-    </table>
-  </p>
+  </table>
+  {% else %}
+    <p class="text-warning">No approved vouchers</p>
+  {% endif %}
+  </center>
 </div>
   

@@ -96,11 +96,20 @@
                 <li>
                     <a href="{% url facilities.views.FacilitiesHome %}"><i class="icon-chevron-right"></i>Facilities</a>
                 </li>
+                <li>
+                    <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
+                </li>
           {% endif %}
                 
           {% ifequal userprofile.dept.name 'Facilities' %}
                 <li>
                     <a href="{% url facilities.views.FacilitiesHome %}"><i class="icon-chevron-right"></i>Facilities</a>
+                </li>
+          {% endifequal %}
+
+          {% ifequal userprofile.dept.name 'Finance' %}
+                <li>
+                    <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
                 </li>
           {% endifequal %}
         </ul>

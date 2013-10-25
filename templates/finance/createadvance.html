@@ -1,0 +1,45 @@
+{% extends "dash/coord.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+          	  <a href="{% url finance.views.advances %}"><i class="icon-chevron-right"></i>Advances</a>
+          </li>
+          <li>	
+              <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+
+    <div class="span9" id="id_content_right">
+		<p><h1>Create Advance:</h1></p>
+
+		<form action="" method="post">
+		{% csrf_token %}
+
+		{% if form.errors %}
+			<div class="alert alert-error" style="height:15%; width:76%; padding:2%; position:relative; right:8%;">
+				<button type='button' class='close' onclick='javascript:this.parentNode.className="alert hide";this.innerHTML="";' style="position:relative; right:2%;">&times;</button>
+				<strong>ERROR!</strong><br>
+				Error in form: Please fill all fields.
+			</div>
+			<br>
+		{% endif %}
+		<table class="table table-bordered table-hover" style="width:80%">
+			{{ form.as_table }}
+		</table>
+		<input class="btn btn-primary" type="submit"  />
+		</form>
+	</div>
+	</center>
+
+{% endblock %} 

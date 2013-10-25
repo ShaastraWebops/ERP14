@@ -1,0 +1,83 @@
+{% extends "dash/coord.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url finance.views.voucher_page primkey=voucher.pk %}"><i class="icon-chevron-right"></i>View Voucher</a>
+          </li>
+          <li>
+              <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+
+    <div class="span9" id="id_content_right">
+        <h2>View Voucher:</h2>
+
+        <form action="" method="post">
+        {% csrf_token %}
+
+        <h3>Voucher Page</h3>
+
+        <table class="table table-striped table-bordered table-hover" style="width:90%">
+                <tr>
+                <td></td>
+                <td>{{ voucher }}</td>
+                </tr>
+                
+                <tr>
+                <td>Date Created</td>
+                <td>{{ voucher.datecreated }}</td>
+                </tr>
+                
+                <tr>
+                <td>Vendor</td>
+                <td>{{ voucher.vendor.name }}</td>
+                </tr>
+                
+                <tr>
+                <td>Amount</td>
+                <td>{{ voucher.amount }}</td>
+                </tr>
+                
+                <tr>
+                <td>Purpose</td>
+                <td>{{ voucher.purpose }}</td>
+                </tr>
+                
+                {% if isapproved %}
+                
+                <tr>
+                <td>Unique ID</td>
+                <td>{{ voucher.uniqueid }}</td>
+                </tr>
+                
+                
+                <tr>
+                <td>Status</td>
+                <td>                
+                <p>Approved already on {{ voucher.dateapproved }} by {{ voucher.approver }}</p>
+                {% else %}
+                 
+                <tr>
+                <td>Status</td>
+                <td>      
+                <p>Currently Unapproved<br>
+                {% if isfinance %}<b><a href="{% url finance.views.approve_voucher primkey=voucher.pk %}">Click here to Approve</a></b>{% endif %}</p>
+                
+                {% endif %} 
+                </td>
+                </tr>  
+        </table>
+    </div>
+    </center>
+{% endblock %} 
