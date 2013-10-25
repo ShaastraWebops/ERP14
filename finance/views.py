@@ -10,7 +10,7 @@ from django.forms.models import modelform_factory
 #Import Django Exception
 from django.core.exceptions import ObjectDoesNotExist
 
-from finance.models import Vendor, BudgetProposal
+from finance.models import Vendor, BudgetProposal, VoucherRequest, PaymentRequest, AdvanceRequest
 from finance.forms import PaymentForm, VoucherForm, AdvanceForm
 
 ##FOR TESTING
@@ -34,6 +34,8 @@ def home ( request ) :
     
 
 #######################################----------BUDGETING VIEWS----------###############################################
+
+#__________-- CREATE BUDGET --___________        
 @login_required
 def create_budget(request):
     BudgetForm = modelform_factory(BudgetProposal, fields=('comment', 'plan_1_total', 'plan_2_total', 'plan_1_description', 'plan_2_description') )
@@ -48,7 +50,7 @@ def create_budget(request):
             
             newbudget.save()
             
-            return redirect('finance.views.home')
+            return redirect('finance.views.budgeting')
         else:
             user_dept = str(request.user.get_profile().dept)
             return render_to_response ('finance/createbudget.html', {'form': form, 'user_dept': user_dept}, context_instance=RequestContext(request))
@@ -60,6 +62,11 @@ def create_budget(request):
         return render_to_response('finance/createbudget.html', context, context_instance=RequestContext(request))
         
 
+
+
+
+
+#__________-- APPROVE BUDGET --___________        
 @login_required
 def approve_budget(request, primkey, option):
     try:
@@ -75,29 +82,45 @@ def approve_budget(request, primkey, option):
         approvedbudget.selectedplan = option
         approvedbudget.save()
         
-        return redirect('finance.views.home')
+        return redirect('finance.views.budgeting')
     except ObjectDoesNotExist:
-        return redirect('finance.views.home')
+        return redirect('finance.views.budgeting')
         
-        
+
+
+
+
+#__________-- BUDGETING HOME --___________        
 @login_required
-def finance_budget_portal(request):
+def budgeting(request):
     #Passing a context of information to the template
     context = {}
     
     #Userprofile
-    context["userprofile"] = request.user.get_profile()
+    userprofile = request.user.get_profile()
+    context["userprofile"] = userprofile
     
-    #Unapproved Budgets
-    context["unapproved"] = BudgetProposal.objects.filter(isapproved=False)
+    if ( context["userprofile"].dept.name == 'Finance' ):
+        #Unapproved Budgets
+        context["unapproved"] = BudgetProposal.objects.filter(isapproved=False)
+        
+        #Approved Budgets
+        context["approved"] = BudgetProposal.objects.filter(isapproved=True)
+    else:
+        #Unapproved Budgets
+        context["unapproved"] = BudgetProposal.objects.filter(isapproved=False).filter(creator=userprofile)
+        
+        #Approved Budgets
+        context["approved"] = BudgetProposal.objects.filter(isapproved=True).filter(creator=userprofile)
     
-    #Approved Budgets
-    context["approved"] = BudgetProposal.objects.filter(isapproved=True)
-    
-    return render_to_response('finance/financebudgetportal.html', context, context_instance=RequestContext(request))
+    return render_to_response('finance/budgeting.html', context, context_instance=RequestContext(request))
     
 
 
+
+
+
+#__________-- VIEW A BUDGET --___________        
 @login_required
 def budget_page(request, primkey):
     try:
@@ -109,49 +132,93 @@ def budget_page(request, primkey):
         
         return render_to_response('finance/budgetpage.html', context, context_instance=RequestContext(request))
     except ObjectDoesNotExist:
-        return redirect('finance.views.home')
+        return redirect('finance.views.budgeting')
 
 
 
 #######################################----------VOUCHERS VIEWS----------###############################################
 
+"""
+TODO:
+    UNIQUE ID IMPLEMENTATION
+"""
 
+#__________-- VOUCHERS HOME --___________
 @login_required
-def vouchers ( request ) :
+def vouchers (request, vendorid=None) :
 
     userprofile = request.user.get_profile()
 
     query_dictionary = {}
     query_dictionary['userprofile'] = userprofile
     query_dictionary['isfinance'] = ( userprofile.dept.name == 'Finance' )
-    query_dictionary['vendors'] = Vendor.objects.all() 
+    query_dictionary['vendors'] = Vendor.objects.all()
+    
+    if vendorid is not None:
+        try:
+            if query_dictionary['isfinance']:
+                query_dictionary['vendor'] = Vendor.objects.get(pk=vendorid)
+                query_dictionary['unapproved'] = VoucherRequest.objects.filter(vendor = query_dictionary['vendor']).filter(status='P').all()
+                query_dictionary['approved'] = VoucherRequest.objects.filter(vendor = query_dictionary['vendor']).filter(status='A').all()
+            else:
+                query_dictionary['vendor'] = Vendor.objects.get(pk=vendorid)
+                query_dictionary['unapproved'] = VoucherRequest.objects.filter(creator=userprofile).filter(vendor = query_dictionary['vendor']).filter(status='P').all()
+                query_dictionary['approved'] = VoucherRequest.objects.filter(creator=userprofile).filter(vendor = query_dictionary['vendor']).filter(status='A').all()
+        except ObjectDoesNotExist:
+            query_dictionary['vendor'] = None
+            query_dictionary['unapproved'] = None
+            query_dictionary['approved'] = None
 
 
     #If the user is a finance coord
-    if query_dictionary['isfinance']:
-	return render_to_response ('finance/voucher_fin.html', query_dictionary, context_instance = RequestContext ( request ) )
+    #if query_dictionary['isfinance']:
+	#return render_to_response ('finance/voucher_fin.html', query_dictionary, context_instance = RequestContext ( request ) )
 
     #If the user is a gen coord
-    return render_to_response ( 'finance/voucher.html', query_dictionary, context_instance = RequestContext ( request ) )
+    return render_to_response ( 'finance/vouchers.html', query_dictionary, context_instance = RequestContext ( request ) )
+    
+    
 
 
-
-
-
-
+#__________-- VOUCHER PAGE --___________
 @login_required
-def user_voucher_history(request, curr_vendor):
-    """
-        Used to display a user's history with a particular vendor
-        """
-    
-    userprofile = request.user.get_profile()
-    query_dictionary = {}
-    query_dictionary['approved_vouchers'] = VoucherRequest.objects.filter(creator=userprofile).all()
-    #    query_dictionary['pending_vouchers'] = VoucherRequest.objects.filter(creator=userprofile).filter(vendor.name=curr_vendor).filter(status='P').all()
-    return render_to_response ('finance/voucher_history.html', query_dictionary, context_instance = RequestContext(request) )
-    
-    
+def voucher_page(request, primkey):
+    try:
+        voucher = VoucherRequest.objects.get(pk=primkey)
+        
+        context = {}
+        context["isfinance"] = ( request.user.get_profile().dept.name == 'Finance' )
+        context["voucher"] = voucher
+        context["isapproved"] = (voucher.status == 'A')
+        
+        return render_to_response('finance/voucherpage.html', context, context_instance=RequestContext(request))
+    except ObjectDoesNotExist:
+        return redirect('finance.views.vouchers')
+
+
+
+
+
+
+
+#__________-- APPROVE VOUCHER FUNCTION--___________
+@login_required
+def approve_voucher(request, primkey):
+    try:
+        approvedvoucher = VoucherRequest.objects.get(pk=primkey)
+        
+        #Validate
+        if (approvedvoucher.status == 'A'):
+            return redirect('finance.views.home')
+        
+        approvedvoucher.status = 'A'
+        approvedvoucher.dateapproved = datetime.datetime.now()
+        approvedvoucher.approver = request.user.get_profile()
+        approvedvoucher.save()
+        
+        return redirect('finance.views.vouchers')
+    except ObjectDoesNotExist:
+        return redirect('finance.views.vouchers')
     
     
     
@@ -174,7 +241,7 @@ def add_voucher_request (request, vendorid):
             
             newVoucher.save()
             
-            return redirect('finance.views.home')
+            return redirect('finance.views.vouchers')
         else:
             context = {'form': form, 'vendorid': vendorid, 'title': "New Voucher Request"}
             return render_to_response ('finance/form.html', context, context_instance=RequestContext(request))   
@@ -187,6 +254,77 @@ def add_voucher_request (request, vendorid):
 
 
 #######################################----------PAYMENTS VIEWS----------###############################################
+"""
+TODO:
+    CHECK NUMBER IMPLEMENTATION
+"""
+
+
+#__________-- PAYMENTS HOME--___________
+@login_required
+def payments(request):
+    #Passing a context of information to the template
+    context = {}
+    
+    #Userprofile
+    userprofile = request.user.get_profile()
+    context["userprofile"] = userprofile
+    context["isfinance"] = ( request.user.get_profile().dept.name == 'Finance' )
+    
+    if ( context["userprofile"].dept.name == 'Finance' ):
+        #Unapproved Budgets
+        context["unapproved"] = PaymentRequest.objects.filter(status = 'P')
+        
+        #Approved Budgets
+        context["approved"] = PaymentRequest.objects.filter(status = 'A')
+    else:
+        #Unapproved Budgets
+        context["unapproved"] = PaymentRequest.objects.filter(status = 'P').filter(creator=userprofile)
+        
+        #Approved Budgets
+        context["approved"] = PaymentRequest.objects.filter(status = 'A').filter(creator=userprofile)
+    
+    return render_to_response('finance/payments.html', context, context_instance=RequestContext(request))
+    
+    
+    
+#__________-- PAYMENT PAGE --___________
+@login_required
+def payment_page(request, primkey):
+    try:
+        payment = PaymentRequest.objects.get(pk=primkey)
+        
+        context = {}
+        context["isfinance"] = ( request.user.get_profile().dept.name == 'Finance' )
+        context["payment"] = payment
+        context["isapproved"] = (payment.status == 'A')
+        
+        return render_to_response('finance/paymentpage.html', context, context_instance=RequestContext(request))
+    except ObjectDoesNotExist:
+        return redirect('finance.views.payments')
+    
+    
+    
+    
+#__________-- APPROVE PAYMENT FUNCTION--___________
+@login_required
+def approve_payment(request, primkey):
+    try:
+        approvedpayment = PaymentRequest.objects.get(pk=primkey)
+        
+        #Validate
+        if (approvedpayment.status == 'A'):
+            return redirect('finance.views.home')
+        
+        approvedpayment.status = 'A'
+        approvedpayment.dateapproved = datetime.datetime.now()
+        approvedpayment.approver = request.user.get_profile()
+        approvedpayment.save()
+        
+        return redirect('finance.views.payments')
+    except ObjectDoesNotExist:
+        return redirect('finance.views.payments')
+    
 
 
 
@@ -208,7 +346,7 @@ def add_payment_request (request):
             
             newPayment.save()
             
-            return redirect('finance.views.home')
+            return redirect('finance.views.payments')
         else:
             context = {'form': form, 'title': "New Payment Request"}
             return render_to_response ('finance/form.html', context, context_instance=RequestContext(request))    
@@ -226,6 +364,71 @@ def add_payment_request (request):
 
 
 
+#__________-- ADVANCES HOME--___________
+@login_required
+def advances(request):
+    #Passing a context of information to the template
+    context = {}
+    
+    #Userprofile
+    userprofile = request.user.get_profile()
+    context["userprofile"] = userprofile
+    context["isfinance"] = ( request.user.get_profile().dept.name == 'Finance' )
+    
+    if ( context["userprofile"].dept.name == 'Finance' ):
+        #Unapproved Budgets
+        context["unapproved"] = AdvanceRequest.objects.filter(status = 'P')
+        
+        #Approved Budgets
+        context["approved"] = AdvanceRequest.objects.filter(status = 'A')
+    else:
+        #Unapproved Budgets
+        context["unapproved"] = AdvanceRequest.objects.filter(status = 'P').filter(creator=userprofile)
+        
+        #Approved Budgets
+        context["approved"] = AdvanceRequest.objects.filter(status = 'A').filter(creator=userprofile)
+    
+    return render_to_response('finance/advances.html', context, context_instance=RequestContext(request))
+    
+    
+
+
+#__________-- ADVANCE PAGE --___________
+@login_required
+def advance_page(request, primkey):
+    try:
+        advance = AdvanceRequest.objects.get(pk=primkey)
+        
+        context = {}
+        context["isfinance"] = ( request.user.get_profile().dept.name == 'Finance' )
+        context["advance"] = advance
+        context["isapproved"] = (advance.status == 'A')
+        
+        return render_to_response('finance/advancepage.html', context, context_instance=RequestContext(request))
+    except ObjectDoesNotExist:
+        return redirect('finance.views.advances')
+    
+    
+
+
+#__________-- APPROVE ADVANCE FUNCTION--___________
+@login_required
+def approve_advance(request, primkey):
+    try:
+        approvedadvance = AdvanceRequest.objects.get(pk=primkey)
+        
+        #Validate
+        if (approvedadvance.status == 'A'):
+            return redirect('finance.views.advances')
+        
+        approvedadvance.status = 'A'
+        approvedadvance.dateapproved = datetime.datetime.now()
+        approvedadvance.approver = request.user.get_profile()
+        approvedadvance.save()
+        
+        return redirect('finance.views.advances')
+    except ObjectDoesNotExist:
+        return redirect('finance.views.advances')
 
 
 
@@ -247,7 +450,7 @@ def add_advance_request (request):
             
             newAdvance.save()
             
-            return redirect('finance.views.home')
+            return redirect('finance.views.advances')
         else:
             context = {'form': form, 'title': "New Advance Request"}
             return render_to_response ('finance/form.html', context, context_instance=RequestContext(request)) 
