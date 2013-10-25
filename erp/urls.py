@@ -48,6 +48,8 @@ urlpatterns = patterns('',
     
     url(r'^comments/', include('django.contrib.comments.urls')),
     url(dajaxice_config.dajaxice_url, include('misc.dajaxice.urls')), # For dajaxice to function corrently
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+                 {'document_root': MEDIA_ROOT}),
 )
 
 urlpatterns += staticfiles_urlpatterns() # To enable serving static files
