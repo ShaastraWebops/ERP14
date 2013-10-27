@@ -4,13 +4,12 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from .models import files_model
 
-class UploadFileForm(forms.ModelForm):
-    #title = forms.CharField(max_length=100,help_text='(add a title to your image)')
-    #content  = forms.ImageField(help_text='(please keep file size below 5MB and give only imagess in jpg format)')	
+class UploadFileForm(forms.ModelForm):	
     class Meta :
         model = files_model
-    def clean_content(self):
-        content = self.cleaned_data['content']
+        exclude = ('user',)
+    def clean_attachment(self):
+        content = self.cleaned_data['attachment']
         content_type = content.content_type
         if content_type in settings.CONTENT_TYPES:
             if content._size > settings.MAX_UPLOAD_SIZE:
@@ -18,10 +17,31 @@ class UploadFileForm(forms.ModelForm):
         else:
             raise forms.ValidationError(_('Image type is not supported'))
         return content
-    def clean_title(self):
-        title=self.cleaned_data['title']
-        check=files_model.objects.filter(title=title)#uncomment this after implementing login,user=user)
-        if check:
-            raise forms.ValidationError('This image name has already been used ,please choose another one')
+    def clean_events_sponsor(self):
+        sponsor_type = self.cleaned_data['sponsor_type']
+        events_sponsor = self.cleaned_data['events_sponsor']
+        if sponsor_type == 'events_spons':
+             if events_sponsor:
+                return events_sponsor
+             else:
+                raise forms.ValidationError(_('please fill in this column if you are uploading events sponsor image or change Sponsor_type if not'))
         else:
-            return title
+            if events_sponsor:
+                  raise forms.ValidationError(_('please disable this column if you are uploading general sponsor image or change Sponsor_type if not'))
+        return events_sponsor
+class EditTitleForm(forms.ModelForm):
+    class Meta:
+        model = files_model
+        exclude = ('user','attachment',)
+    def clean_events_sponsor(self):
+        sponsor_type = self.cleaned_data['sponsor_type']
+        events_sponsor = self.cleaned_data['events_sponsor']
+        if sponsor_type == 'events_spons':
+             if events_sponsor:
+                return events_sponsor
+             else:
+                raise forms.ValidationError(_('please fill in this column if you are uploading events sponsor image or change Sponsor_type if not'))
+        else:
+            if events_sponsor:
+                  raise forms.ValidationError(_('please disable this column if you are uploading general sponsor image or change Sponsor_type if not'))
+        return events_sponsor
