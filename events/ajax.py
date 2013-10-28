@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # For simple dajax(ice) functionalities
 from django.utils import simplejson
 from misc.dajaxice.decorators import dajaxice_register
@@ -553,12 +554,7 @@ def view_tdp(request,event_pk=None):
     event = ParticipantEvent.objects.get(pk=event_pk)
     tdplist = []
     for tdp in TDP.objects.using(mainsite_db).filter(teamevent__event_id = event_pk):
-        print tdp.file_tdp.name
         tdplist.append((tdp,tdp.teamevent.team_id))
-    print tdplist
-    for tdp in tdplist:
-        print tdp[0].teamevent.team_name
-        print tdp[0].file_tdp.url
 
     html_content = render_to_string('events/view_tdp.html',locals(),RequestContext(request))
     dajax.assign('#id_content_right','innerHTML',html_content)
