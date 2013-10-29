@@ -34,31 +34,31 @@
 			</div>
 			<br>
 		{% endif %}
-		<table class="table table-bordered table-hover" style="width:80%">
+		<table class="table table-bordered table-hover">
             {{formset.management_form}}
-            {{ form.as_table }}
             <table>
-                <tr>
-                    <td>Service</td>
-                    <td>Quantity</td>
-                    <td>Price</td>
-                    <td>Comments</td>
-                    <td>Plan Number</td>
+                <tr class="success">
+                    <td><b><u>Service</u></b></td>
+                    <td><b><u>Quantity</u></b></td>
+                    <td><b><u>Price</u></b></td>
+                    <td><b><u>Comments</u></b></td>
+                    <td><b><u>Plan Number</u></b></td>
                 </tr>
             {% for form in formset.forms %}
-                <tr>
+                <tr class="success">
                     <td>{{form.req_service}}</td>
                     <td>{{form.req_qty}}</td>
                     <td>{{form.req_price}}</td>
                     <td>{{form.comment}}</td>
                     <td>{{form.plan_number}}</td>
                 </tr>
-            
-                {% endfor %}
+            {% endfor %}
             </table>
-
+            <table class="table table-bordered table-striped">
+                {{ form.as_table }}
+            </table>
 		</table>
-		<input class="btn btn-primary" type="submit"  />
+		<input class="btn btn-primary" type="submit"/>
 		</form>
 	</div>
 	</center>
