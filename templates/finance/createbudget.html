@@ -34,7 +34,7 @@
 			</div>
 			<br>
 		{% endif %}
-		<table class="table table-bordered table-hover">
+		<table class="table table-bordered table-hover table-striped">
             {{formset.management_form}}
             <table>
                 <tr class="success">
@@ -54,7 +54,7 @@
                 </tr>
             {% endfor %}
             </table>
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-hover">
                 {{ form.as_table }}
             </table>
 		</table>
