@@ -26,7 +26,7 @@
 		<form action="" method="post">
 		{% csrf_token %}
 
-		{% if form.errors %}
+		{% if form.errors or formset.errors %}
 			<div class="alert alert-error" style="height:15%; width:76%; padding:2%; position:relative; right:8%;">
 				<button type='button' class='close' onclick='javascript:this.parentNode.className="alert hide";this.innerHTML="";' style="position:relative; right:2%;">&times;</button>
 				<strong>ERROR!</strong><br>
@@ -35,7 +35,28 @@
 			<br>
 		{% endif %}
 		<table class="table table-bordered table-hover" style="width:80%">
-			{{ form.as_table }}
+            {{formset.management_form}}
+            {{ form.as_table }}
+            <table>
+                <tr>
+                    <td>Service</td>
+                    <td>Quantity</td>
+                    <td>Price</td>
+                    <td>Comments</td>
+                    <td>Plan Number</td>
+                </tr>
+            {% for form in formset.forms %}
+                <tr>
+                    <td>{{form.req_service}}</td>
+                    <td>{{form.req_qty}}</td>
+                    <td>{{form.req_price}}</td>
+                    <td>{{form.comment}}</td>
+                    <td>{{form.plan_number}}</td>
+                </tr>
+            
+                {% endfor %}
+            </table>
+
 		</table>
 		<input class="btn btn-primary" type="submit"  />
 		</form>

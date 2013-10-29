@@ -3,7 +3,7 @@ from users.models import ERPUser
 from dept.models import Subdept, Dept
 from events.models import GenericEvent
 
-
+PLAN_CHOICES = [(i,i) for i in range(1,3)]
 ##BUDGETING MODELS##
 class BudgetProposal(models.Model):
     creator = models.ForeignKey(ERPUser, related_name='created_budget_set')
@@ -25,7 +25,17 @@ class BudgetProposal(models.Model):
     
     def __unicode__ (self):
         return '%s (%s)' %(self.event.title, self.creator)
-        
+
+class Requirement(models.Model):
+    req_service = models.CharField(max_length=25)
+    req_qty = models.IntegerField(default=0)
+    req_price = models.IntegerField()
+    comment = models.CharField(max_length=100)
+    plan_number = models.IntegerField(choices=PLAN_CHOICES)
+    budget = models.ForeignKey(BudgetProposal, related_name="requirement_of_budget")
+
+    def __unicode__(self):
+        return self.req_service
         
         
 

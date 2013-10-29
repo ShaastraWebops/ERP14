@@ -8,12 +8,12 @@ import datetime
 from misc.utilities import finance_check, events_check, finance_or_events_check
 
 #Importing Model Formset Factory
-from django.forms.models import modelform_factory
+from django.forms.models import modelform_factory,inlineformset_factory
 
 #Import Django Exception
 from django.core.exceptions import ObjectDoesNotExist
 
-from finance.models import Vendor, BudgetProposal, VoucherRequest, PaymentRequest, AdvanceRequest
+from finance.models import Vendor, BudgetProposal, VoucherRequest, PaymentRequest, AdvanceRequest,Requirement
 from finance.forms import PaymentForm, VoucherForm, AdvanceForm
 
 ##FOR TESTING
@@ -43,27 +43,37 @@ def home ( request ) :
 @login_required
 @user_passes_test (events_check)
 def create_budget(request):
-    BudgetForm = modelform_factory(BudgetProposal, fields=('comment', 'plan_1_total', 'plan_2_total', 'plan_1_description', 'plan_2_description') )
-    
+    BudgetForm = modelform_factory(BudgetProposal, fields=('plan_1_total', 'plan_2_total', 'plan_1_description', 'plan_2_description') )
+    Req_Formset_Gen = inlineformset_factory(BudgetProposal,Requirement,extra=20)
+    data = {
+            'form-TOTAL_FORMS': u'1',
+            'form-INITIAL_FORMS': u'0',
+            'form-MAX_NUM_FORMS': u'',
+            }
     if request.method == 'POST':
         form = BudgetForm(request.POST)
         if form.is_valid():
             newbudget = form.save(commit=False)
+            req_formset_inst = Req_Formset_Gen(request.POST,instance=newbudget)
+            if req_formset_inst.is_valid():
+                newbudget.creator = request.user.get_profile()
+                newbudget.event = request.user.get_profile().event
             
-            newbudget.creator = request.user.get_profile()
-            newbudget.event = request.user.get_profile().event
-            
-            newbudget.save()
-            
-            return redirect('finance.views.budgeting')
+                newbudget.save()
+                req_formset_inst.save()
+                return redirect('finance.views.budgeting')
+            else:
+                user_dept = str(request.user.get_profile().dept)
+                return render_to_response('finance/createbudget.html',{'form': form,'user_dept' : user_dept}, context_instance=RequestContext(request))
         else:
             user_dept = str(request.user.get_profile().dept)
             return render_to_response ('finance/createbudget.html', {'form': form, 'user_dept': user_dept}, context_instance=RequestContext(request))
     else:
         #Display Blank Form
         form = BudgetForm()
+        req_formset_inst = Req_Formset_Gen()
         user_dept = str(request.user.get_profile().dept)
-        context = {'form': form, 'user_dept':user_dept}
+        context = {'form': form, 'user_dept':user_dept,'formset': req_formset_inst, 'data': data}
         return render_to_response('finance/createbudget.html', context, context_instance=RequestContext(request))
         
 
@@ -138,6 +148,16 @@ def budget_page(request, primkey):
         context = {}
         context["budget"] = approvedbudget
         context["user_dept"] = str(request.user.get_profile().dept)
+        req_list =  approvedbudget.requirement_of_budget.all()
+        plan1_list = []
+        plan2_list = []
+        for req in req_list:
+            if req.plan_number == 1:
+                plan1_list.append(req)
+                context["plan1"] = plan1_list
+            else:
+                plan2_list.append(req)
+                context["plan2"] = plan2_list
         
         return render_to_response('finance/budgetpage.html', context, context_instance=RequestContext(request))
     except ObjectDoesNotExist:

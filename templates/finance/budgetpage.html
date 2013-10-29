@@ -38,8 +38,6 @@
         <table class="table table-striped table-bordered table-hover" style="width:90%">
             <tr><td colspan="4"><center><b>{{budget}}</b></center></td></tr>
             
-            <tr><td colspan="4"><center><b>Comment:</b><br>{{budget.comment}}</center></td></tr>
-            
             <tr>
                 <td colspan="2"><center>Plan 1:</center></td>
                 <td colspan="2"><center>Plan 2:</center></td>
@@ -55,7 +53,57 @@
                 <td colspan="2"><center>{{budget.plan_1_description}}</center></td>
                 <td colspan="2"><center>{{budget.plan_2_description}}</center></td>
             </tr>
+            <tr>
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td>Service</td>
+                            <td>Quantity</td>
+                            <td>Price</td>
+                            <td>Comment</td>
+                        </tr>
+                    </table>
+                </td>
+                <td colspan="2">
+                    <table>
+                        <tr>
+                            <td>Service</td>
+                            <td>Quantity</td>
+                            <td>Price</td>
+                            <td>Comment</td>
+                        </tr>
+                    </table>
+                </td>
+            <tr>
             
+
+            {% for req in plan1 %}
+            <td colspan="2">
+                <table>
+                <tr>
+                <td>{{req.req_service}}</td>
+                <td>{{req.req_qty}}</td>
+                <td>{{req.req_price}}</td>
+                <td>{{req.comment}}</td>
+                </tr>
+                </table>
+            </td>
+            {% endfor %}
+
+            {% for req in plan2 %}
+            <td colspan="2">
+                <table>
+                    <tr>
+                        <td>{{req.req_service}}</td>
+                        <td>{{req.req_qty}}</td>
+                        <td>{{req.req_price}}</td>
+                        <td>{{req.comment}}</td>
+                    </tr>
+                </table>
+            </td>
+            {% endfor %}
+        </tr>
+
             <tr>
                 {% if not budget.isapproved %}
                 <td colspan="2"><center><a href="{% url finance.views.approve_budget primkey=budget.pk option=1 %}"><b>Approve Plan 1</b></a></center></td>
