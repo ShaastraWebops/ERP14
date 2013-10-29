@@ -108,7 +108,8 @@ INSTALLED_APPS = (
     'misc.dajaxice',
     'events',
     'misc.dajaxice',
-    'misc.dajax'
+    'misc.dajax',
+    'files_upload',
 )
 
 AUTH_PROFILE_MODULE = 'users.ERPUser'
@@ -180,3 +181,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 LOGIN_URL = "/login/" # URL for login_required decorator to redirect to
+
+CONTENT_TYPES=['image/jpeg',]
+MAX_UPLOAD_SIZE=5242880
+DEFAULT_FILE_STORAGE =  'django.core.files.storage.FileSystemStorage'

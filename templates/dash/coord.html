@@ -112,6 +112,12 @@
                     <a href="{% url finance.views.home %}"><i class="icon-chevron-right"></i>Finance</a>
                 </li>
           {% endifequal %}
+
+          {% ifequal userprofile.dept.name 'Spons & PR' %}
+                <li>
+                    <a href="{% url files_upload.views.upload_file %}"><i class="icon-chevron-right"></i>File Upload</a>
+                </li>
+          {% endifequal %}
         </ul>
       </div>
     

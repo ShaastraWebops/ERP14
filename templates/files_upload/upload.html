@@ -1,0 +1,59 @@
+{% extends 'dash/coord.html' %}
+
+{% block content %}
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+              <a href="{% url files_upload.views.upload_file %}"><i class="icon-chevron-right"></i>File Upload</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i> Dashboard </a>
+          </li>
+        </ul>
+    </div>
+	
+	<div class="span9" id="id_content_right">
+		<h2> File Upload </h2>
+
+		<form action ="" method="POST" enctype="multipart/form-data">
+	        {% csrf_token %}   
+	        
+	        {% if form.errors %}
+				<div class="alert alert-error" style="height:10%; width:50%; position:relative; right:7.5%;">
+					<button type='button' class='close' onclick='javascript:this.parentNode.className="alert hide";this.innerHTML="";'>&times;</button>
+					<strong>ERROR!</strong><br>
+					Error in form: Please fill all fields.
+				</div>
+				<br>
+			{% endif %}
+
+			{% if error %}
+				<div class="alert alert-error" style="height:10%; width:50%; position:relative; right:7.5%;">
+					<button type='button' class='close' onclick='javascript:this.parentNode.className="alert hide";this.innerHTML="";'>&times;</button>
+					<strong>ERROR!</strong><br>
+					{{ error }}
+				</div>
+				<br>
+			{% endif %}
+
+			{% if message %}
+				<div class="well" style="width:50%;"> <p class="text-muted">{{ message }}</p> </div>
+			{% endif %}
+
+			<table class="table table-hover table-bordered"> 
+				{{ form.as_table }}
+			</table>
+		
+			<input type="submit" value="Upload" class = "float_right button_input btn btn-primary">
+		</form>
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+				$("#id_attachment").parent().find('span').addClass("text-muted");
+			})
+		</script>
+	</div>
+{% endblock content %}

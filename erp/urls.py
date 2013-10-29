@@ -1,6 +1,6 @@
 from django.conf.urls import patterns, include, url
 import os.path
-from erp.settings import STATIC_URL
+from erp.settings import STATIC_URL, MEDIA_ROOT
 from django.views.generic.simple import redirect_to
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
@@ -34,6 +34,7 @@ urlpatterns = patterns('',
     url(r'^finance/', include('finance.urls')),
     url(r'^users/', include('users.urls')),
     url(r'^facilities/', include('facilities.urls')),
+    url(r'^files_upload/', include('files_upload.urls')),
     
     #Password Reset Handling
     url(r'^forgotpassword/reset/$', 'django.contrib.auth.views.password_reset',  {'post_reset_redirect' : '/forgotpassword/reset/done/', 'template_name': 'users/password_reset_form.html', 'email_template_name': 'user/password_email_template.html'}, name="password_reset"),
@@ -47,6 +48,8 @@ urlpatterns = patterns('',
     
     url(r'^comments/', include('django.contrib.comments.urls')),
     url(dajaxice_config.dajaxice_url, include('misc.dajaxice.urls')), # For dajaxice to function corrently
+    url(r'^media/(?P<path>.*)$', 'django.views.static.serve',
+                 {'document_root': MEDIA_ROOT}),
 )
 
 urlpatterns += staticfiles_urlpatterns() # To enable serving static files
