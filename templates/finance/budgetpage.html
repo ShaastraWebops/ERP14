@@ -69,7 +69,7 @@
                         <tr>
                             <td>Service</td>
                             <td>Quantity</td>
-                            <td>Price</td>
+                            <td>Unit Price</td>
                             <td>Comment</td>
                         </tr>
                     </table>
@@ -77,31 +77,31 @@
             <tr>
             
 
-            {% for req in plan1 %}
             <td colspan="2">
                 <table>
+            {% for req in plan1 %}
                 <tr>
                 <td>{{req.req_service}}</td>
                 <td>{{req.req_qty}}</td>
                 <td>{{req.req_price}}</td>
                 <td>{{req.comment}}</td>
                 </tr>
+            {% endfor %}
                 </table>
             </td>
-            {% endfor %}
 
-            {% for req in plan2 %}
             <td colspan="2">
                 <table>
+            {% for req in plan2 %}
                     <tr>
                         <td>{{req.req_service}}</td>
                         <td>{{req.req_qty}}</td>
                         <td>{{req.req_price}}</td>
                         <td>{{req.comment}}</td>
                     </tr>
+            {% endfor %}
                 </table>
             </td>
-            {% endfor %}
         </tr>
 
             <tr>
