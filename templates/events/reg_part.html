@@ -46,13 +46,17 @@
                 <td>Name</td>
                 <td>Username</td>
                 <td>Email</td>
+                <td>Team Name</td>
             </tr>
-            {% for user1 in userlist %}
+            {% for user1,team_name in userlist %}
+            {% for all_users in user1 %}
             <tr>
-                <td>{{user1.first_name}}</td>
-                <td>{{user1.username}}</td>
-                <td>{{user1.email}}</td>
+                <td>{{all_users.first_name}}</td>
+                <td>{{all_users.username}}</td>
+                <td>{{all_users.email}}</td>
+                <td>{{team_name}}</td>
             </tr>
+            {% endfor %}
             {% endfor %}
         </table>
         <a href="/events/csv/">Export as CSV</a>
