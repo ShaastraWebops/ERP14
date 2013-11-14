@@ -182,6 +182,8 @@ class College(models.Model):
     state = models.CharField(max_length=40, choices=STATE_CHOICES,
                              help_text='The state where your college is located. Select from the drop down list'
                              )
+    def __unicode__(self):
+        return '%s, %s, %s' % (self.name, self.city, self.state)
 
 class UserProfile(models.Model):
 
