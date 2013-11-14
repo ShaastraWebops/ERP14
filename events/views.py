@@ -111,10 +111,10 @@ def registered_participants(request,exportCSV=False):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="participants.csv"'
         writer = csv.writer(response)
-        writer.writerow(['Name','Username','Email','Shaastra_ID'])
+        writer.writerow(['Name','Username','Email','Team Name','College','Shaastra_ID'])
         for user1,team_name in userlist:
             for all_users in user1:
-                writer.writerow([all_users.first_name,all_users.username,all_users.email,team_name])
+                writer.writerow([all_users.first_name,all_users.username,all_users.email,team_name,all_users.userprofile_set.all()[0].college,all_users.userprofile_set.all()[0].shaastra_id])
         print response
         return response
     else:
