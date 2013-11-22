@@ -46,9 +46,11 @@
                 <td>Name</td>
                 <td>Username</td>
                 <td>Email</td>
+                <td>Mobile Number</td>
                 <td>Team Name</td>
                 <td>College</td>
                 <td>Shaastra ID</td>
+                <td>Want Accomodation</td>
             </tr>
             {% for user1,team_name in userlist %}
             {% for all_users in user1 %}
@@ -56,9 +58,11 @@
                 <td>{{all_users.first_name}}</td>
                 <td>{{all_users.username}}</td>
                 <td>{{all_users.email}}</td>
+                <td>{{all_users.userprofile_set.all.0.mobile_number}}</td>
                 <td>{{team_name}}</td>
                 <td>{{all_users.userprofile_set.all.0.college}}</td>
                 <td>{{all_users.userprofile_set.all.0.shaastra_id}}</td>
+                <td>{{all_users.userprofile_set.all.0.want_accomodation}}</td>
             </tr>
             {% endfor %}
             {% endfor %}
