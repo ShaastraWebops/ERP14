@@ -29,6 +29,7 @@ mainsite_db = DATABASES.keys()[1]
 # Python imports
 import json
 import os
+import csv
 
 @dajaxice_register
 def hello_world(request):
@@ -559,3 +560,57 @@ def view_tdp(request,event_pk=None):
     html_content = render_to_string('events/view_tdp.html',locals(),RequestContext(request))
     dajax.assign('#id_content_right','innerHTML',html_content)
     return dajax.json()
+
+@dajaxice_register
+def choose_event_tdp(request, choose_form=None):
+    dajax = Dajax()
+    if request.method == 'POST' and choose_form !=None:
+        form = ChooseEventForm(deserialize_form(choose_form))
+        if form.is_valid():
+            clean_form = form.clean()
+            event_name = clean_form['event']
+            generic_event_instance = GenericEvent.objects.get(title=event_name)
+            event_pk = generic_event_instance.pk
+            tdplist = []
+            for tdp in TDP.objects.using(mainsite_db).filter(teamevent__event_id = event_pk):
+                tdplist.append((tdp,tdp.teamevent.team_id))
+            html_content = render_to_string('events/view_tdp.html',locals(),RequestContext(request))
+            dajax.assign('#id_content_right','innerHTML',html_content)
+            return dajax.json()
+
+    else:
+        form=ChooseEventForm()
+        html_content = render_to_string('events/choose_event_tdp.html',locals(),RequestContext(request))
+        dajax.assign('#id_content_right','innerHTML',html_content)
+        return dajax.json()
+
+@dajaxice_register
+def choose_event_parti(request,choose_form=None):
+    dajax=Dajax()
+    if request.method=="POST" and choose_form != None:
+        form=ChooseEventForm(deserialize_form(choose_form))
+        if form.is_valid():
+            clean_form = form.clean()
+            event_name = clean_form['event']
+            generic_event_instance = GenericEvent.objects.get(title=event_name)
+            event_pk = generic_event_instance.pk
+            teameventlist = TeamEvent.objects.using(mainsite_db).filter(event_id = event_pk)
+            userlist = []
+            for team in teameventlist:
+                userlist.append([team.users.all(),team.team_name])
+            #if exportCSV:
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="participants.csv'
+            writer = csv.writer(response)
+            writer.writerow(['Name','Username','Email','Mobile'.'Team Name','College','Shaastra ID','Want Accomodation'])
+            for user1,team_name in userlist:
+                for all_users in user1:
+                    writer.writerow([all_users.first_name,all_users.username,all_users.email,all_users.userprofile_set.all()[0].mobile_number,team_name, all_users.userprofile_set.all()[0].college,all_users.userprofile_set.all()[0].shaastra_id,all_users.userprofile_set.all()[0].want_accomodation])
+            html_content = render_to_string('events/reg_part.html',locals(),RequestContext(request))
+            dajax.assign('#id_content_right','innerHTML',html_content)
+            return dajax.json()
+    else:
+        form=ChooseEventForm()
+        html_content = render_to_string('events/choose_event_reg_part.html',locals(),RequestContext(request))
+        dajax.assign('#id_content_right','innerHTML',html_content)
+        return dajax.json()
