@@ -5,6 +5,7 @@ from misc.dajaxice.decorators import dajaxice_register
 from misc.dajax.core import Dajax
 from misc.dajaxice.utils import deserialize_form
 # Django imports
+from django.http import HttpResponse
 # For rendering templates
 from django.template import RequestContext
 from django.template.loader import render_to_string
@@ -602,11 +603,11 @@ def choose_event_parti(request,choose_form=None):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="participants.csv'
             writer = csv.writer(response)
-            writer.writerow(['Name','Username','Email','Mobile'.'Team Name','College','Shaastra ID','Want Accomodation'])
+            writer.writerow(['Name','Username','Email','Mobile','Team Name','College','Shaastra ID','Want Accomodation'])
             for user1,team_name in userlist:
                 for all_users in user1:
                     writer.writerow([all_users.first_name,all_users.username,all_users.email,all_users.userprofile_set.all()[0].mobile_number,team_name, all_users.userprofile_set.all()[0].college,all_users.userprofile_set.all()[0].shaastra_id,all_users.userprofile_set.all()[0].want_accomodation])
-            html_content = render_to_string('events/reg_part.html',locals(),RequestContext(request))
+            html_content = render_to_string('events/coreshow_reg_part.html',locals(),RequestContext(request))
             dajax.assign('#id_content_right','innerHTML',html_content)
             return dajax.json()
     else:
