@@ -118,6 +118,12 @@
                     <a href="{% url files_upload.views.upload_file %}"><i class="icon-chevron-right"></i>File Upload</a>
                 </li>
           {% endifequal %}
+
+          {% ifequal userprofile.dept.name 'Student Relations' %}
+          <li>
+          <a href="{% url hospi.views.home %}"><i class="icon-chevron-right"></i>ControlRoom Portal</a>
+          </li>
+          {% endifequal %}
         </ul>
       </div>
     

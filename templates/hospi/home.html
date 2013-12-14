@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+{% block extrastyle %}
+    <link href="{% static 'dash/coord/coord.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/sidenav.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/table_style.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/datatables/TableTools.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/datatables/TableTools_JUI.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'css/jui_themes/smoothness/jquery-ui-1.10.3.custom.css' %}" rel="stylesheet" media="screen">
+    <link href="{% static 'dash/content.css' %}" rel="stylesheet" media="screen">
+{% endblock %}
+
+{% block extrascripts %}
+    <script src="{% static 'js/jquery-ui-1.10.3.custom.js' %}"></script>
+    <script src="{% static 'dash/datatables/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'dash/datatables/TableTools.js' %}"></script>
+    <script src="{% static 'dash/datatables/ZeroClipboard.js' %}"></script>
+    <script src="{% static 'dash/content.js' %}"></script>
+    <script src="{% static 'dash/coord/coord.js' %}"></script>
+    <!-- <script src="{% static 'dash/dataTables.bootstrap.js' %}"></script> 
+        JQuery UI looks better than bootstrap version-->
+{% endblock %}
+
+{% block content %}
+
+<div class="row-fluid"> 
+    <center>
+    <div class="span3 sidebar" id="id_content_left">
+        <!-- Left content holds the sidebar-nav -->
+        <ul class="nav nav-tabs nav-stacked sidenav affix-top">
+          <li class="active">
+          <a href="{% url hospi.views.home %}"><i class="icon-chevron-right"></i>ControlRoom Portal</a>
+          </li>
+          <li>
+            <a href="{% url dash.views.dash_view %}"><i class="icon-chevron-right"></i>Dashboard</a>
+          </li>
+        </ul>
+    </div>
+    <div class="span9" id="id_content_right">
+        <div class="tabbable" id="navs">
+            <ul class="nav nav-tabs">
+                <li id="list_roommap" class="active" ><a href="#tab1" data-toggle ="tab" onclick="Dajaxice.hospi.roommap(Dajax.process)">RoomMap</a></li>
+                <li id="list_add_room"><a href="#tab2" data-toggle="tab">Add Room</a></li>
+                <li id="list_checkin"><a href="#tab3" data-toggle="tab">CheckIn</a></li>
+                <li id="list_checkout"><a href="#tab4" data-toggle="tab">Checkout</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="tab1">
+                    SSUP
+                </div>
+                <div class="tab-pane" id="tab2">
+                    GEN
+                </div>
+                <div class="tab-pane" id="tab3">
+                    ENTRA
+                </div>
+                <div class="tab-pane" id="tab4">
+                    Champesthanu
+                </div>
+            </div>
+        </div>
+
+        {% endblock %}
