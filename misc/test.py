@@ -5,6 +5,7 @@ from tasks.models import Task, Comment
 import datetime
 import random
 from events.models import GenericEvent, ParticipantEvent, AudienceEvent, Tab, EVENT_CATEGORIES
+from hospi.models import AvailableRooms, HOSTEL_CHOICES
 
 DEPT_RANGE = 5
 SUBDEPT_RANGE = 5
@@ -552,5 +553,14 @@ def populate_events_db():
             tb.event = e
             tb.save()
 
-
- 
+def populate_controlroom_db():
+    for hostel in HOSTEL_CHOICES:
+        for i in range(365,375):
+            a = AvailableRooms()
+            a.hostel = hostel[0]
+            a.room_no = str(i)
+            a.max_number = 3
+            a.mattresses = 3 
+            a.already_checkedin = 0
+            a.save()
+            print a
