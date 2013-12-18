@@ -10,6 +10,7 @@ from django.template import loader
 from django.contrib.auth.decorators import login_required
 
 from hospi.models import *
+from hospi.forms import AddRoomForm
 import json 
 
 @dajaxice_register
@@ -21,3 +22,27 @@ def roommap(request,hostel_name):
     dajax.remove_css_class=('#id_modal','hide')
     dajax.assign('#id_modal',"innerHTML",html_content)
     return dajax.json()
+
+@dajaxice_register
+def addroom(request,addroom_form=None):
+
+    dajax = Dajax()
+    if request.method == 'POST' and addroom_form != None:
+        form = AddRoomForm(deserialize_form(addroom_form))
+        if form.is_valid():
+            try:
+                form.save()
+                html_content = render_to_string('hospi/AddRoom.html',locals(),RequestContext(request))
+                dajax.assign('#tab2',"innerHTML",html_content)
+                return dajax.json()
+            except EditError as error:
+                show_alert(dajax,"error",error.value)
+                return dajax.json()
+        else:
+            show_alert(dajax,"error","Form is invalid")
+    else:
+        form = AddRoomForm()
+        html_content = render_to_string('hospi/AddRoom.html',locals(),RequestContext(request))
+        dajax.assign('#tab2',"innerHTML",html_content)
+        return dajax.json()
+            

@@ -1,0 +1,7 @@
+<form method="POST" action="" id="id_form_addroom">
+                        {% csrf_token %}
+                        <table class="table table-striped table-bordered table-condensed">
+                            {{form.as_table}}
+                        </table>
+                        <a class="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.hospi.addroom, Dajax.process, {'addroom_form':$('#id_form_addroom').serialize(true)})">SUBMIT</a>
+
