@@ -1,0 +1,7 @@
+<form method="POST" action="" id="id_form_checkin">
+    {% csrf_token %}
+    <table class="table table-striped table-bordered table-condensed">
+        {{form.as_table}}
+    </table>
+    <a class="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.hospi.checkin, Dajax.process,{'indi_form':$('#id_form_checkin').serialize(true)})">Submit</a>
+</form>

@@ -10,8 +10,11 @@ from django.template import loader
 from django.contrib.auth.decorators import login_required
 
 from hospi.models import *
-from hospi.forms import AddRoomForm
+from hospi.forms import AddRoomForm,IndividualForm
 import json 
+from misc.utilities import show_alert
+from erp.settings import DATABASES
+mainsite_db = DATABASES.keys()[1]
 
 @dajaxice_register
 def roommap(request,hostel_name):  
@@ -32,6 +35,7 @@ def addroom(request,addroom_form=None):
         if form.is_valid():
             try:
                 form.save()
+                show_alert(dajax,"success","Room Added Successfully")
                 html_content = render_to_string('hospi/AddRoom.html',locals(),RequestContext(request))
                 dajax.assign('#tab2',"innerHTML",html_content)
                 return dajax.json()
@@ -46,3 +50,39 @@ def addroom(request,addroom_form=None):
         dajax.assign('#tab2',"innerHTML",html_content)
         return dajax.json()
             
+@dajaxice_register
+def checkin(request,indi_form=None):
+    dajax = Dajax()
+    if request.method == 'POST' and indi_form != None:
+        form = IndividualForm(deserialize_form(indi_form))
+        if form.is_valid():
+            cleaned_form = form.cleaned_data
+            try:
+                participant = UserProfile.objects.using(mainsite_db).filter(shaastra_id = cleaned_form['shaastra_id'])
+            except:
+                show_alert(dajax,"error","User with this Shaastra ID does not exist")
+                return dajax.json()
+            try:
+                checkedin = IndividualCheckIn.objects.get(shaastra_id=cleaned_form['shaastra_id'])
+                room = checkedin.room
+                checkindate = checkedin.check_in_date
+                checkoutdate = checkedin.check_out_date
+                if checkoutdate:
+                    show_alert(dajax,"info","Participant was checked-in into" + str(room) + ".He has already checked-out on "+str(checkoutdate))
+                    return dajax.json()
+                else:
+                    show_alert(dajax,"info","Participant is checked-in into" + str(room))
+            except:
+                form.save()
+                show_alert(dajax,'success',"Checked In successfully")
+                html_content = render_to_string('hospi/Checkin_indi.html',locals(),RequestContext(request))
+                dajax.assign('#tab3',"innerHTML",html_content)
+                return dajax.json()
+        else:
+            show_alert(dajax,"error","Form is not valis")
+
+    else:
+        form = IndividualForm()
+        html_content = render_to_string('hospi/Checkin_indi.html',locals(),RequestContext(request))
+        dajax.assign('#tab3',"innerHTML",html_content)
+        return dajax.json()
