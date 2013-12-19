@@ -2,5 +2,6 @@ from django.conf.urls import patterns, include, url
 
 
 urlpatterns = patterns('barcode.views',
-    url(r'^csv/(?P<type>\w+)/$', 'upload_csv'),
+    url(r'^csv/barcode/$', 'upload_csv', {'type': "barcodeportal"}, name = "barcodeportal"),
+    url(r'^csv/participants/$', 'upload_csv', {'type': "participantsportal"}, name = "participantsportal"),
 )

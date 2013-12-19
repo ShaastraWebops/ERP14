@@ -1,15 +1,17 @@
 # Create your views here.
 import csv
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response
 from barcode.forms import UploadFileForm
 from django.template import RequestContext
+from django.http import HttpResponseRedirect
+from django.core.urlresolvers import reverse
 
 def upload_csv(request, type):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         if form.is_valid():
             process_csv (request.FILES['file'], type)
-            redirect ('barcode.views.upload_csv')
+            return HttpResponseRedirect(reverse(type))
     else:
         form = UploadFileForm()
 
@@ -43,7 +45,7 @@ def process_csv (file, type):
 
 
 
-
+#View to add an entry one at a time.
 def add_single_entry(request):
     if type == "barcodeportal":
         title = "Barcode Portal"
@@ -57,6 +59,9 @@ def add_single_entry(request):
 
 #Function to process each user entry dictionary for the Barcode Portal
 def barcodeportal_processor(entry):
+    #Needs Work
+    #
+    #Placeholder:
     print entry['field1']
     print " "
     print entry['field2']
@@ -65,6 +70,9 @@ def barcodeportal_processor(entry):
 
 #Function to process each user entry dictionary for the Participants Portal
 def participantsportal_processor(entry):
+    #Needs Work
+    #
+    #Placeholder:
     print entry['field1']
     print " "
     print entry['field2']
