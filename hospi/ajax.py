@@ -10,7 +10,7 @@ from django.template import loader
 from django.contrib.auth.decorators import login_required
 
 from hospi.models import *
-from hospi.forms import AddRoomForm,IndividualForm
+from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm
 import json 
 from misc.utilities import show_alert
 from erp.settings import DATABASES
@@ -74,6 +74,9 @@ def checkin(request,indi_form=None):
                     show_alert(dajax,"info","Participant is checked-in into" + str(room))
             except:
                 form.save()
+                room = cleaned_form['room']
+                room.already_checkedin = 1
+                room.save()
                 show_alert(dajax,'success',"Checked In successfully")
                 html_content = render_to_string('hospi/Checkin_indi.html',locals(),RequestContext(request))
                 dajax.assign('#tab3',"innerHTML",html_content)
@@ -85,4 +88,42 @@ def checkin(request,indi_form=None):
         form = IndividualForm()
         html_content = render_to_string('hospi/Checkin_indi.html',locals(),RequestContext(request))
         dajax.assign('#tab3',"innerHTML",html_content)
+        return dajax.json()
+
+@dajaxice_register
+def checkout(request,shaastra_form=None):
+    dajax = Dajax()
+    if request.method=='POST' and shaastra_form != None:
+        form = ShaastraIDForm(desrialize_form(shaastra_form))
+        if form.is_valid():
+            cleaned_form = form.cleaned_data
+            try:
+                participant = UserProfile.objects.using(mainsite_db).filter(shaastra_id = cleaned_form['shaastraID'])
+            except:
+                show_alert(dajax,"error","User with this Shaastra ID does not exist")
+                dajax.json()
+            try:
+                checkedin = IndividualCheckin.objects.get(shaastra_id=cleaned_form['shaastraID'])
+                if checkedin.check_out_date:
+                    show_alert(dajax,"error","Participant has already checked out")
+                    return dajax.json()
+                else:
+                    checkedin.check_out_date = datetime.now()
+                    checkedin.check_out_control_room = checkedin.check_in_control_room
+                    checkedin.save()
+                    room = checkedin.room
+                    room.already_checkedin = 0
+                    room.save()
+                    show_alert(dajax,"success","Participant checked out successfully")
+                    return dajax.json()
+            except:
+                show_alert(dajax,"error","Participant never checked in !")
+                return dajax.json()
+        else:
+            show_alert(dajax,"error","An unexpected error has occured. Contact Webops ASAP")
+            return dajax.json()
+    else:
+        form=ShaastraIDForm()
+        html_content = render_to_string('hospi/Checkout.html',locals(),RequestContext(request))
+        dajax.assign('#tab4',"innerHTML",html_content)
         return dajax.json()

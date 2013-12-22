@@ -1,0 +1,7 @@
+<form method="POST" action="" id="id_form_checkout">
+    {% csrf_token %}
+    <table class="table table-striped table-bordered table-condensed">
+        {{form.as_table}}
+    </table>
+    <a class="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.hospi.checkout, Dajax.process,{'shaastra_form':$('id_form_checkout').serialize(true)})">Submit</a>
+</form>

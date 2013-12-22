@@ -24,4 +24,5 @@ class IndividualForm(ModelForm):
                 )
 
 
-
+class ShaastraIDForm(forms.Form):
+    shaastraID = forms.CharField(required=False,help_text='Enter Shaastra ID')
