@@ -58,12 +58,12 @@ def checkin(request,indi_form=None):
         if form.is_valid():
             cleaned_form = form.cleaned_data
             try:
-                participant = UserProfile.objects.using(mainsite_db).filter(shaastra_id = cleaned_form['shaastra_id'])
+                participant = UserProfile.objects.using(mainsite_db).filter(shaastra_id = cleaned_form['shaastra_ID'])
             except:
                 show_alert(dajax,"error","User with this Shaastra ID does not exist")
                 return dajax.json()
             try:
-                checkedin = IndividualCheckIn.objects.get(shaastra_id=cleaned_form['shaastra_id'])
+                checkedin = IndividualCheckIn.objects.get(shaastra_id=cleaned_form['shaastra_ID'])
                 room = checkedin.room
                 checkindate = checkedin.check_in_date
                 checkoutdate = checkedin.check_out_date
