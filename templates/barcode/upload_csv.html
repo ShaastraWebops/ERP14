@@ -1,0 +1,28 @@
+{% load staticfiles %}
+
+<title> {{title}} </title>
+<h1>{{title}}</h1>
+<p>
+<span style="color:green">{{msg_success}}</span>
+<form action="" method="post" id ="Portal_Form" enctype="multipart/form-data">
+{% csrf_token %}
+{% if messages %}
+<ul>
+{% for message in messages %}
+<li>{{message}}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% if form.errors or eventForm.errors %}<p style="color:red">Error in form:{{flag_str}}</p>{% endif %}
+<table>
+{{ form.as_table }}
+{% ifequal title "Participant's Portal" %}
+{{ eventForm.as_table }}
+{% else %}
+<span>Note: take care that second column must be named "BARCODE" (without the quotes)</span>
+{% endifequal %}
+</table>
+<p><input type="submit"  /></p>
+</form>
+</p>
