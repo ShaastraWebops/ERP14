@@ -4,15 +4,15 @@
 <h1>{{title}}</h1>
 <p>
 <span style="color:green">{{msg_success}}
-
-{% if messages %}<br/>
+<br/>
+{% if messages %}
 <ul>
 {% for message in messages %}
 <li>{{message}}</li>
 {% endfor %}
 </ul>
 {% endif %}
-</span>
+
 <form action="" method="post" id ="Portal_Form" enctype="multipart/form-data">
 {% csrf_token %}
 
