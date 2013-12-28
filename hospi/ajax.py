@@ -33,15 +33,23 @@ def addroom(request,addroom_form=None):
     if request.method == 'POST' and addroom_form != None:
         form = AddRoomForm(deserialize_form(addroom_form))
         if form.is_valid():
-            try:
-                form.save()
-                show_alert(dajax,"success","Room Added Successfully")
-                html_content = render_to_string('hospi/AddRoom.html',locals(),RequestContext(request))
-                dajax.assign('#tab2',"innerHTML",html_content)
+            cleaned_form = form.cleaned_data
+            room_num = cleaned_form['room_no']
+            hostel = cleaned_form['hostel']
+            already_avail = AvailableRooms.objects.filter(room_no=room_num,hostel=hostel)
+            if already_avail:
+                show_alert(dajax,"error","Room already exists")
                 return dajax.json()
-            except EditError as error:
-                show_alert(dajax,"error",error.value)
-                return dajax.json()
+            else:
+                try:
+                    form.save()
+                    show_alert(dajax,"success","Room Added Successfully")
+                    html_content = render_to_string('hospi/AddRoom.html',locals(),RequestContext(request))
+                    dajax.assign('#tab2',"innerHTML",html_content)
+                    return dajax.json()
+                except EditError as error:
+                    show_alert(dajax,"error",error.value)
+                    return dajax.json()
         else:
             show_alert(dajax,"error","Form is invalid")
     else:
@@ -73,14 +81,19 @@ def checkin(request,indi_form=None):
                 else:
                     show_alert(dajax,"info","Participant is checked-in into" + str(room))
             except:
-                form.save()
                 room = cleaned_form['room']
-                room.already_checkedin = 1
-                room.save()
-                show_alert(dajax,'success',"Checked In successfully")
-                html_content = render_to_string('hospi/Checkin_indi.html',locals(),RequestContext(request))
-                dajax.assign('#tab3',"innerHTML",html_content)
-                return dajax.json()
+                parti_in_room = IndividualCheckIn.objects.filter(room=room)
+                if room.max_number<=len(parti_in_room):
+                    show_alert(dajax,"error","This room has reached maximum capacity")
+                    return dajax.json()
+                else:
+                    form.save()
+                    room.already_checkedin = 1
+                    room.save()
+                    show_alert(dajax,'success',"Checked In successfully")
+                    html_content = render_to_string('hospi/Checkin_indi.html',locals(),RequestContext(request))
+                    dajax.assign('#tab3',"innerHTML",html_content)
+                    return dajax.json()
         else:
             show_alert(dajax,"error","Form is not valis")
 
