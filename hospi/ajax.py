@@ -53,6 +53,7 @@ def addroom(request,addroom_form=None):
                     return dajax.json()
         else:
             show_alert(dajax,"error","Form is invalid")
+            return dajax.json()
     else:
         form = AddRoomForm()
         html_content = render_to_string('hospi/AddRoom.html',locals(),RequestContext(request))
@@ -82,6 +83,7 @@ def checkin(request,indi_form=None):
                     return dajax.json()
                 else:
                     show_alert(dajax,"info","Participant is checked-in into" + str(room))
+                    return dajax.json()
             except:
                 room = cleaned_form['room']
                 parti_in_room = IndividualCheckIn.objects.filter(room=room)
@@ -118,7 +120,7 @@ def checkout(request,shaastra_form=None):
                 participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid)
             except:
                 show_alert(dajax,"error","User with this Shaastra ID does not exist")
-                dajax.json()
+                return dajax.json()
             try:
                 checkedin = IndividualCheckin.objects.get(shaastra_ID=shaastraid)
                 if checkedin.check_out_date:
