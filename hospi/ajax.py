@@ -8,13 +8,14 @@ from django.template.loader import render_to_string
 from django.template import loader
 
 from django.contrib.auth.decorators import login_required
-
+from users.models import UserProfile
 from hospi.models import *
 from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm
 import json 
 from misc.utilities import show_alert
 from erp.settings import DATABASES
 mainsite_db = DATABASES.keys()[1]
+from datetime import datetime
 
 @dajaxice_register
 def roommap(request,hostel_name):  
