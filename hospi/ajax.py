@@ -66,10 +66,11 @@ def checkin(request,indi_form=None):
         form = IndividualForm(deserialize_form(indi_form))
         if form.is_valid():
             cleaned_form = form.cleaned_data
+            shaastraid = cleaned_form['shaastra_ID']
             try:
-                participant = UserProfile.objects.using(mainsite_db).filter(shaastra_id = cleaned_form['shaastra_ID'])
+                participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid)
             except:
-                show_alert(dajax,"error","User with this Shaastra ID does not exist")
+                show_alert(dajax,"error","User with this Shaastra ID does not exist, %s" %(shaastraid,))
                 return dajax.json()
             try:
                 checkedin = IndividualCheckIn.objects.get(shaastra_id=cleaned_form['shaastra_ID'])
@@ -117,7 +118,7 @@ def checkout(request,shaastra_form=None):
                 show_alert(dajax,"error","User with this Shaastra ID does not exist")
                 dajax.json()
             try:
-                checkedin = IndividualCheckin.objects.get(shaastra_id=cleaned_form['shaastraID'])
+                checkedin = IndividualCheckin.objects.get(shaastra_ID=cleaned_form['shaastraID'])
                 if checkedin.check_out_date:
                     show_alert(dajax,"error","Participant has already checked out")
                     return dajax.json()
