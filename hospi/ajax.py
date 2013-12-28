@@ -70,10 +70,10 @@ def checkin(request,indi_form=None):
             try:
                 participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid)
             except:
-                show_alert(dajax,"error","User with this Shaastra ID does not exist, %s" %(shaastraid,))
+                show_alert(dajax,"error","User with this Shaastra ID does not exist, %s" % shaastraid)
                 return dajax.json()
             try:
-                checkedin = IndividualCheckIn.objects.get(shaastra_id=cleaned_form['shaastra_ID'])
+                checkedin = IndividualCheckIn.objects.get(shaastra_ID=shaastraid)
                 room = checkedin.room
                 checkindate = checkedin.check_in_date
                 checkoutdate = checkedin.check_out_date
@@ -98,6 +98,7 @@ def checkin(request,indi_form=None):
                     return dajax.json()
         else:
             show_alert(dajax,"error","Form is not valis")
+            return dajax.json()
 
     else:
         form = IndividualForm()
@@ -109,16 +110,17 @@ def checkin(request,indi_form=None):
 def checkout(request,shaastra_form=None):
     dajax = Dajax()
     if request.method=='POST' and shaastra_form != None:
-        form = ShaastraIDForm(desrialize_form(shaastra_form))
+        form = ShaastraIDForm(deserialize_form(shaastra_form))
         if form.is_valid():
             cleaned_form = form.cleaned_data
+            shaastraid = cleaned_form['shaastraID']
             try:
-                participant = UserProfile.objects.using(mainsite_db).filter(shaastra_id = cleaned_form['shaastraID'])
+                participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid)
             except:
                 show_alert(dajax,"error","User with this Shaastra ID does not exist")
                 dajax.json()
             try:
-                checkedin = IndividualCheckin.objects.get(shaastra_ID=cleaned_form['shaastraID'])
+                checkedin = IndividualCheckin.objects.get(shaastra_ID=shaastraid)
                 if checkedin.check_out_date:
                     show_alert(dajax,"error","Participant has already checked out")
                     return dajax.json()
