@@ -6,6 +6,7 @@ from misc.dajaxice.utils import deserialize_form
 from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.template import loader
+from django.forms.formsets import formset_factory
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -173,4 +174,59 @@ def remove(request,rem_form=None):
         html_content = render_to_string('hospi/Remove.html',locals(),RequestContext(request))
         dajax.assign('#tab5',"innerHTML",html_content)
         return dajax.json()
+@dajaxice_register
+def choose(request,choose_eventform=None):
+    dajax=Dajax()
+    if request.method=='POST' and choose_eventform != None:
+        form = ChooseEventForm(deserialize_form(choose_eventform))
+        if form.is_valid():
+            clean_form = form.clean()
+            event_name = clean_form['event']
+            generic_event_instance = GenericEvent.objects.get(title = event_name)
+            event_pk = generic_event_instance.pk
+            parti_event_instance = ParticipantEvent.objects.get(pk = event_pk)
+            mins = parti_event_instance.team_size_min
+            maxs = parti_event_instance.team_size_max
+            teamformset = formset_factory(ShaastraIDForm,extra=maxs,max_num=maxs,validate_max=True,min_num=mins,validate_min=True)
+            data={
+                    'form-TOTAL_FORMS':u'',
+                    'form-INITIAL_FORMS':u'',
+                    'form-MIN_NUM_FORMS':u'',
+                    'form-MAX_NUM_FORMS':u'',
+                    }
+            html_content = render_to_string('hospi/CreateTeam.html',locals(),RequestContext(request))
+            dajax.assign('#tab6',"innerHTML",html_content)
+            return dajax.json()
+        else:
+            show_alert(dajax,"error","Form invalid")
+            return dajax.json()
+    else:
+        form = ChooseEventForm()
+        html_content = render_to_string('hospi/Choose.html',locals(),RequestContext(request))
+        dajax.assign('#tab6',"innerHTML",html_content)
+        return dajax.json()
 
+@dajaxice_register
+def createteam(request,team_formset=None,event_pk=None):
+    dajax=Dajax()
+    if request.method=="POST" and team_formset != None:
+        formset = teamformset(deserialize_form(team_formset))
+        if formset.is_valid():
+            userlist = []
+            for f in formset:
+                cd = f.cleaned_data
+                shaastraid=cd['shaastraID']
+                parti = UserProfile.objects.using(mainsite_db).get(shaastra_id=shaastraid)
+                userlist.append(parti.user)
+            teamevent = TeamEvent(event_id=event_pk)
+            teamevent.users = userlist
+            teamevent.team_name = str(event_pk)
+            teamevent.save(using='mainsite_db')
+            show_alert(dajax,"success","Team Registered successfully")
+            return dajax.json()
+        else:
+            show_alert(dajax,"error","Form is invalid")
+            return dajax.json()
+    else:
+        show_alert(dajax,"error","Unexpected Error, Contact Webops")
+        return dajax.json()

@@ -1,0 +1,8 @@
+<form method="POST" action="" id="id_choose">
+    {% csrf_token %}
+    <table class="table table-bordered table-hover">
+        <caption>Choose Event to register for</caption>
+        {{form.as_table}}
+    </table>
+    <a class="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.hospi.choose, Dajax.process, {'choose_eventform':$('#id_choose').serialize(true)})">Choose</a>
+

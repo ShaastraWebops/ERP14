@@ -28,3 +28,4 @@ class RemoveRoom(ModelForm):
     class Meta:
         model = AvailableRooms
         exclude = ('already_checkedin','mattresses','max_number')
+

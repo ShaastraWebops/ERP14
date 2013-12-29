@@ -1,0 +1,6 @@
+<form method="POST" action="" id="id_reg">
+    {% csrf_token %}
+    <table class="table table-striped table-bordered table-condensed">
+        {{teamformset}}
+    </table>
+    <a class="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.hospi.createteam, Dajax.process, {'team_formset':$('#id_reg').serialize(true),'event_pk':{{event_pk}}})">Create Team</a>
