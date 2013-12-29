@@ -23,3 +23,8 @@ class IndividualForm(ModelForm):
 
 class ShaastraIDForm(forms.Form):
     shaastraID = forms.CharField(required=False,help_text='Enter Shaastra ID')
+
+class RemoveRoom(ModelForm):
+    class Meta:
+        model = AvailableRooms
+        exclude = ('already_checkedin','mattresses','max_number')

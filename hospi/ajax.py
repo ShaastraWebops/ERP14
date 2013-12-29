@@ -8,9 +8,10 @@ from django.template.loader import render_to_string
 from django.template import loader
 
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from users.models import UserProfile
 from hospi.models import *
-from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm
+from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom
 import json 
 from misc.utilities import show_alert
 from erp.settings import DATABASES
@@ -146,3 +147,30 @@ def checkout(request,shaastra_form=None):
         html_content = render_to_string('hospi/Checkout.html',locals(),RequestContext(request))
         dajax.assign('#tab4',"innerHTML",html_content)
         return dajax.json()
+
+@dajaxice_register
+def remove(request,rem_form=None):
+    dajax=Dajax()
+    if request.method=='POST' and rem_form != None:
+        form = RemoveRoom(deserialize_form(rem_form))
+        if form.is_valid():
+            cleaned_form=form.cleaned_data
+            room_num = cleaned_form['room_no']
+            hostel = cleaned_form['hostel']
+            try:
+                exist_room = AvailableRooms.objects.get(room_no=room_num,hostel=hostel)
+                exist_room.delete()
+                show_alert(dajax,"success","Room deleted successfully")
+                return dajax.json()
+            except:
+                show_alert(dajax,"error","This room has not been added")
+                return dajax.json()
+        else:
+            show_alert(dajax,"error","Form is not valid")
+            return dajax.json()
+    else:
+        form=RemoveRoom()
+        html_content = render_to_string('hospi/Remove.html',locals(),RequestContext(request))
+        dajax.assign('#tab5',"innerHTML",html_content)
+        return dajax.json()
+
