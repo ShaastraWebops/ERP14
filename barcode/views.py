@@ -8,6 +8,16 @@ from django.core.urlresolvers import reverse
 from events.models import GenericEvent
 from models import Barcode,Event_Participant
 from django.contrib import messages
+from users.models import UserProfile
+
+def get_userprofile(shaastra_id = None):
+    if shaastra_id is None:
+        return None
+    try:
+        up = UserProfile.objects.using('mainsite').filter(shaastra_id = shaastra_id)[0]
+    except:
+        return None
+    return up
 
 def upload_csv(request, type):
     flag_str = ''
