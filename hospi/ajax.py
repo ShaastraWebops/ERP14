@@ -68,7 +68,7 @@ def checkin(request,indi_form=None):
         form = IndividualForm(deserialize_form(indi_form))
         if form.is_valid():
             cleaned_form = form.cleaned_data
-            shaastraid = cleaned_form['shaastra_ID']
+            shaastraid = 'SHA1400'+cleaned_form['shaastra_ID']
             try:
                 participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid)
             except:
@@ -116,7 +116,7 @@ def checkout(request,shaastra_form=None):
         form = ShaastraIDForm(deserialize_form(shaastra_form))
         if form.is_valid():
             cleaned_form = form.cleaned_data
-            shaastraid = cleaned_form['shaastraID']
+            shaastraid = 'SHA1400'+cleaned_form['shaastraID']
             try:
                 participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid)
             except:
