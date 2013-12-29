@@ -7,6 +7,78 @@ from events.models import GenericEvent
 import datetime
 from django.utils import timezone
 # Create your models here.
+BRANCH_CHOICES = (('School','School'),)
+GENDER_CHOICES = (('M', 'Male'), ('F', 'Female'))
+
+STATE_CHOICES = (('School','School'),)
+class College(models.Model):
+
+    name = models.CharField(max_length=255,
+                            help_text='The name of your college. Please refrain from using short forms.'
+                            )
+    city = models.CharField(max_length=30,
+                            help_text='The name of the city where your college is located. Please refrain from using short forms.'
+                            )
+    state = models.CharField(max_length=40, choices=STATE_CHOICES,
+                             help_text='The state where your college is located. Select from the drop down list'
+                             )
+
+    def __unicode__(self):
+        return '%s, %s, %s' % (self.name, self.city, self.state)
+
+    class Admin:
+
+        pass
+
+class UserProfile(models.Model):
+
+    user               = models.ForeignKey(User, unique=True)
+    gender             = models.CharField(max_length=1, choices=GENDER_CHOICES,
+                              default='F')  # Defaults to 'girl' ;-)
+    age                = models.IntegerField(default=18)
+                              # help_text='You need to be over 12 and under 80 years of age to participate'
+                              # No age limit now.
+    branch             = models.CharField(max_length=50, choices=BRANCH_CHOICES,
+                              help_text='Your branch of study')
+    mobile_number      = models.CharField(max_length=15, blank=True, null=True,
+                              help_text='Please enter your current mobile number')
+    college            = models.ForeignKey(College, null=True, blank=True)
+    college_roll       = models.CharField(max_length=40, null=True)
+
+    shaastra_id        = models.CharField(max_length = 20, unique = True, null=True)
+
+    activation_key     = models.CharField(max_length=40, null=True)
+    key_expires        = models.DateTimeField(default = timezone.now()+datetime.timedelta(2))
+    want_accomodation  = models.BooleanField(default=False, help_text = "Doesn't assure accommodation during Shaastra.")
+    school_student    = models.BooleanField(default=False)
+    is_core = models.BooleanField(default=False)
+    is_hospi = models.BooleanField(default=False)
+
+#    facebook_id = models.CharField(max_length=20)
+#    access_token = models.CharField(max_length=250)
+    def save(self, *args, **kwargs):
+        self.user.save()
+        super(UserProfile, self).save(*args, **kwargs)
+    
+    def delete(self, *args, **kwargs):
+        self.user.delete()
+        super(UserProfile, self).delete(*args, **kwargs)
+    
+    def __unicode__(self):
+        return self.user.first_name
+    
+    def get_regd_events(self):
+        tevlist = []
+        tevlist=TeamEvent.objects.filter(users__username=self.user.username)
+        #TODO: return events with TDP first!! sort by has_tdp
+        return tevlist
+        
+    def no_regd_events(self):
+        return len(self.get_regd_events())
+    
+    class Admin:
+        pass
+
 
 
 #Annoying little details
