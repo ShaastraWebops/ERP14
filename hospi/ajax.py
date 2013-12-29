@@ -13,6 +13,8 @@ from django.contrib.auth.models import User
 from users.models import UserProfile
 from hospi.models import *
 from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom
+from events.forms import ChooseEventForm
+from events.models import GenericEvent, ParticipantEvent
 import json 
 from misc.utilities import show_alert
 from erp.settings import DATABASES
@@ -187,7 +189,7 @@ def choose(request,choose_eventform=None):
             parti_event_instance = ParticipantEvent.objects.get(pk = event_pk)
             mins = parti_event_instance.team_size_min
             maxs = parti_event_instance.team_size_max
-            teamformset = formset_factory(ShaastraIDForm,extra=maxs,max_num=maxs,validate_max=True,min_num=mins,validate_min=True)
+            teamformset = formset_factory(ShaastraIDForm,extra=maxs)
             data={
                     'form-TOTAL_FORMS':u'',
                     'form-INITIAL_FORMS':u'',
