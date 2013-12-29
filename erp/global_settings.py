@@ -111,6 +111,7 @@ INSTALLED_APPS = (
     'misc.dajaxice',
     'misc.dajax',
     'files_upload',
+    'hospi',
 )
 
 AUTH_PROFILE_MODULE = 'users.ERPUser'
