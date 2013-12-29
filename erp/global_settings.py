@@ -103,6 +103,7 @@ INSTALLED_APPS = (
     'finance',
     'facilities',
     'dashboard',
+    'DTV',
 #    'file',
     'misc.dajax',
     'misc.dajaxice',
