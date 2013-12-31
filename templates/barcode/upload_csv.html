@@ -3,13 +3,16 @@
 <title> {{title}} </title>
 <h1>{{title}}</h1>
 <p>
-<span style="color:green">{{msg_success}}
+<span style="color:green">{{msg_success}}</span>
+<span>
 <b>Note:</b><br/>
 1.File must be of type csv.<br/>
 2.If barcode portal, it must contain 2 columns. 1 with title 'SHAASTRA ID' and other 'BARCODE' and no empty row below<br/>
 3.If participant portal, it must contain a single column with title 'BARCODE', and no empty row below<br/>
+4. Also, choose the event carefully.
 {% if messages %}<br/>
 <ul>
+<span style="color:red">
 {% for message in messages %}
 <li>{{message}}</li>
 {% endfor %}

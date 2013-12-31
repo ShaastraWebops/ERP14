@@ -20,6 +20,8 @@ def is_valid_id(shid):
 
 def is_valid_insti_roll(roll):
     #TODO::
+    if len(roll)==8 and roll[:2].isalpha() and roll[2:4].isdigit() and roll[4].isalpha() and roll[5:].isdigit():
+        return True
     return False
 
 def get_userprofile(shaastra_id = None):
@@ -48,24 +50,29 @@ def upload_csv(request, type):
                 return HttpResponse(flag_str)
             else:
                 display_list = []
-                message_str = "Successfully uploaded"
+                fail_list = []
+                message_str = "Successfully uploaded "
                 if type == "participantsportal":
-                    display_list = process_csv(request,request.FILES['file'],form.cleaned_data['title'],type,event.cleaned_data['event_title'] )
+                    (display_list,fail_list) = process_csv(request,request.FILES['file'],form.cleaned_data['title'],type,event.cleaned_data['event_title'] )
                     if display_list:
                         message_str+=str(display_list[0])
                         display_list = display_list[1:]
+                        message_str += "::"
+                        message_str+=str(display_list)
                 else:
-                    display_list = process_csv(request,request.FILES['file'],form.cleaned_data['title'] ,type)
-                    message_str += str(len(display_list))
-                    message_str += " ;"
-                    message_str += str(display_list[0:10])
+                    (display_list,fail_list) = process_csv(request,request.FILES['file'],form.cleaned_data['title'] ,type)
+                    message_str += str(len(display_list)) + "items;"
+                    message_str += str(display_list[0:5])
+                    if fail_list:
+                        message_str += "||Failed: %s" % str(fail_list)
+                    
                 
                 messages.success(request,"%s..."% (message_str))
                 return HttpResponseRedirect(reverse(type))
         else:
             flag_str = "Invalid Upload"
     else:
-        form = UploadFileForm()
+        form = UploadFileForm(initial={'title': 'SHAASTRA ID'})
         eventForm = EventForm()
 
     if type == "barcodeportal":
@@ -79,6 +86,7 @@ def upload_csv(request, type):
 def process_csv (request,file, title,type_str,event_title = None):
     input_file = csv.DictReader(file,delimiter=',')
     return_list = []
+    fail_list = []
     if type_str == "barcodeportal":
         sh_id = []
         barcode = []
@@ -89,6 +97,7 @@ def process_csv (request,file, title,type_str,event_title = None):
         while i<len(sh_id):
             print sh_id[i]+"||"+barcode[i]+"__"
             if not is_valid_id(sh_id[i]):
+                fail_list.append(sh_id[i])
                 i = i+1
                 continue
                 #TODO: what??
@@ -125,7 +134,7 @@ def process_csv (request,file, title,type_str,event_title = None):
             try:
                 sh_id.append(Barcode.objects.get(barcode = code).shaastra_id)
             except:
-                error_list.append(barcode)
+                error_list.append(code)
         i=0
         for roll in insti_list:
             insti_part = Insti_Participant(event = event,insti_roll = roll)
@@ -139,10 +148,10 @@ def process_csv (request,file, title,type_str,event_title = None):
             ev_part.save()
             i=i+1
         if len(error_list):
-            messages.warning(request,'%d values were invalid' % len(error_list))
+            messages.warning(request,'%d values were invalid: some are:%s' % (len(error_list),error_list))
             #TODO: display error list??
             #return False
-    return return_list
+    return (return_list,fail_list)
 
 
 #View to add an entry one at a time.
