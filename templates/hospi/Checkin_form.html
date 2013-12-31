@@ -1,0 +1,7 @@
+<form method="POST" action="checkin/" id="id_form_actualcheckin">
+    {% csrf_token %}
+    <table class="table table-striped table-bordered table-condensed">
+        {{new_form.as_table}}
+    </table>
+    <center><input type="submit" class="btn btn-info" /></center>
+</form>

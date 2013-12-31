@@ -12,7 +12,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from users.models import UserProfile
 from hospi.models import *
-from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom
+from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom,RegistrationForm
 from events.forms import ChooseEventForm
 from events.models import GenericEvent, ParticipantEvent
 import json 
@@ -68,46 +68,38 @@ def addroom(request,addroom_form=None):
 def checkin(request,indi_form=None):
     dajax = Dajax()
     if request.method == 'POST' and indi_form != None:
-        form = IndividualForm(deserialize_form(indi_form))
+        form = ShaastraIDForm(deserialize_form(indi_form))
         if form.is_valid():
-            cleaned_form = form.cleaned_data
-            shaastraid = 'SHA1400'+cleaned_form['shaastra_ID']
+            cleaned_form=form.cleaned_data
+            shaastraid = 'SHA14'+cleaned_form['shaastraID']
             try:
                 participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid)
             except:
-                show_alert(dajax,"error","User with this Shaastra ID does not exist, %s" % shaastraid)
+                new_form = RegistrationForm()
+                html_content = render_to_string('hospi/Register.html',locals(),RequestContext(request))
+                dajax.assign=('#tab3',"innerHTML",html_content)
                 return dajax.json()
             try:
                 checkedin = IndividualCheckIn.objects.get(shaastra_ID=shaastraid)
                 room = checkedin.room
-                checkindate = checkedin.check_in_date
-                checkoutdate = checkedin.check_out_date
+                checkedindate = checkedin.check_in_date
+                checkedoutdate = checkedin.check_out_date
                 if checkoutdate:
-                    show_alert(dajax,"info","Participant was checked-in into" + str(room) + ".He has already checked-out on "+str(checkoutdate))
+                    show_alert(dajax,"info","Participant was checked-in into" + str(room) + ".He has already checked-out on" + str(checkoutdate))
                     return dajax.json()
                 else:
-                    show_alert(dajax,"info","Participant is checked-in into" + str(room))
+                    show_alert(dajax,"info","Participant is already checked-in into" + str(room))
                     return dajax.json()
             except:
-                room = cleaned_form['room']
-                parti_in_room = IndividualCheckIn.objects.filter(room=room)
-                if room.max_number<=len(parti_in_room):
-                    show_alert(dajax,"error","This room has reached maximum capacity")
-                    return dajax.json()
-                else:
-                    form.save()
-                    room.already_checkedin = 1
-                    room.save()
-                    show_alert(dajax,'success',"Checked In successfully")
-                    html_content = render_to_string('hospi/Checkin_indi.html',locals(),RequestContext(request))
-                    dajax.assign('#tab3',"innerHTML",html_content)
-                    return dajax.json()
+                new_form = IndividualForm(initial={'shaastra_ID':shaastraid})
+                html_content = render_to_string('hospi/Checkin_form.html',locals(),RequestContext(request))
+                dajax.assign('#tab3',"innerHTML",html_content)
+                return dajax.json()
         else:
-            show_alert(dajax,"error","Form is not valis")
+            show_alert(dajax,"error","Form is invalid")
             return dajax.json()
-
     else:
-        form = IndividualForm()
+        form = ShaastraIDForm()
         html_content = render_to_string('hospi/Checkin_indi.html',locals(),RequestContext(request))
         dajax.assign('#tab3',"innerHTML",html_content)
         return dajax.json()
@@ -211,13 +203,14 @@ def choose(request,choose_eventform=None):
 @dajaxice_register
 def createteam(request,team_formset=None,event_pk=None):
     dajax=Dajax()
+    teamformset=formset_factory(ShaastraIDForm)
     if request.method=="POST" and team_formset != None:
         formset = teamformset(deserialize_form(team_formset))
         if formset.is_valid():
             userlist = []
             for f in formset:
                 cd = f.cleaned_data
-                shaastraid=cd['shaastraID']
+                shaastraid=cd.get('shaastraID')
                 parti = UserProfile.objects.using(mainsite_db).get(shaastra_id=shaastraid)
                 userlist.append(parti.user)
             teamevent = TeamEvent(event_id=event_pk)
@@ -232,3 +225,33 @@ def createteam(request,team_formset=None,event_pk=None):
     else:
         show_alert(dajax,"error","Unexpected Error, Contact Webops")
         return dajax.json()
+
+@dajaxice_register
+def register(request,reg_form=None,shaastraID=None):
+    dajax=Dajax()
+    if request.method=='POST' and reg_form != None:
+        form = RegistrationForm(deserialize_form(reg_form))
+        if form.is_valid():
+            clean_form = form.cleaned_data
+            new_user = User(first_name=clean_form['first_name'],last_name=clean_form['last_name'],username=clean_form['username'],email=clean_form['email']) 
+            new_user.set_password('default')
+            new_user.is_active = True
+            new_user.save(using='mainsite_db')
+            userprofile = UserProfile(
+                    user=new_user,
+                    gender=cleaned_form['gender'],
+                    age=cleaned_form['age'],
+                    mobile_number=cleaned_form['mobile_number'],
+                    college = cleaned_form['college'],
+                    college_roll = cleaned_form['college_roll'],
+                    shaastra_id = shaastraid,
+                    want_accomodation = True,
+                    )
+            userprofile.save(using='mainsite_db')
+            show_alert(dajax,"success","Participant registered successfully")
+            return dajax.json()
+        else:
+            show_alert(dajax,"error","Form is invalid")
+            return dajax.json()
+
+
