@@ -10,6 +10,19 @@ from models import Barcode,Event_Participant
 from django.contrib import messages
 from users.models import UserProfile
 
+
+
+def is_valid_id(shid):
+    return True
+    up = get_userprofile(shid)
+    if up is None:
+        return False
+    return True
+
+def is_valid_insti_roll(roll):
+    #TODO::
+    return False
+
 def get_userprofile(shaastra_id = None):
     if shaastra_id is None:
         return None
@@ -35,11 +48,20 @@ def upload_csv(request, type):
                 flag_str = 'Choose a valid event'
                 return HttpResponse(flag_str)
             else:
+                display_list = []
+                message_str = "Successfully uploaded"
                 if type == "participantsportal":
-                    process_csv(request.FILES['file'],form.cleaned_data['title'],type,event.cleaned_data['event_title'] )
+                    display_list = process_csv(request,request.FILES['file'],form.cleaned_data['title'],type,event.cleaned_data['event_title'] )
+                    if display_list:
+                        message_str+=str(display_list[0])
+                        display_list = display_list[1:]
                 else:
-                    process_csv(request.FILES['file'],form.cleaned_data['title'] ,type)
-                messages.success(request,"Successfully uploaded!")
+                    display_list = process_csv(request,request.FILES['file'],form.cleaned_data['title'] ,type)
+                    message_str += str(len(display_list))
+                    message_str += " ;"
+                    message_str += str(display_list[0:10])
+                
+                messages.success(request,"%s..."% (message_str))
                 return HttpResponseRedirect(reverse(type))
         else:
             flag_str = "Invalid Upload"
@@ -55,11 +77,9 @@ def upload_csv(request, type):
     return render_to_response('barcode/upload_csv.html', {'eventForm':eventForm,'flag_str':flag_str,'form': form, 'type': type, 'title': title}, context_instance=RequestContext(request))
 
 
-
-
-def process_csv (file, title,type_str,event_title = None):
+def process_csv (request,file, title,type_str,event_title = None):
     input_file = csv.DictReader(file,delimiter=',')
-    
+    return_list = []
     if type_str == "barcodeportal":
         sh_id = []
         barcode = []
@@ -70,25 +90,37 @@ def process_csv (file, title,type_str,event_title = None):
         while i<len(sh_id):
             print sh_id[i]+"||"+barcode[i]+"__"
             if not is_valid_id(sh_id[i]):
+                i = i+1
                 continue
                 #TODO: what??
-            barcode_obj = Barcode(shaastra_id = sh_id[i],barcode = barcode[i])
-            barcode_obj.save()
+            if Barcode.objects.filter(shaastra_id = sh_id[i]).count()==0:
+                barcode_obj = Barcode(shaastra_id = sh_id[i],barcode = barcode[i])
+                return_list.append(str(sh_id[i]))
+                barcode_obj.save()
+            else:
+                i=i+1
+                continue
+                #TODO: code to do when shaastra ID is scanned second time..
             #TODO: write to a log text file that this happened..
             i=i+1
     if type_str == "participantsportal":
         if event_title == None:
             return False
         barcode = []
+        insti_list = []#List of insti roll no.s
         for d in input_file:
-            barcode.append(d['BARCODE'])
+            if is_valid_insti_roll(d['BARCODE']):
+                insti_list.append(d['BARCODE'])
+            else:
+                barcode.append(d['BARCODE'])
         event_list = GenericEvent.objects.filter(title = event_title)
+        return_list.append(str(event_title))
         if event_list.count() == 0:
             return False
         event = event_list[0]
         sh_id = []
         error_list = []
-        
+        #TODO: implement roll no, of insti
         #NOW, get shaastra id of corresponding barcodes, and error list appended if not found
         for code in barcode:
             try:
@@ -96,16 +128,22 @@ def process_csv (file, title,type_str,event_title = None):
             except:
                 error_list.append(barcode)
         i=0
+        for roll in insti_list:
+            insti_part = Insti_Participant(event = event,insti_roll = roll)
+            insti_part.save()
+            #TODO: what to do with roll?? store??
+            
         while i<len(sh_id):
             #print barcode[i]+"||"
             ev_part = Event_Participant(event = event,shaastra_id = sh_id[i])
+            return_list.append(str(sh_id[i]))
             ev_part.save()
             i=i+1
         if len(error_list):
             messages.warning(request,'%d values were invalid' % len(error_list))
             #TODO: display error list??
             #return False
-
+    return return_list
 
 
 #View to add an entry one at a time.
@@ -135,6 +173,10 @@ def add_single_entry(request,type):
                 else:
                     messages.success(request,'Invalid Shaastra ID: Not registered in Hospi Desk!!')
                 return HttpResponseRedirect(reverse('add_single_participant'))
+        else:
+            if flag_bar:
+                return HttpResponse("Enter valid event . Go <a href='/barcode/csv/add_single_barcode'>Back</a>")
+            return HttpResponse("Enter valid event . Go <a href='/barcode/csv/add_single_participant'>Back</a>")
     else:
         if flag_bar:
             title = "Barcode Portal"
@@ -145,10 +187,6 @@ def add_single_entry(request,type):
     return render_to_response('barcode/upload_single.html', {'form':form,'flag_str':flag_str, 'type': type, 'title': title}, context_instance=RequestContext(request))
 
 
-def is_valid_id(shid):
-    #NEEDS WORK
-    return True
-
 def add_single_barcode(barcodedata):
     shid = barcodedata['shaastra_id']
     code = barcodedata['barcode']
@@ -157,12 +195,12 @@ def add_single_barcode(barcodedata):
     
     barcode_obj = Barcode(shaastra_id = shid,barcode = code)
     barcode_obj.save()
-    return 'cool'
+    return 'add single success'
     
 def add_single_participant(event_participant_data):
     
     try:
-       shid = Barcode.objects.get(barcode = event_participant_data['shaastra_id']).shaastra_id
+       shid = Barcode.objects.get(shaastra_id = event_participant_data['shaastra_id']).shaastra_id
        #NOTE: here form's shaastra id is used to get the shaastra ID, it actually barcode
     except:
         return ''
@@ -171,4 +209,4 @@ def add_single_participant(event_participant_data):
     
     ev_part = Event_Participant(event = event_participant_data['event'],shaastra_id = shid)
     ev_part.save()
-    return 'cool'
+    return 'add single success'
