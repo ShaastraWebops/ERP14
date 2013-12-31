@@ -13,7 +13,6 @@ from users.models import UserProfile
 
 
 def is_valid_id(shid):
-    return True
     up = get_userprofile(shid)
     if up is None:
         return False
