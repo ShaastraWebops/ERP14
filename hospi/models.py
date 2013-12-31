@@ -40,7 +40,7 @@ class AvailableRooms(models.Model):
     already_checkedin = models.IntegerField(default=0)
 
     def __unicode__(self):
-        return '%s' % self.hostel + ',' + self.room_no
+        return '%s' % self.hostel + ',' + self.room_no + ',' + str(self.max_number)
 
 class IndividualCheckIn(models.Model):
     room = models.ForeignKey(AvailableRooms)
@@ -69,4 +69,6 @@ class Mattresses(models.Model):
     team_leader_id = models.CharField(max_length = 20)
     no_of_mattresses = models.IntegerField(default = 0,blank = True)
 
-
+class Mattresses_new(models.Model):
+    team_shaastra_id = models.CharField(max_length=20)
+    no_of_mattresses = models.IntegerField(default=0,blank=True)

@@ -254,4 +254,68 @@ def register(request,reg_form=None,shaastraID=None):
             show_alert(dajax,"error","Form is invalid")
             return dajax.json()
 
+@dajaxice_register
+def team(request,team_form=None):
+    dajax=Dajax()
+    if request.method=="POST" and team_form != None:
+        form = TeamCheckinForm(deserialize_form(team_form))
+        if form.is_valid():
+            cleaned_form=form.cleaned_data
+            event_name = cleaned_form['event']
+            generic_event_instance = GenericEvent.objects.get(title=event_name)
+            event_pk = generic_event_instance.pk
+            actual_name = event_name[:5]
+            team_id_num = cleaned_form['team_id_num']
+            team_id = 'TEAM#'+str(actual_name)+'#'+str(cleaned_form['team_id_num'])
+            team_instance = TeamEvent.objects.using(mainsite_db).get(team_id=team_id)
+            if check_in_control_room=='Ganga':
+                userlist = []
+                shalist=[]
+                users_in_team = team_instance.users.all()
+                for user_ex in users_in_team:
+                    if user_ex.userprofile_set.all()[0].gender == 'M':
+                        userlist.append(user_ex.userprofile_set.all()[0])
+                        shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
+                tcheckinformset = formset_factory(IndividualForm,extra=len(userlist))
+                formset = tcheckinformset(initial=[{'shaastra_ID':sid,'check_in_control_room':'Ganga','check_out_control_room':'Ganga'} for sid in shalist])
+                data={
+                        'form-TOTAL_FORMS':u'',
+                        'form-INITIAL_FORMS':u'',
+                        'form-MIN_NUM_FORMS':u'',
+                        'form-MAX_NUM_FORMS':u'',
+                        }
+                html_content = render_to_string('hospi/TeamDisplay.html',locals(),RequestContext(request))
+                dajax.assign('#tab7',"innerHTML",html_content)
+                return dajax.json()
+            else:
+                userlist = []
+                shalist=[]
+                users_in_team = team_instance.users.all()
+                for user_ex in users_in_team:
+                    if user_ex.userprofile_set.all()[0].gender == 'F':
+                        userlist.append(user_ex.userprofile_set.all()[0])
+                        shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
+                tcheckinformset = formset_factory(IndividualForm,extra=len(userlist))
+                formset = tcheckinformset(initial=[{'shaastra_ID':sid,'check_in_control_room':'Sharavati','check_out_control_room':'Sharavati'} for sid in shalist])
+                data={
+                        'form-TOTAL_FORMS':u'',
+                        'form-INITIAL_FORMS':u'',
+                        'form-MIN_NUM_FORMS':u'',
+                        'form-MAX_NUM_FORMS':u'',
+                        }
+                html_content = render_to_string('hospi/TeamDisplay.html',locals(),RequestContext(request))
+                dajax.assign('#tab7',"innerHTML",html_content)
+                return dajax.json()
+        else:
+            show_alert(dajax,"error","Form is invalid")
+            return dajax.json()
+    else:
+        form = TeamCheckinForm()
+        html_content = render_to_string('hospi/TeamCheckin.html',locals(),RequestContext(request))
+        dajax.assign("#tab7","innerHTML",html_content)
+        return dajax.json()
+
+
+
+
 

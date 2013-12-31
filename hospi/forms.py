@@ -19,7 +19,6 @@ class IndividualForm(ModelForm):
                 'shaastra_ID',
                 'check_in_control_room',
                 'check_out_control_room',
-                'comments',
                 )
 
 
@@ -53,5 +52,4 @@ class TeamCheckinForm(forms.Form):
     event = forms.ChoiceField(event_choices,required=False,widget=forms.Select())
     check_in_control_room = forms.ChoiceField(choices = [('Ganga','Ganga'),('Sharavathi','Sharavathi')],required=False,widget=forms.Select())
     team_id_num = forms.CharField(max_length=10)
-
 

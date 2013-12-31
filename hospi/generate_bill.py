@@ -86,7 +86,7 @@ def generatetable(pdf, x, y, leader,s_ids):
     
     tableData = [ ['Shaastra ID', 'Room', 'Name', 'Phone No'] ]
     
-    tm = Team.objects.filter(leader = leader)
+    #tm = Team.objects.filter(leader = leader)
     """
     for t in tm:
         for m in t.members.all():
@@ -129,15 +129,12 @@ def generatetable(pdf, x, y, leader,s_ids):
     
     t.drawOn(pdf, x, y - tableHeight)
 
-def printParticipantDetails(pdf, x, y, s_id,team,number):
+def printParticipantDetails(pdf, x, y, s_id,team_id,number):
     if not number:
         n=1  
     else:
-        n=0
-        for s in number:
-            n = n+1  
-    print n
-    if team == 0:
+        n=len(number)
+    if not team_id:
         CD = 0
         try:
             checkedin = IndividualCheckIn.objects.get(shaastra_ID=s_id)  
@@ -145,8 +142,8 @@ def printParticipantDetails(pdf, x, y, s_id,team,number):
         except:
             msg = "This participant has not been checked in!" 
     else:
-        profile = UserProfile.objects.using(mainsite_db).get(shaastra_id = s_id)
         checkedin = IndividualCheckIn.objects.get(shaastra_ID=s_id)  
+        team_instance = TeamEvent.objects.using(mainsite_db).get(team_id=team_id)
 #        leader = User.objects.using(mainsite_db).get(id = profile.user_id)
      
        
@@ -159,7 +156,8 @@ def printParticipantDetails(pdf, x, y, s_id,team,number):
     
     lineheight = PDFSetFont(pdf, 'Times-Roman', 12)
     
-    if team == 0:
+    if not team_id :
+
         pdf.drawString(x, y, 'Shaastra ID: %s' % checkedin.shaastra_ID)
         y -= lineheight + (cm * 0.8)
 
@@ -173,25 +171,18 @@ def printParticipantDetails(pdf, x, y, s_id,team,number):
         y -= lineheight + (cm * 0.8)
     
     else:
-        pdf.drawString(x, y, "Team Leader's Shaastra ID: %s" % profile.shaastra_id)    
+        pdf.drawString(x, y, "Team ID: %s" % team_instance.team_id)    
         y -= lineheight + (cm * 0.8)
 
-        pdf.drawString(x, y, "Team Leader's Name: %s %s" % (leader.first_name, leader.last_name))
+        pdf.drawString(x, y, "Team Name: %s" % team_instance.team_name)
         y -= lineheight + (cm * 0.8)
     
-        matt = Mattresses.objects.get(team_leader_id = profile.shaastra_id)
+        matt = Mattresses_new.objects.get(team_shaastra_id = team_instance.team_id)
 
         pdf.drawString(x, y, 'Mattresses: %s' % matt.no_of_mattresses)
         y -= lineheight + (cm * 0.8)
     
-    pdf.drawString(x, y, 'Mobile No: %s' % profile.mobile_number)
     
-    y -= lineheight + (cm * 0.8)
-
-    pdf.drawString(x, y, 'College: %s' % profile.college)
-    
-    y -= lineheight + (cm * 0.8)
-
     d = checkedin.duration_of_stay
 
     
@@ -208,10 +199,10 @@ def printParticipantDetails(pdf, x, y, s_id,team,number):
     
     y -= lineheight + (cm * 0.8)
 
-    if int(d)>2:
-        amount = CD + (320 + 160 *(int(d)-2))*n
+    if int(d)>1:
+        amount = CD + (250 + 200 *(int(d)-1))*n
     else:
-        amount = CD +320*int(n)
+        amount = CD +250*int(n)
     pdf.drawString(x, y, 'Amount: %s' % amount)
     
     y -= lineheight + (cm * 0.8)
@@ -226,10 +217,11 @@ def printParticipantDetails(pdf, x, y, s_id,team,number):
 
     return y
 
-def generateParticipantPDF(s_id,team,number=[]):
+def generateParticipantPDF(s_id=None,team_id=None,number=[]):
     
     print number
-    userProfile = UserProfile.objects.using(mainsite_db).get(shaastra_id = s_id)
+    if not team_id:
+        userProfile = UserProfile.objects.using(mainsite_db).get(shaastra_id = s_id)
     
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = \
@@ -261,10 +253,10 @@ def generateParticipantPDF(s_id,team,number=[]):
 
     # Print Participant Details in PDF
     
-    y = printParticipantDetails(pdf, x, y, userProfile.shaastra_id,int(team),number)
+    y = printParticipantDetails(pdf, x, y, userProfile.shaastra_id,team_id,number)
   
-    if not int(team) == 0:
-        generatetable(pdf,x,y,userProfile.user,number)
+    if team_id:
+        generatetable(pdf,x,y,team_id,number)
 
     pdf.showPage()
     pdf.save()
