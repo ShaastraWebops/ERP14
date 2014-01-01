@@ -1,3 +1,5 @@
+from users.models import *
+
 def is_valid_id(shid):
     up = get_userprofile(shid)
     if up is None:
