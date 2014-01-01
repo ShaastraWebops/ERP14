@@ -13,9 +13,8 @@ from barcode.scripts import *
 
 
 #TODO: if shaastra id not valid in portal
-def get_details(request):
+def get_details(request,sh_id=None):
     output_str = ""
-    """
     if sh_id:
         profile = is_valid_id(sh_id)
         if not profile:
@@ -29,7 +28,6 @@ def get_details(request):
             return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
         detailform = DetailForm()
         return render_to_response('barcode/get_details.html', {'form':detailform,'output_str':output_str}, context_instance=RequestContext(request))
-    """
     if request.method == 'POST':
         detailform = DetailForm(request.POST)
         output_str = ""
