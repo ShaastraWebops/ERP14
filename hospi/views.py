@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response,redirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
+from events.models import GenericEvent
 from hospi.models import *
 from hospi.forms import *
 from hospi.generate_bill import *

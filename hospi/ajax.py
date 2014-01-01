@@ -10,9 +10,10 @@ from django.forms.formsets import formset_factory
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from dashboard.models import TeamEvent
 from users.models import UserProfile
 from hospi.models import *
-from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom,RegistrationForm
+from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom,RegistrationForm,TeamCheckinForm
 from events.forms import ChooseEventForm
 from events.models import GenericEvent, ParticipantEvent
 import json 
@@ -214,9 +215,10 @@ def createteam(request,team_formset=None,event_pk=None):
                 parti = UserProfile.objects.using(mainsite_db).get(shaastra_id=shaastraid)
                 userlist.append(parti.user)
             teamevent = TeamEvent(event_id=event_pk)
+            teamevent.save(using='mainsite')
             teamevent.users = userlist
             teamevent.team_name = str(event_pk)
-            teamevent.save(using='mainsite_db')
+            teamevent.save(using='mainsite')
             show_alert(dajax,"success","Team Registered successfully")
             return dajax.json()
         else:
@@ -236,7 +238,7 @@ def register(request,reg_form=None,shaastraID=None):
             new_user = User(first_name=clean_form['first_name'],last_name=clean_form['last_name'],username=clean_form['username'],email=clean_form['email']) 
             new_user.set_password('default')
             new_user.is_active = True
-            new_user.save(using='mainsite_db')
+            new_user.save(using='mainsite')
             userprofile = UserProfile(
                     user=new_user,
                     gender=cleaned_form['gender'],
@@ -247,7 +249,7 @@ def register(request,reg_form=None,shaastraID=None):
                     shaastra_id = shaastraid,
                     want_accomodation = True,
                     )
-            userprofile.save(using='mainsite_db')
+            userprofile.save(using='mainsite')
             show_alert(dajax,"success","Participant registered successfully")
             return dajax.json()
         else:
