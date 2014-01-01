@@ -112,7 +112,9 @@ def checkout(request,shaastra_form=None):
         form = ShaastraIDForm(deserialize_form(shaastra_form))
         if form.is_valid():
             cleaned_form = form.cleaned_data
-            shaastraid = 'SHA1400'+cleaned_form['shaastraID']
+            print cleaned_form
+            shaastraid = 'SHA14'+cleaned_form['shaastraID']
+            print shaastraid
             try:
                 participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid)
             except:
@@ -128,7 +130,7 @@ def checkout(request,shaastra_form=None):
                     checkedin.check_out_control_room = checkedin.check_in_control_room
                     checkedin.save()
                     room = checkedin.room
-                    room.already_checkedin = 0
+                    room.already_checkedin = 0#Delete
                     room.save()
                     show_alert(dajax,"success","Participant checked out successfully")
                     return dajax.json()
@@ -205,6 +207,8 @@ def choose(request,choose_eventform=None):
 def createteam(request,team_formset=None,event_pk=None):
     dajax=Dajax()
     teamformset=formset_factory(ShaastraIDForm)
+    generic_event_instance = GenericEvent.objects.get(pk=event_pk)
+    event_name = generic_event_instance.title
     if request.method=="POST" and team_formset != None:
         formset = teamformset(deserialize_form(team_formset))
         if formset.is_valid():
@@ -217,9 +221,10 @@ def createteam(request,team_formset=None,event_pk=None):
             teamevent = TeamEvent(event_id=event_pk)
             teamevent.save(using='mainsite')
             teamevent.users = userlist
+            teamevent.team_id = 'TEAM#'+str(event_name[:5])+'#'+str(teamevent.pk)
             teamevent.team_name = str(event_pk)
             teamevent.save(using='mainsite')
-            show_alert(dajax,"success","Team Registered successfully")
+            show_alert(dajax,"success","Team Registered successfully.Team ID is %s" % str(teamevent.pk))
             return dajax.json()
         else:
             show_alert(dajax,"error","Form is invalid")
