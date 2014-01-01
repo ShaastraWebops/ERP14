@@ -5,16 +5,20 @@ GENDER_CHOICES = (('M', 'Male'), ('F', 'Female'))
 
 HOSTEL_CHOICES = (
     ('Alakananda','Alakananda'),
+    ('Godavari','Godavari'),
+    ('Cauvery','Cauvery'),
+    ('Brahmaputra','Brahmaputra'),
     ('Ganga','Ganga'),
     ('Jamuna','Jamuna'),
+    ('Saraswathi','Saraswathi'),
+    ('Tapti','Tapti'),
+    ('Krishna','Krishna'),
+    ('Narmada','Narmada'),
     ('Mahanadhi','Mahanadhi'),
     ('Mandakini','Mandakini'),
     ('Pamba','Pamba'),
     ('Sindhu','Sindhu'),    
     ('Tamraparani','Tamraparani'),
-    ('Sarayu','Sarayu'),
-    ('Sarayu Extn','Sarayu Extn'),
-    ('C-2-8','C-2-8'),
     ('Sharavati','Sharavati'),   
     )
 
