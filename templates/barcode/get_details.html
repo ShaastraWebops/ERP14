@@ -1,17 +1,17 @@
 <h3>
 Get details from Shaastra ID
 </h3>
-<span>
 {% if output_str %}
+<span style="color:red">
 Error:<br/>
-{{output_str}}
+{{output_str}}<br/>
+</span>
 {% endif %}
-<span>
 <br/>
 <form action="" method="POST">
 {% csrf_token %}
 {{form.as_table}}
-<p><input type="submit"  /></p>
+<input type="submit"  />
 </form>
 
 
