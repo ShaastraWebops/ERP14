@@ -78,11 +78,12 @@ def upload_csv(request, type):
                         message_str+=str(display_list)
                 else:
                     (display_list,fail_list) = process_csv(request,request.FILES['file'],form.cleaned_data['title'] ,type) 
-                    message_str += str(len(display_list)) + "items;"
-                    message_str += str(display_list[0:5])
+                    if display_list:
+                        message_str += str(len(display_list)) + "items;"
+                        message_str += str(display_list[0:5])
                     if fail_list:
                         message_str += "||Failed: %s" % str(fail_list)
-                if display_list==[] and fail_list ==[]:
+                if display_list is None and fail_list is None:
                     return HttpResponse('File reading failed, check file format')
                 
                 messages.success(request,"%s..."% (message_str))
@@ -105,9 +106,9 @@ def process_csv (request,file, title,type_str,event_title = None):
     try:
         input_file = csv.DictReader(file,delimiter=',')
         if file.content_type!='text/csv':
-            return ([],[])
+            return (None,None)
     except:
-        return ([],[])
+        return (None,None)
     return_list = []
     fail_list = []
     if type_str == "barcodeportal":
