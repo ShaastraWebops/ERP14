@@ -1,6 +1,11 @@
 from users.models import *
 
-def is_valid_id(shid):
+def id_is_valid(sh_id):
+    if len(sh_id) == 10 and sh_id[:5] == 'SHA14' and sh_id[5:].isalpha():
+        return True
+    return False
+
+def id_in_db(shid):
     up = get_userprofile(shid)
     if up is None:
         return False

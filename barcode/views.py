@@ -16,7 +16,7 @@ from barcode.scripts import *
 def get_details(request,sh_id=None):
     output_str = ""
     if sh_id:
-        if not is_valid_id(sh_id):
+        if not id_in_db(sh_id):
             output_str += "Entered Shaastra ID is not yet entered into database"
         elif is_junk(sh_id):
             output_str += "Entered Shaastra ID details are junk. Please request and enter the participants details"
@@ -33,7 +33,7 @@ def get_details(request,sh_id=None):
         output_str = ""
         if detailform.is_valid():
             shaastra_id  = detailform.cleaned_data['shaastra_id']
-            if not is_valid_id(shaastra_id):
+            if not id_in_db(shaastra_id):
                 output_str += "Entered Shaastra ID is not yet entered into database"
             elif is_junk(shaastra_id):
                 output_str += "Entered Shaastra ID details are junk. Please request and enter the participants details"
@@ -120,7 +120,7 @@ def process_csv (request,file, title,type_str,event_title = None):
         i=0
         while i<len(sh_id):
             print sh_id[i]+"||"+barcode[i]+"__"
-            if not is_valid_id(sh_id[i]):
+            if not id_in_db(sh_id[i]):
                 fail_list.append(sh_id[i])
                 i = i+1
                 continue
@@ -222,7 +222,7 @@ def add_single_entry(request,type):
 def add_single_barcode(barcodedata):
     shid = barcodedata['shaastra_id']
     code = barcodedata['barcode']
-    if not is_valid_id(shid):
+    if not id_in_db(shid):
         return ''
     
     barcode_obj = Barcode(shaastra_id = shid,barcode = code)
@@ -236,7 +236,7 @@ def add_single_participant(event_participant_data):
        #NOTE: here form's shaastra id is used to get the shaastra ID, it actually barcode
     except:
         return ''
-    if not is_valid_id(shid):
+    if not id_in_db(shid):
         return ''
     
     ev_part = Event_Participant(event = event_participant_data['event'],shaastra_id = shid)
