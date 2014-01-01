@@ -22,3 +22,5 @@ class EventForm(forms.Form):
                              help_text='Choose the event for which list is being uploaded. Please check twice'
                              )
 
+class DetailForm(forms.Form):
+    shaastra_id = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)    
