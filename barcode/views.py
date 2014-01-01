@@ -13,12 +13,10 @@ from barcode.scripts import *
 
 
 #TODO: if shaastra id not valid in portal
-def get_details(request):
+def get_details(request,sh_id=None):
     output_str = ""
-    """
     if sh_id:
-        profile = is_valid_id(sh_id)
-        if not profile:
+        if not is_valid_id(sh_id):
             output_str += "Entered Shaastra ID is not yet entered into database"
         elif is_junk(sh_id):
             output_str += "Entered Shaastra ID details are junk. Please request and enter the participants details"
@@ -26,10 +24,10 @@ def get_details(request):
             return HttpResponse(output_str)
             #TODO: link to url for edit profile!!
         else:
+            profile = get_userprofile(sh_id)
             return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
         detailform = DetailForm()
         return render_to_response('barcode/get_details.html', {'form':detailform,'output_str':output_str}, context_instance=RequestContext(request))
-    """
     if request.method == 'POST':
         detailform = DetailForm(request.POST)
         output_str = ""
