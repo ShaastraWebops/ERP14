@@ -14,7 +14,7 @@ from barcode.scripts import *
 
 #TODO: if shaastra id not valid in portal
 def get_details(request):
-    detailForm = None
+    detailform = DetailForm()
     output_str = ""
     if request.method == 'POST':
         detailform = DetailForm(request.POST)
@@ -30,10 +30,13 @@ def get_details(request):
             else:
                 profile = get_userprofile(shaastra_id)
                 return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
-
+            return render_to_response('barcode/get_details.html', {'form':detailform,'output_str':output_str}, context_instance=RequestContext(request))
         else:
             output_str +=[str(error) for error in detailform.errors.values()]
-
+        detailform = DetailForm(initial = {"SHA14"})
+    return render_to_response('barcode/get_details.html', {'form':detailform,'output_str':output_str}, context_instance=RequestContext(request))
+    
+    
 def upload_csv(request, type):
     flag_str = ''
     
