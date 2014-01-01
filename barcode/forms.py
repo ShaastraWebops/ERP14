@@ -14,7 +14,7 @@ class Event_Participant_Form(forms.ModelForm):
 
 class UploadFileForm(forms.Form):
     file  = forms.FileField()
-    title = forms.CharField(help_text = "Enter the column name in excel sheet.Do not make spelling mistakes.eg:SHAASTRA ID",max_length = 50)
+    title = forms.CharField(help_text = "Enter the column name in excel sheet.If you are following standard format, just leave this as SHAASTRA ID",max_length = 50)
 
 
 class EventForm(forms.Form):
@@ -22,3 +22,5 @@ class EventForm(forms.Form):
                              help_text='Choose the event for which list is being uploaded. Please check twice'
                              )
 
+class DetailForm(forms.Form):
+    shaastra_id = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)    

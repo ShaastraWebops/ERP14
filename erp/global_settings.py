@@ -3,6 +3,7 @@
 
 # **************** ERP - SETTINGS.PY - COMMENTING DONE TO KEEP TRACK OF MODIFICATIONS
 # Django settings for erp project.
+MEDIA_URL = 'media/'
 
 import os.path
 

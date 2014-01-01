@@ -9,30 +9,47 @@ from events.models import GenericEvent
 from models import Barcode,Event_Participant
 from django.contrib import messages
 from users.models import UserProfile
+from barcode.scripts import *
 
 
-
-def is_valid_id(shid):
-    up = get_userprofile(shid)
-    if up is None:
-        return False
-    return True
-
-def is_valid_insti_roll(roll):
-    #TODO::
-    if len(roll)==8 and roll[:2].isalpha() and roll[2:4].isdigit() and roll[4].isalpha() and roll[5:].isdigit():
-        return True
-    return False
-
-def get_userprofile(shaastra_id = None):
-    if shaastra_id is None:
-        return None
-    try:
-        up = UserProfile.objects.using('mainsite').filter(shaastra_id = shaastra_id)[0]
-    except:
-        return None
-    return up
-
+#TODO: if shaastra id not valid in portal
+def get_details(request,sh_id=None):
+    output_str = ""
+    if sh_id:
+        if not is_valid_id(sh_id):
+            output_str += "Entered Shaastra ID is not yet entered into database"
+        elif is_junk(sh_id):
+            output_str += "Entered Shaastra ID details are junk. Please request and enter the participants details"
+            output_str += "<a href = '/???'>here</a>?"
+            return HttpResponse(output_str)
+            #TODO: link to url for edit profile!!
+        else:
+            profile = get_userprofile(sh_id)
+            return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
+        detailform = DetailForm()
+        return render_to_response('barcode/get_details.html', {'form':detailform,'output_str':output_str}, context_instance=RequestContext(request))
+    if request.method == 'POST':
+        detailform = DetailForm(request.POST)
+        output_str = ""
+        if detailform.is_valid():
+            shaastra_id  = detailform.cleaned_data['shaastra_id']
+            if not is_valid_id(shaastra_id):
+                output_str += "Entered Shaastra ID is not yet entered into database"
+            elif is_junk(shaastra_id):
+                output_str += "Entered Shaastra ID details are junk. Please request and enter the participants details"
+                output_str += "<a href = '/???'>here</a>?"
+                return HttpResponse(output_str)
+                #TODO: link to url for edit profile!!
+            else:
+                profile = get_userprofile(shaastra_id)
+                return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
+            return render_to_response('barcode/get_details.html', {'form':detailform,'output_str':output_str}, context_instance=RequestContext(request))
+        else:
+            output_str +=[str(error) for error in detailform.errors.values()]
+    detailform = DetailForm(initial = {'shaastra_id':"SHA14"})
+    return render_to_response('barcode/get_details.html', {'form':detailform,'output_str':output_str}, context_instance=RequestContext(request))
+    
+    
 def upload_csv(request, type):
     flag_str = ''
     
@@ -60,12 +77,13 @@ def upload_csv(request, type):
                         message_str += "::"
                         message_str+=str(display_list)
                 else:
-                    (display_list,fail_list) = process_csv(request,request.FILES['file'],form.cleaned_data['title'] ,type)
+                    (display_list,fail_list) = process_csv(request,request.FILES['file'],form.cleaned_data['title'] ,type) 
                     message_str += str(len(display_list)) + "items;"
                     message_str += str(display_list[0:5])
                     if fail_list:
                         message_str += "||Failed: %s" % str(fail_list)
-                    
+                if display_list==[] and fail_list ==[]:
+                    return HttpResponse('File reading failed, check file format')
                 
                 messages.success(request,"%s..."% (message_str))
                 return HttpResponseRedirect(reverse(type))
@@ -84,7 +102,12 @@ def upload_csv(request, type):
 
 
 def process_csv (request,file, title,type_str,event_title = None):
-    input_file = csv.DictReader(file,delimiter=',')
+    try:
+        input_file = csv.DictReader(file,delimiter=',')
+        if file.content_type!='text/csv':
+            return ([],[])
+    except:
+        return ([],[])
     return_list = []
     fail_list = []
     if type_str == "barcodeportal":
