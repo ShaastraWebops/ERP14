@@ -10,16 +10,16 @@ HOSTEL_CHOICES = (
     ('Brahmaputra','Brahmaputra'),
     ('Ganga','Ganga'),
     ('Jamuna','Jamuna'),
-    ('Saraswathi','Saraswathi'),
+    ('Saras','Saras'),
     ('Tapti','Tapti'),
     ('Krishna','Krishna'),
     ('Narmada','Narmada'),
     ('Mahanadhi','Mahanadhi'),
-    ('Mandakini','Mandakini'),
-    ('Pamba','Pamba'),
+    ('Mandak','Mandak'),
+    ('Pampa','Pampa'),
     ('Sindhu','Sindhu'),    
-    ('Tamraparani','Tamraparani'),
-    ('Sharavati','Sharavati'),   
+    ('Tambi','Tambi'),
+    ('Sharav','Sharav'),   
     )
 
 CONTROL_ROOM_CHOICES = (
