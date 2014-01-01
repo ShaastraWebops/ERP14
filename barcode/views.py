@@ -71,7 +71,7 @@ def upload_csv(request, type):
                 message_str = "Successfully uploaded "
                 if type == "participantsportal":
                     (display_list,fail_list) = process_csv(request,request.FILES['file'],form.cleaned_data['title'],type,event.cleaned_data['event_title'] )
-                    if display_list:
+                    if display_list[1:]:
                         message_str+=str(display_list[0])
                         display_list = display_list[1:]
                         message_str += "::"
@@ -80,7 +80,8 @@ def upload_csv(request, type):
                     (display_list,fail_list) = process_csv(request,request.FILES['file'],form.cleaned_data['title'] ,type) 
                     if display_list:
                         message_str += str(len(display_list)) + "items;"
-                        message_str += str(display_list[0:5])
+                        message_str += str(display_list[0:5]) + "etc.."
+                        print str(display_list)
                     if fail_list:
                         message_str += "||Failed: %s" % str(fail_list)
                 if display_list is None and fail_list is None:
@@ -119,9 +120,15 @@ def process_csv (request,file, title,type_str,event_title = None):
             barcode.append(d['BARCODE'])
         i=0
         while i<len(sh_id):
-            print sh_id[i]+"||"+barcode[i]+"__"
-            if not id_in_db(sh_id[i]):
+            if not id_is_valid(sh_id[i]):
                 fail_list.append(sh_id[i])
+                i = i+1
+                continue
+            if not id_in_db(sh_id[i]):
+                profile = create_junk_profile(sh_id[i])
+                barcode_obj = Barcode(shaastra_id = sh_id[i],barcode = barcode[i])
+                return_list.append(str(sh_id[i]))
+                barcode_obj.save()
                 i = i+1
                 continue
                 #TODO: what??
