@@ -19,12 +19,13 @@ def get_details(request):
         detailform = DetailForm(request.POST)
         output_str = ""
         if detailform.is_valid():
-            shaastra_id  = form.cleaned_data['shaastra_id']
+            shaastra_id  = detailform.cleaned_data['shaastra_id']
             if not is_valid_id(shaastra_id):
-                output_str += "Entered Shaastra ID is not yet entered into database<br/>"
+                output_str += "Entered Shaastra ID is not yet entered into database"
             elif is_junk(shaastra_id):
                 output_str += "Entered Shaastra ID details are junk. Please request and enter the participants details"
                 output_str += "<a href = '/???'>here</a>?"
+                return HttpResponse(output_str)
                 #TODO: link to url for edit profile!!
             else:
                 profile = get_userprofile(shaastra_id)
