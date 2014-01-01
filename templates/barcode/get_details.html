@@ -1,7 +1,6 @@
 <h3>
 Get details from Shaastra ID
 </h3>
-<br/>
 <span>
 {% if output_str %}
 Error:<br/>
@@ -10,6 +9,7 @@ Error:<br/>
 <span>
 <br/>
 <form action="" method="POST">
+{% csrf_token %}
 {{form.as_table}}
 <p><input type="submit"  /></p>
 </form>
