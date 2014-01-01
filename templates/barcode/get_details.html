@@ -2,9 +2,13 @@
 Get details from Shaastra ID
 </h3>
 <br/>
-<span style="color:red">
-{{output_str}}
 <span>
+{% if output_str %}
+Error:<br/>
+{{output_str}}
+{% endif %}
+<span>
+<br/>
 <form>
 {{form.as_table}}
 <p><input type="submit"  /></p>
