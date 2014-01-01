@@ -9,29 +9,30 @@ from events.models import GenericEvent
 from models import Barcode,Event_Participant
 from django.contrib import messages
 from users.models import UserProfile
+from barcode.scripts import *
 
 
+#TODO: if shaastra id not valid in portal
+def get_details(request):
+    detailForm = None
+    output_str = ""
+    if request.method == 'POST':
+        detailform = DetailForm(request.POST)
+        output_str = ""
+        if detailform.is_valid():
+            shaastra_id  = form.cleaned_data['shaastra_id']
+            if not is_valid_id(shaastra_id):
+                output_str += "Entered Shaastra ID is not yet entered into database<br/>"
+            elif is_junk(shaastra_id):
+                output_str += "Entered Shaastra ID details are junk. Please request and enter the participants details"
+                output_str += "<a href = '/???'>here</a>?"
+                #TODO: link to url for edit profile!!
+            else:
+                profile = get_userprofile(shaastra_id)
+                return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
 
-def is_valid_id(shid):
-    up = get_userprofile(shid)
-    if up is None:
-        return False
-    return True
-
-def is_valid_insti_roll(roll):
-    #TODO::
-    if len(roll)==8 and roll[:2].isalpha() and roll[2:4].isdigit() and roll[4].isalpha() and roll[5:].isdigit():
-        return True
-    return False
-
-def get_userprofile(shaastra_id = None):
-    if shaastra_id is None:
-        return None
-    try:
-        up = UserProfile.objects.using('mainsite').filter(shaastra_id = shaastra_id)[0]
-    except:
-        return None
-    return up
+        else:
+            output_str +=[str(error) for error in detailform.errors.values()]
 
 def upload_csv(request, type):
     flag_str = ''
