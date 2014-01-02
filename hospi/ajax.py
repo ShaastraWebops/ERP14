@@ -300,7 +300,7 @@ def team(request,team_form=None):
                         shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
                 print len(userlist)
                 tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm,extra=len(userlist))
-                formset = tcheckinformset(initial=[{'shaastra_ID':sid,'check_in_control_room':'Ganga','check_out_control_room':'Ganga'} for sid in shalist])
+                formset = tcheckinformset(queryset=IndividualCheckIn.objects.none(),initial=[{'shaastra_ID':sid,'check_in_control_room':'Ganga','check_out_control_room':'Ganga'} for sid in shalist])
                 data={
                         'form-TOTAL_FORMS':u'',
                         'form-INITIAL_FORMS':u'',
@@ -319,7 +319,7 @@ def team(request,team_form=None):
                         userlist.append(user_ex.userprofile_set.all()[0])
                         shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
                 tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm,extra=len(userlist))
-                formset = tcheckinformset(initial=[{'shaastra_ID':sid,'check_in_control_room':'Sharavati','check_out_control_room':'Sharavati'} for sid in shalist])
+                formset = tcheckinformset(queryset=IndividualCheckIn.objects.none(),initial=[{'shaastra_ID':sid,'check_in_control_room':'Sharavati','check_out_control_room':'Sharavati'} for sid in shalist])
                 data={
                         'form-TOTAL_FORMS':u'',
                         'form-INITIAL_FORMS':u'',
