@@ -44,12 +44,14 @@ class RegistrationForm(ModelForm):
                 'mobile_number',
                 'college',
                 'college_roll',
+                'shaastra_id',
                 )
 
 class TeamCheckinForm(forms.Form):
     event_list = GenericEvent.objects.all()
-    event_choices = [('','Airshow')] + [(event,event) for event in event_list]
-    event = forms.ChoiceField(event_choices,required=False,widget=forms.Select())
-    check_in_control_room = forms.ChoiceField(choices = [('Ganga','Ganga'),('Sharavathi','Sharavathi')],required=False,widget=forms.Select())
-    team_id_num = forms.CharField(max_length=10)
+    event_choices = [(event,event) for event in event_list]
+
+    event = forms.ChoiceField(choices=event_choices,required=False,widget=forms.Select())
+    check_in_control_room = forms.ChoiceField(choices=CONTROL_ROOM_CHOICES,required=False,widget=forms.Select())
+    team_id_num = forms.IntegerField(required=False)
 
