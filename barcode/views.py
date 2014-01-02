@@ -6,10 +6,11 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import reverse
 from events.models import GenericEvent
-from models import Barcode,Event_Participant
+from models import Barcode,Event_Participant,PPM
 from django.contrib import messages
 from users.models import UserProfile
 from barcode.scripts import *
+from django.forms.models import modelform_factory
 
 
 #TODO: if shaastra id not valid in portal
@@ -48,7 +49,22 @@ def get_details(request,sh_id=None):
             output_str +=[str(error) for error in detailform.errors.values()]
     detailform = DetailForm(initial = {'shaastra_id':"SHA14"})
     return render_to_response('barcode/get_details.html', {'form':detailform,'output_str':output_str}, context_instance=RequestContext(request))
+
+
+def upload_ppm(request):
+    PPMForm = modelform_factory(PPM)
+    if request.method == 'POST':
+        form = PPMForm (request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('barcode.views.upload_ppm')
+
+    else:
+        #Display Blank Form
+        form = PPMForm()
+        context = {'form': form}
     
+    return render_to_response ('barcode/ppm.html', {'form': form }, context_instance=RequestContext(request))    
     
 def upload_csv(request, type):
     flag_str = ''
