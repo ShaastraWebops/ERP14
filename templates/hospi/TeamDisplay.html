@@ -1,7 +1,29 @@
 <form method="POST" action="teamcheckin/{{event_pk}}/{{team_id_num}}/" id="id_formset">
     {% csrf_token %}
     <table class="table table-bordered table-striped table-condensed">
-        {{formset}}
+        {{formset.management_form}}
+        <table class="table table-bordered table-striped table-condensed">
+            <tr class="success">
+            <td><b>RoomM</b></td>
+            <td><b>Duration of Stay</b></td>
+            <td><b>Number of mattresses given</b></td>
+            <td><b>Mattress Room</b></td>
+            <td><b>Shaastra ID</b></td>
+            <td><b>Check in Control Room</b></td>
+            <td><b>Check out Control Room</b></td>
+        </tr>
+        {% for form in formset.forms %}
+            <tr class="success">
+                <td>{{form.room}}</td>
+                <td>{{form.duration_of_stay}}</td>
+                <td>{{form.number_of_mattresses_given}}</td>
+                <td>{{form.mattress_room}}</td>
+                <td>{{form.shaastra_ID}}</td>
+                <td>{{form.check_in_control_room}}</td>
+                <td>{{form.check_out_control_room}}</td>
+            </tr>
+            {% endfor %}
+        </table>
     </table>
     <center><input type="submit" class="btn btn-info" /></center>
 </form>
