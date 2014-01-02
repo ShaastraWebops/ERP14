@@ -6,9 +6,11 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import reverse
 from events.models import GenericEvent
-from models import Barcode,Event_Participant
+from models import Barcode,Event_Participant, PPM
 from django.contrib import messages
 from users.models import UserProfile
+from django.forms.models import modelform_factory
+
 
 
 
@@ -218,3 +220,20 @@ def add_single_participant(event_participant_data):
     ev_part = Event_Participant(event = event_participant_data['event'],shaastra_id = shid)
     ev_part.save()
     return 'add single success'
+
+
+
+def upload_ppm(request):
+    PPMForm = modelform_factory(PPM)
+    if request.method == 'POST':
+        form = PPMForm (request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('barcode.views.upload_ppm')
+
+    else:
+        #Display Blank Form
+        form = PPMForm()
+        context = {'form': form}
+    
+    return render_to_response ('barcode/ppm.htm', {'form': form }, context_instance=RequestContext(request))
