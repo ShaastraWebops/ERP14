@@ -94,7 +94,7 @@ def checkin(request,indi_form=None):
                     show_alert(dajax,"info","Participant is already checked-in into" + str(room))
                     return dajax.json()
             except:
-                if is_junk(participant):
+                if is_junk(shaastraid):
                     participant.user.is_staff = False
                     new_form = RegistrationForm(initial={'shaastra_id':shaastraid})
                     html_content = render_to_string('hospi/Register.html',locals(),RequestContext(request))
@@ -130,7 +130,7 @@ def checkout(request,shaastra_form=None):
                 show_alert(dajax,"error","User with this Shaastra ID does not exist")
                 return dajax.json()
             try:
-                checkedin = IndividualCheckin.objects.get(shaastra_ID=shaastraid)
+                checkedin = IndividualCheckIn.objects.get(shaastra_ID=shaastraid)
                 if checkedin.check_out_date:
                     show_alert(dajax,"error","Participant has already checked out")
                     return dajax.json()
@@ -224,7 +224,7 @@ def createteam(request,team_formset=None,event_pk=None):
             userlist = []
             for f in formset:
                 cd = f.cleaned_data
-                shaastraid=cd.get('shaastraID')
+                shaastraid='SHA14'+str(cd.get('shaastraID'))
                 print shaastraid
                 try:
                     parti = UserProfile.objects.using(mainsite_db).get(shaastra_id=shaastraid)

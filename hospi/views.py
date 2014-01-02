@@ -29,7 +29,6 @@ def checkin(request):
             #    msg = "This room has reached its Maximum Capacity"
             #else:
             form.save()
-            room.already_checkedin = 1
             room.save()
             msg = "Participant checked in successfully"
             pdf = generateParticipantPDF(shaastraid,0)
@@ -38,10 +37,10 @@ def checkin(request):
             msg = "Form is not valid"
             return render_to_response('hospi/home.html',locals(),RequestContext(request))
 
-def teamcheckin(request,pk,team_id):
+def teamcheckin(request,pk,team_idi):
     tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm)
     event_pk = pk
-    team_id_num = team_id
+    team_id_num = team_idi
     generic_event_instance = GenericEvent.objects.get(pk=event_pk)
     event_name = generic_event_instance.title
     team_id = 'TEAM#'+str(event_name[:5])+'#'+str(team_id_num)
@@ -54,6 +53,9 @@ def teamcheckin(request,pk,team_id):
                 cd = f.cleaned_data
                 shalist.append(cd.get('shaastra_ID'))
                 roomlist.append(cd.get('room'))
+                room = cd.get('room')
+                room.max_number -= 1
+                room.save()
 
             formset.save()
             for room in roomlist:
@@ -63,7 +65,4 @@ def teamcheckin(request,pk,team_id):
             return pdf
         else:
             return render_to_response('hospi/home.html',locals(),RequestContext(request))
-
-
-        
 

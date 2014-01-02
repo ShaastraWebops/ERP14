@@ -46,7 +46,7 @@ def initNewPDFPage(pdf, page_title, page_no, (pageWidth, pageHeight),):
 
     # SHAASTRA 2013 in centre
 
-    pdf.drawCentredString(pageWidth / 2, y, 'SHAASTRA 2013')
+    pdf.drawCentredString(pageWidth / 2, y, 'SHAASTRA 2014')
     y -= lineheight + cm
 
     # Set font for Page Title
@@ -136,13 +136,10 @@ def printParticipantDetails(pdf, x, y, s_id,team_id,number):
         n=len(number)
     if not team_id:
         CD = 0
-        try:
-            checkedin = IndividualCheckIn.objects.get(shaastra_ID=s_id)  
-            profile = UserProfile.objects.using(mainsite_db).get(shaastra_id = s_id)
-        except:
-            msg = "This participant has not been checked in!" 
-    else:
         checkedin = IndividualCheckIn.objects.get(shaastra_ID=s_id)  
+        profile = UserProfile.objects.using(mainsite_db).get(shaastra_id = s_id)
+    else:
+        checkedin = IndividualCheckIn.objects.get(shaastra_ID=s_id) #This is the checked in object after team checkin is done 
         team_instance = TeamEvent.objects.using(mainsite_db).get(team_id=team_id)
 #        leader = User.objects.using(mainsite_db).get(id = profile.user_id)
      
@@ -161,13 +158,16 @@ def printParticipantDetails(pdf, x, y, s_id,team_id,number):
         pdf.drawString(x, y, 'Shaastra ID: %s' % checkedin.shaastra_ID)
         y -= lineheight + (cm * 0.8)
 
-        pdf.drawString(x, y, 'Name: %s %s' % (checkedin.first_name, checkedin.last_name))
+        pdf.drawString(x, y, 'Name: %s %s' % (profile.user.first_name, profile.user.last_name))
+        y -= lineheight + (cm * 0.8)
+
+        pdf.drawString(x,y, 'Phone Number: %s' % profile.mobile_number)
         y -= lineheight + (cm * 0.8)
 
         pdf.drawString(x, y, 'Mattresses: %s' % checkedin.number_of_mattresses_given)
         y -= lineheight + (cm * 0.8)
 
-        pdf.drawString(x, y, 'Room Allotted: %s' % checkedin.room)
+        pdf.drawString(x, y, 'Room Allotted: %s' % str(checkedin.room)[:-2])
         y -= lineheight + (cm * 0.8)
     
     else:
@@ -177,16 +177,22 @@ def printParticipantDetails(pdf, x, y, s_id,team_id,number):
         pdf.drawString(x, y, "Team Name: %s" % team_instance.team_name)
         y -= lineheight + (cm * 0.8)
     
-        matt = Mattresses_new.objects.get(team_shaastra_id = team_instance.team_id)
-
-        pdf.drawString(x, y, 'Mattresses: %s' % matt.no_of_mattresses)
+        #Add up all the mattresses given and put it into code below
+        mattress = []
+        users_in_team = team_instance.users.all()
+        for user_ex in users_in_team:
+            shaastraid = user_ex.userprofile_set.all()[0].shaastra_id
+            indi_check = IndividualCheckIn.objects.get(shaastra_ID = shaastraid)
+            mattress.append(indi_check.number_of_mattresses_given)
+        mattress_sum = sum(mattress)
+        pdf.drawString(x, y, 'Mattresses: %s' % mattress_sum)
         y -= lineheight + (cm * 0.8)
     
     
     d = checkedin.duration_of_stay
 
     
-    pdf.drawString(x, y, 'Check In date & time: %s' % checkedin.check_in_date)
+    pdf.drawString(x, y, 'Check In date & time: %s' % str(checkedin.check_in_date)[:-6])
     
     y -= lineheight + (cm * 0.8)
 
@@ -220,8 +226,7 @@ def printParticipantDetails(pdf, x, y, s_id,team_id,number):
 def generateParticipantPDF(s_id=None,team_id=None,number=[]):
     
     print number
-    if not team_id:
-        userProfile = UserProfile.objects.using(mainsite_db).get(shaastra_id = s_id)
+    userProfile = UserProfile.objects.using(mainsite_db).get(shaastra_id = s_id)
     
     response = HttpResponse(mimetype='application/pdf')
     response['Content-Disposition'] = \
