@@ -47,7 +47,8 @@ def get_userprofile(shaastra_id = None):
         return None
     return up
 
-def is_junk(profile):
+def is_junk(shaastra_id):
+    profile = get_userprofile(shaastra_id)
     if profile.user.is_staff:
         return True
     #returns 0 for 
