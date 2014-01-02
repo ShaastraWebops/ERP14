@@ -27,6 +27,6 @@ class PPM(models.Model):
     event = models.ForeignKey(GenericEvent)
     first_prize_winners  =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='firstprize_set' )
     second_prize_winners =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='secondprize_set')
+    third_prize_winners =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='thirdprize_set')
     need_consoling       =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='consolation_set')
     
-
