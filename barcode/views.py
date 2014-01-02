@@ -12,6 +12,12 @@ from users.models import UserProfile
 from barcode.scripts import *
 from django.forms.models import modelform_factory
 
+def hospi_announce(request):
+    events_list = [event for event in GenericEvent.objects.all()]
+    announced_list = [has_winner(event) for event in GenericEvent.objects.all()]
+    ziplist = zip(events_list,announced_list)    
+    return render_to_response('barcode/result_announce.html', {'ziplist':ziplist}, context_instance=RequestContext(request))
+    
 def zero(intg):
     s=''
     count=1
@@ -62,14 +68,24 @@ def edit_profile(request,shaastra_id=None):
     if request.method == 'POST':
         form = EditProfileForm(request.POST)
         college_form = CollegeForm(request.POST)
-        if form.is_valid() and college_form.is_valid():
+        if form.is_valid():
 #            profile = form.instance
             up = form.save(commit = False)
-            
-            college = college_form.instance
-            college.save(using = 'mainsite')
+            if not college_form.is_valid():
+                print '555555555555555'
+                colllist = form.cleaned_data['coll'].split('|')
+                collquery = College.objects.using('mainsite').filter(name =  colllist[0],city = colllist[1],state = colllist[2])
+                if collquery.count():
+                    college = collquery[0]
+                else:
+                    college = College(name =  colllist[0],city = colllist[1],state = colllist[2])
+                    college.save(using = 'mainsite')
+            else:
+                college = college_form.instance
+                college.save(using = 'mainsite')
             if not id_in_db(shaastra_id):
                 user = User(username = shaastra_id,email = shaastra_id +'@'+shaastra_id+'.com',password = 'default' + shaastra_id)
+                profile = up
             else:
                 profile = get_userprofile(shaastra_id)
                 profile.branch = up.branch
@@ -88,7 +104,8 @@ def edit_profile(request,shaastra_id=None):
             profile.save(using = 'mainsite')
             return HttpResponse("success!!%s Added..Go  <a href='/barcode/detail_entry' >back</a>"% str(shaastra_id))
         else:
-            message_str += str(form.errors.values())
+            if form.errors.values():
+                message_str += str(form.errors.values())
         
     if shaastra_id is None or not id_is_valid(shaastra_id):
         return HttpResponse('<strong>Invalid Shaastra ID</strong>')
@@ -99,8 +116,8 @@ def edit_profile(request,shaastra_id=None):
     else:
         message_str = "Details already entered, may be junk, so replace with actual values."
         profile = get_userprofile(shaastra_id)
-        form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email})
-        college_form = CollegeForm(instance = profile.college)
+        form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email,'coll':profile.college.name +"|"+ profile.college.city+"|" + profile.college.state})
+        college_form = CollegeForm()
     return render_to_response('barcode/edit_profile.html', {'profileform':form,'collegeform':college_form,'message_str':message_str}, context_instance=RequestContext(request))
 
 def upload_ppm(request):

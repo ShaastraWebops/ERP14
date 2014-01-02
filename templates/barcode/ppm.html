@@ -21,7 +21,7 @@ function submit_winner(){
 {% for i in no_of_places %}
 <b>POSITION</b> {{i}} <br/>
 {% for j in max_team %}
-	{{form_list[i*j].as_table}}
+	<input id={{i}} + "," + {{j}} + type="text">
 {% endfor %}
 {% endfor %}
 </table>

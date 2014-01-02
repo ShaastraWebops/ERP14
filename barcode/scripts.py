@@ -1,4 +1,10 @@
 from users.models import *
+from models import *
+
+def has_winner(event = None):
+    if not event:
+        return 0
+    return PrizeWinner.objects.filter(event = event).count()>0
 
 def is_valid_barcode(code):
     #TODO
