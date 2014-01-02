@@ -22,6 +22,12 @@ class Insti_Participant(models.Model):
     event = models.ForeignKey(GenericEvent)
     insti_roll = models.CharField(max_length = 10)
     
+"""
+class PrizeWinner(models.Model):
+    position = models.IntegerField()
+    winners = models.ManyToManyField(Barcode,blank = True,null = True)
+    event = models.ForeignKey(GenericEvent)
+"""
 class PPM(models.Model):
 #One-many or one-one?? Temporarily kept at the safer option - one-many.
     event = models.ForeignKey(GenericEvent)

@@ -48,8 +48,63 @@ def get_details(request,sh_id=None):
         else:
             output_str +=[str(error) for error in detailform.errors.values()]
     detailform = DetailForm(initial = {'shaastra_id':"SHA14"})
+    
     return render_to_response('barcode/get_details.html', {'form':detailform,'output_str':output_str}, context_instance=RequestContext(request))
 
+def edit_profile(request,shaastra_id=None):
+    message_str = ""
+    if request.method == 'POST':
+        form = EditProfileForm(request.POST)
+        college_form = CollegeForm(request.POST)
+        if form.is_valid() and college_form.is_valid():
+            profile = form.instance
+            college = college_form.instance
+            college.save(using = 'mainsite')
+            profile.college = college
+            try:
+                user = User.objects.using('mainsite').get(username = shaastra_id)
+            except:
+                user = User(username = shaastra_id,email = shaastra_id +'@'+shaastra_id+'.com',password = 'default' + shaastra_id)
+                user.save(using = 'mainsite')
+            user.first_name = form.cleaned_data['first_name']
+            user.email = form.cleaned_data['email']
+            """
+            
+            try:
+                user = User.objects.using('mainsite').get(username = shaastra_id)
+            except:
+                user = User()
+                user.set_password('default')
+                user.save(using = 'mainsite')
+            """
+            profile.user = user
+            """
+            try:
+                db_profile = UserProfile.objects.get(shaastra_id = shaastra_id)
+                db_profile = profile
+                db_profile.save(using = 'mainsite')
+            except:
+            """
+            profile.save(using = 'mainsite')
+            return HttpResponse("success!!%s Added..Go  <a href='/barcode/detail_entry' >back</a>"% str(shaastra_id))
+            return HttpResponseRedirect(reverse('detail_entry'))
+        else:
+            message_str += str(form.errors.values())
+        
+    if shaastra_id is None or not id_is_valid(shaastra_id):
+        return HttpResponse('<strong>Invalid Shaastra ID</strong>')
+    if not id_in_db(shaastra_id):
+        #Here, details are not submitted-> no barcode..
+        form = EditProfileForm(initial = {'shaastra_id':shaastra_id})
+        college_form = CollegeForm()
+    else:
+        message_str = "Details already entered, may be junk, so replace with actual values."
+        profile = get_userprofile(shaastra_id)
+        form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email})
+        college_form = CollegeForm(instance = profile.college)
+    return render_to_response('barcode/edit_profile.html', {'profileform':form,'collegeform':college_form,'message_str':message_str}, context_instance=RequestContext(request))
+
+        
 
 def upload_ppm(request):
     PPMForm = modelform_factory(PPM)
@@ -140,14 +195,27 @@ def process_csv (request,file, title,type_str,event_title = None):
                 fail_list.append(sh_id[i])
                 i = i+1
                 continue
-            if not id_in_db(sh_id[i]):
+            if id_is_valid(sh_id[i])==-1:
+                sh_id[i] = 'SHA14' + sh_id[i]
+            #below section is for on-spot guys
+            if not id_in_db(sh_id[i]) and not barcode_in_db(barcode[i]):
                 profile = create_junk_profile(sh_id[i])
                 barcode_obj = Barcode(shaastra_id = sh_id[i],barcode = barcode[i])
                 return_list.append(str(sh_id[i]))
                 barcode_obj.save()
                 i = i+1
                 continue
+            if barcode_in_db(barcode[i]):
+                #This section is for mainsite regd. ppl who registered in events, so got a bogus profile
+                if id_in_db(sh_id[i]):
+                    junk_profile = get_userprofile(sh_id[i])
+                    
+            #This section is for on-spot ppl regd. ppl who registered in events, so got a bogus profile
+                else:
+                    pass
+                
                 #TODO: what??
+            # This below check is for existing shaastra ID's(mainsite registered)
             if Barcode.objects.filter(shaastra_id = sh_id[i]).count()==0:
                 barcode_obj = Barcode(shaastra_id = sh_id[i],barcode = barcode[i])
                 return_list.append(str(sh_id[i]))
@@ -181,7 +249,14 @@ def process_csv (request,file, title,type_str,event_title = None):
             try:
                 sh_id.append(Barcode.objects.get(barcode = code).shaastra_id)
             except:
-                error_list.append(code)
+                #if barcode object does not exist, just make a junk for given barcode
+                if is_valid_barcode(code):
+                #TODO!!!
+                    barcode = Barcode.objects.create(barcode = code, shaastra_id = '#'+ str(code) + '#' )
+                    profile = create_junk_profile('#' + str(code) + '#')
+                    sh_id.append('#' + str(code) + '#')
+                else:
+                    error_list.append(code)
         i=0
         for roll in insti_list:
             insti_part = Insti_Participant(event = event,insti_roll = roll)

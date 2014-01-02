@@ -7,19 +7,21 @@
 
 
 <h3>
-Get details from Shaastra ID
+PROFILE DETAIL ENTRY
 </h3>
 <center>
-{% if output_str %}
-<span style="color:red">
-Error:<br/>
-{{output_str}}<br/>
+{% if message_str %}
+<span><strong>
+{{message_str}}<br/>
+</strong>
 </span>
 {% endif %}
 <br/>
-<form action="" method="POST" class="navbar-search">
+<form action="" method="POST" class="form-horizontal">
 {% csrf_token %}
-{{form.as_table}}
+{{profileform.as_table}}
+<p><h4>College</h4></p><br/>
+{{collegeform.as_table}}
 <br/>
 <input type="submit"  />
 </form>

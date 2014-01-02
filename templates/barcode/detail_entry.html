@@ -1,0 +1,36 @@
+
+{% load staticfiles %}
+
+<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet" media="screen">
+<script src="{% static 'js/jquery-1.9.1.js' %}"></script>
+<script src="{% static 'js/base.js' %}"></script>
+<script>
+function redirect(data){
+var url = "/barcode/edit_profile/".concat(data);
+window.location.replace(url);
+
+}
+</script>
+
+<center>
+<h3>
+Enter details of a Shaastra ID
+</h3>
+{% if error_str %}
+<span style="color:red">
+Error:<br/>
+{{error_str}}<br/>
+</span>
+{% endif %}
+<br/>
+<form class="form-inline">
+  <label><strong>Shaastra ID</strong></label>
+  <input type="text" class="input-large" placeholder="Enter Shaastra ID" id = "shaastra_id">
+  
+  <a href="#" class="btn btn-primary" onclick = "redirect($('#shaastra_id').val())">Submit Shaastra ID</a>
+</form>
+
+</center>
+

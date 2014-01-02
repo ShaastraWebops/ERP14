@@ -1,8 +1,9 @@
 from django import forms
 from events.models import GenericEvent
+from users.models import *
 from models import *
 EVENT_CHOICES = ((event.title,event.title) for event in GenericEvent.objects.all())
-
+COLLEGE_CHOICES = ((college.name +","+ college.city+"," + college.state) for college in College.objects.using('mainsite').all())
 class BarcodeForm(forms.ModelForm):
     class Meta:
         model = Barcode
@@ -11,10 +12,22 @@ class Event_Participant_Form(forms.ModelForm):
     class Meta:
         model = Event_Participant
 
+class EditProfileForm(forms.ModelForm):
+    first_name = forms.CharField(max_length = 50)
+    email = forms.EmailField()
+#    coll = forms.ChoiceField(choices = COLLEGE_CHOICES,help_text = 'Try to find the college here, else fill form below')
+    class Meta:
+        model = UserProfile
+        fields = ('branch','mobile_number', 'college_roll','gender','age','shaastra_id')
+
+class CollegeForm(forms.ModelForm):
+    class Meta:
+        model = College
+
 
 class UploadFileForm(forms.Form):
     file  = forms.FileField()
-    title = forms.CharField(help_text = "Enter the column name in excel sheet.If you are following standard format, just leave this as SHAASTRA ID",max_length = 50)
+    title = forms.CharField(help_text = "Leave this is as Shaastra ID.(Column heading in excel sheet).If you are following standard format, just leave this as SHAASTRA ID",max_length = 50)
 
 
 class EventForm(forms.Form):
