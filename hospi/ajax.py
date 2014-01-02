@@ -94,7 +94,7 @@ def checkin(request,indi_form=None):
                     show_alert(dajax,"info","Participant is already checked-in into" + str(room))
                     return dajax.json()
             except:
-                if is_junk(participant):
+                if is_junk(shaastraid):
                     participant.user.is_staff = False
                     new_form = RegistrationForm(initial={'shaastra_id':shaastraid})
                     html_content = render_to_string('hospi/Register.html',locals(),RequestContext(request))
@@ -130,7 +130,7 @@ def checkout(request,shaastra_form=None):
                 show_alert(dajax,"error","User with this Shaastra ID does not exist")
                 return dajax.json()
             try:
-                checkedin = IndividualCheckin.objects.get(shaastra_ID=shaastraid)
+                checkedin = IndividualCheckIn.objects.get(shaastra_ID=shaastraid)
                 if checkedin.check_out_date:
                     show_alert(dajax,"error","Participant has already checked out")
                     return dajax.json()
@@ -224,7 +224,7 @@ def createteam(request,team_formset=None,event_pk=None):
             userlist = []
             for f in formset:
                 cd = f.cleaned_data
-                shaastraid=cd.get('shaastraID')
+                shaastraid='SHA14'+str(cd.get('shaastraID'))
                 print shaastraid
                 try:
                     parti = UserProfile.objects.using(mainsite_db).get(shaastra_id=shaastraid)
@@ -300,7 +300,7 @@ def team(request,team_form=None):
                         shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
                 print len(userlist)
                 tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm,extra=len(userlist))
-                formset = tcheckinformset(initial=[{'shaastra_ID':sid,'check_in_control_room':'Ganga','check_out_control_room':'Ganga'} for sid in shalist])
+                formset = tcheckinformset(queryset=IndividualCheckIn.objects.none(),initial=[{'shaastra_ID':sid,'check_in_control_room':'Ganga','check_out_control_room':'Ganga'} for sid in shalist])
                 data={
                         'form-TOTAL_FORMS':u'',
                         'form-INITIAL_FORMS':u'',
@@ -319,7 +319,7 @@ def team(request,team_form=None):
                         userlist.append(user_ex.userprofile_set.all()[0])
                         shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
                 tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm,extra=len(userlist))
-                formset = tcheckinformset(initial=[{'shaastra_ID':sid,'check_in_control_room':'Sharavati','check_out_control_room':'Sharavati'} for sid in shalist])
+                formset = tcheckinformset(queryset=IndividualCheckIn.objects.none(),initial=[{'shaastra_ID':sid,'check_in_control_room':'Sharavati','check_out_control_room':'Sharavati'} for sid in shalist])
                 data={
                         'form-TOTAL_FORMS':u'',
                         'form-INITIAL_FORMS':u'',
