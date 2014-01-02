@@ -4,6 +4,10 @@ from hospi.models import *
 from users.models import UserProfile
 from events.models import GenericEvent
 
+event_list = GenericEvent.objects.all()
+event_choices = [(event,event) for event in event_list]
+
+
 class AddRoomForm(ModelForm):
     class Meta:
         model = AvailableRooms
@@ -48,9 +52,7 @@ class RegistrationForm(ModelForm):
                 )
 
 class TeamCheckinForm(forms.Form):
-    event_list = GenericEvent.objects.all()
-    event_choices = [(event,event) for event in event_list]
-
+    
     event = forms.ChoiceField(choices=event_choices,required=False,widget=forms.Select())
     check_in_control_room = forms.ChoiceField(choices=CONTROL_ROOM_CHOICES,required=False,widget=forms.Select())
     team_id_num = forms.IntegerField(required=False)

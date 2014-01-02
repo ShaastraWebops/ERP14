@@ -7,6 +7,7 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 from django.template import loader
 from django.forms.formsets import formset_factory
+from django.forms.models import modelformset_factory
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -16,6 +17,7 @@ from hospi.models import *
 from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom,RegistrationForm,TeamCheckinForm
 from events.forms import ChooseEventForm
 from events.models import GenericEvent, ParticipantEvent
+from barcode.scripts import is_junk
 import json 
 from misc.utilities import show_alert
 from erp.settings import DATABASES
@@ -74,7 +76,7 @@ def checkin(request,indi_form=None):
             cleaned_form=form.cleaned_data
             shaastraid = 'SHA14'+cleaned_form['shaastraID']
             try:
-                participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid)
+                participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid) #So participant in the database can be pre-reg or junk
             except:
                 new_form = RegistrationForm(initial={'shaastra_id':shaastraid})
                 html_content = render_to_string('hospi/Register.html',locals(),RequestContext(request))
@@ -92,10 +94,17 @@ def checkin(request,indi_form=None):
                     show_alert(dajax,"info","Participant is already checked-in into" + str(room))
                     return dajax.json()
             except:
-                new_form = IndividualForm(initial={'shaastra_ID':shaastraid})
-                html_content = render_to_string('hospi/Checkin_form.html',locals(),RequestContext(request))
-                dajax.assign('#tab3',"innerHTML",html_content)
-                return dajax.json()
+                if is_junk(participant):
+                    participant.user.is_staff = False
+                    new_form = RegistrationForm(initial={'shaastra_id':shaastraid})
+                    html_content = render_to_string('hospi/Register.html',locals(),RequestContext(request))
+                    dajax.assign('#tab3',"innerHTML",html_content)
+                    return dajax.json()
+                else:
+                    new_form = IndividualForm(initial={'shaastra_ID':shaastraid})
+                    html_content = render_to_string('hospi/Checkin_form.html',locals(),RequestContext(request))
+                    dajax.assign('#tab3',"innerHTML",html_content)
+                    return dajax.json()
         else:
             show_alert(dajax,"error","Form is invalid")
             return dajax.json()
@@ -130,7 +139,7 @@ def checkout(request,shaastra_form=None):
                     checkedin.check_out_control_room = checkedin.check_in_control_room
                     checkedin.save()
                     room = checkedin.room
-                    room.already_checkedin = 0#Delete
+                    room.max_number += 1
                     room.save()
                     show_alert(dajax,"success","Participant checked out successfully")
                     return dajax.json()
@@ -271,10 +280,9 @@ def team(request,team_form=None):
     dajax=Dajax()
     if request.method=="POST" and team_form != None:
         form = TeamCheckinForm(deserialize_form(team_form))
-        print form
         if form.is_valid():
             cleaned_form=form.cleaned_data
-            print cleaned_form
+            check_in_control_room = cleaned_form['check_in_control_room']
             event_name = cleaned_form['event']
             generic_event_instance = GenericEvent.objects.get(title=event_name)
             event_pk = generic_event_instance.pk
@@ -290,7 +298,8 @@ def team(request,team_form=None):
                     if user_ex.userprofile_set.all()[0].gender == 'M':
                         userlist.append(user_ex.userprofile_set.all()[0])
                         shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
-                tcheckinformset = formset_factory(IndividualForm,extra=len(userlist))
+                print len(userlist)
+                tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm,extra=len(userlist))
                 formset = tcheckinformset(initial=[{'shaastra_ID':sid,'check_in_control_room':'Ganga','check_out_control_room':'Ganga'} for sid in shalist])
                 data={
                         'form-TOTAL_FORMS':u'',
@@ -309,7 +318,7 @@ def team(request,team_form=None):
                     if user_ex.userprofile_set.all()[0].gender == 'F':
                         userlist.append(user_ex.userprofile_set.all()[0])
                         shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
-                tcheckinformset = formset_factory(IndividualForm,extra=len(userlist))
+                tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm,extra=len(userlist))
                 formset = tcheckinformset(initial=[{'shaastra_ID':sid,'check_in_control_room':'Sharavati','check_out_control_room':'Sharavati'} for sid in shalist])
                 data={
                         'form-TOTAL_FORMS':u'',

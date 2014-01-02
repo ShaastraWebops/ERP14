@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render_to_response,redirect
 from django.template import RequestContext
 from django.core.urlresolvers import reverse
+from django.forms.formsets import formset_factory
+from django.forms.models import modelformset_factory
 from events.models import GenericEvent
 from hospi.models import *
 from hospi.forms import *
@@ -36,10 +38,10 @@ def checkin(request):
             msg = "Form is not valid"
             return render_to_response('hospi/home.html',locals(),RequestContext(request))
 
-def teamcheckin(request,pk):
-    tcheckinformset = formset_factory(IndividualForm)
-    event_pk = pk[:2]
-    team_id_num = pk[2:]
+def teamcheckin(request,pk,team_id):
+    tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm)
+    event_pk = pk
+    team_id_num = team_id
     generic_event_instance = GenericEvent.objects.get(pk=event_pk)
     event_name = generic_event_instance.title
     team_id = 'TEAM#'+str(event_name[:5])+'#'+str(team_id_num)
@@ -52,13 +54,13 @@ def teamcheckin(request,pk):
                 cd = f.cleaned_data
                 shalist.append(cd.get('shaastra_ID'))
                 roomlist.append(cd.get('room'))
+
             formset.save()
             for room in roomlist:
                 room.max_number = room.max_number - 1
                 room.save()
             pdf = generateParticipantPDF(shalist[0],team_id,shalist)
             return pdf
-
         else:
             return render_to_response('hospi/home.html',locals(),RequestContext(request))
 

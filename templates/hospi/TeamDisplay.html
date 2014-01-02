@@ -1,6 +1,7 @@
-<form method="POST" action="teamcheckin/{{event_pk}}{{team_id_num}}/" id="id_formset">
+<form method="POST" action="teamcheckin/{{event_pk}}/{{team_id_num}}/" id="id_formset">
     {% csrf_token %}
     <table class="table table-bordered table-striped table-condensed">
         {{formset}}
     </table>
+    <center><input type="submit" class="btn btn-info" /></center>
 </form>
