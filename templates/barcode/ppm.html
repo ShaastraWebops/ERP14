@@ -1,16 +1,32 @@
-{% block content %}
-<p><h1>Upload PPM:</h1></p>
 
-<form action="" method="post">
+
+{% load staticfiles %}
+
+<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet" media="screen">
+<script src="{% static 'js/jquery-1.9.1.js' %}"></script>
+<script src="{% static 'js/base.js' %}"></script>
+<script>
+function submit_winner(){
+	
+}
+</script>
+
+<p><h3>Upload PPM:</h3></p>
+<div class="well">
+<form action="" method="POST">
 {% csrf_token %}
+<table class="table table-hover table-bordered">
+{% for i in no_of_places %}
+<b>POSITION</b> {{i}} <br/>
+{% for j in max_team %}
+	{{form_list[i*j].as_table}}
+{% endfor %}
+{% endfor %}
+</table>
 
-
-{% if form.errors %}<p>Error in form</p>{% endif %}
-<table>
-{{ form.as_table }}</table>
-<p><input type="submit"  /></p>
+<input type="submit"  />
 </form>
 
-
-
-{% endblock %} 
+</div>

@@ -3,7 +3,7 @@ from events.models import GenericEvent
 from users.models import *
 from models import *
 EVENT_CHOICES = ((event.title,event.title) for event in GenericEvent.objects.all())
-COLLEGE_CHOICES = ((college.name +","+ college.city+"," + college.state) for college in College.objects.using('mainsite').all())
+COLLEGE_CHOICES = ((college.name +","+ college.city+"," + college.state,college.name +","+ college.city+"," + college.state) for college in College.objects.using('mainsite').all())
 class BarcodeForm(forms.ModelForm):
     class Meta:
         model = Barcode
@@ -27,7 +27,6 @@ class CollegeForm(forms.ModelForm):
 
 class UploadFileForm(forms.Form):
     file  = forms.FileField()
-    title = forms.CharField(help_text = "Leave this is as Shaastra ID.(Column heading in excel sheet).If you are following standard format, just leave this as SHAASTRA ID",max_length = 50)
 
 
 class EventForm(forms.Form):

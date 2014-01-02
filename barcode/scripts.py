@@ -33,11 +33,13 @@ def create_junk_profile(shaastra_id):
         profile.gender = 'F'
         profile.age = 0
         profile.branch = 'Others'
-        profile.shaastra_id = str(1500000 - user.id)
+        profile.shaastra_id = shaastra_id
         profile.save(using = 'mainsite')
         return profile
 
 def id_is_valid(sh_id):
+    if len(sh_id) <5 and sh_id.isdigit():
+        return -6 + len(sh_id)
     if len(sh_id) == 5 and sh_id.isdigit():
         return -1
     if len(sh_id) == 10 and sh_id[:5] == 'SHA14' and sh_id[5:].isdigit():

@@ -22,9 +22,8 @@ class Insti_Participant(models.Model):
     event = models.ForeignKey(GenericEvent)
     insti_roll = models.CharField(max_length = 10)
     
-"""
 class PrizeWinner(models.Model):
-    position = models.IntegerField()
+    position = models.IntegerField(default = 4)
     winners = models.ManyToManyField(Barcode,blank = True,null = True)
     event = models.ForeignKey(GenericEvent)
 """
@@ -35,4 +34,4 @@ class PPM(models.Model):
     second_prize_winners =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='secondprize_set')
     third_prize_winners =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='thirdprize_set')
     need_consoling       =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='consolation_set')
-    
+"""

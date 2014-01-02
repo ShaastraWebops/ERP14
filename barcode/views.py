@@ -6,13 +6,19 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import reverse
 from events.models import GenericEvent
-from models import Barcode,Event_Participant,PPM
+from models import Barcode,Event_Participant
 from django.contrib import messages
 from users.models import UserProfile
 from barcode.scripts import *
 from django.forms.models import modelform_factory
 
-
+def zero(intg):
+    s=''
+    count=1
+    while count<=intg:
+        s+='0'
+        count+=1
+    return s
 #TODO: if shaastra id not valid in portal
 def get_details(request,sh_id=None):
     output_str = ""
@@ -57,37 +63,30 @@ def edit_profile(request,shaastra_id=None):
         form = EditProfileForm(request.POST)
         college_form = CollegeForm(request.POST)
         if form.is_valid() and college_form.is_valid():
-            profile = form.instance
+#            profile = form.instance
+            up = form.save(commit = False)
+            
             college = college_form.instance
             college.save(using = 'mainsite')
-            profile.college = college
-            try:
-                user = User.objects.using('mainsite').get(username = shaastra_id)
-            except:
+            if not id_in_db(shaastra_id):
                 user = User(username = shaastra_id,email = shaastra_id +'@'+shaastra_id+'.com',password = 'default' + shaastra_id)
-                user.save(using = 'mainsite')
+            else:
+                profile = get_userprofile(shaastra_id)
+                profile.branch = up.branch
+                profile.mobile_number = up.mobile_number
+                profile.college_roll = up.college_roll
+                profile.gender = up.gender
+                profile.age = up.age
+                profile.shaastra_id = up.shaastra_id
+                
+                user = profile.user
             user.first_name = form.cleaned_data['first_name']
             user.email = form.cleaned_data['email']
-            """
-            
-            try:
-                user = User.objects.using('mainsite').get(username = shaastra_id)
-            except:
-                user = User()
-                user.set_password('default')
-                user.save(using = 'mainsite')
-            """
+            user.save(using = 'mainsite')
+            profile.college = college
             profile.user = user
-            """
-            try:
-                db_profile = UserProfile.objects.get(shaastra_id = shaastra_id)
-                db_profile = profile
-                db_profile.save(using = 'mainsite')
-            except:
-            """
             profile.save(using = 'mainsite')
             return HttpResponse("success!!%s Added..Go  <a href='/barcode/detail_entry' >back</a>"% str(shaastra_id))
-            return HttpResponseRedirect(reverse('detail_entry'))
         else:
             message_str += str(form.errors.values())
         
@@ -104,23 +103,23 @@ def edit_profile(request,shaastra_id=None):
         college_form = CollegeForm(instance = profile.college)
     return render_to_response('barcode/edit_profile.html', {'profileform':form,'collegeform':college_form,'message_str':message_str}, context_instance=RequestContext(request))
 
-        
-
 def upload_ppm(request):
-    PPMForm = modelform_factory(PPM)
-    if request.method == 'POST':
-        form = PPMForm (request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('barcode.views.upload_ppm')
-
-    else:
-        #Display Blank Form
-        form = PPMForm()
-        context = {'form': form}
-    
-    return render_to_response ('barcode/ppm.html', {'form': form }, context_instance=RequestContext(request))    
-    
+    return HttpResponse('!')
+"""
+	max_team = 6
+	no_of_places = 4
+	nolist=range(no_of_places*max_team)
+	form_list = [DetailForm() for i in nolist]
+	if request.method == 'POST':
+		form_list = []
+		for i in nolist:
+			form_list.append(DetailForm (request.POST))
+			if form_list[i].is_valid():
+				print form_list[i].cleaned_data['shaastra_id']
+		return HttpResponseRedirect(reverse(upload_ppm))
+    return HttpResponse('df')
+#    return render_to_response ('barcode/ppm.html', {'form_list': form_list,'no_of_places':no_of_places,'max_team':max_team }, context_instance=RequestContext(request))
+"""  
 def upload_csv(request, type):
     flag_str = ''
     
@@ -141,14 +140,14 @@ def upload_csv(request, type):
                 fail_list = []
                 message_str = "Successfully uploaded "
                 if type == "participantsportal":
-                    (display_list,fail_list) = process_csv(request,request.FILES['file'],form.cleaned_data['title'],type,event.cleaned_data['event_title'] )
+                    (display_list,fail_list) = process_csv(request,request.FILES['file'],"",type,event.cleaned_data['event_title'] )
                     if display_list[1:]:
                         message_str+=str(display_list[0])
                         display_list = display_list[1:]
                         message_str += "::"
                         message_str+=str(display_list)
                 else:
-                    (display_list,fail_list) = process_csv(request,request.FILES['file'],form.cleaned_data['title'] ,type) 
+                    (display_list,fail_list) = process_csv(request,request.FILES['file'],"" ,type) 
                     if display_list:
                         message_str += str(len(display_list)) + "items;"
                         message_str += str(display_list[0:5]) + "etc.."
@@ -160,10 +159,9 @@ def upload_csv(request, type):
                 
                 messages.success(request,"%s..."% (message_str))
                 return HttpResponseRedirect(reverse(type))
-        else:
             flag_str = "Invalid Upload"
     else:
-        form = UploadFileForm(initial={'title': 'SHAASTRA ID'})
+        form = UploadFileForm()
         eventForm = EventForm()
 
     if type == "barcodeportal":
@@ -187,8 +185,12 @@ def process_csv (request,file, title,type_str,event_title = None):
         sh_id = []
         barcode = []
         for d in input_file:
-            sh_id.append(d[title])
-            barcode.append(d['BARCODE'])
+            key_list = d.keys()
+            sh_id.append(d[key_list[1]])
+            try:
+                barcode.append(d[key_list[0]])
+            except:
+                return (None,None)
         i=0
         while i<len(sh_id):
             if not id_is_valid(sh_id[i]):
@@ -197,22 +199,21 @@ def process_csv (request,file, title,type_str,event_title = None):
                 continue
             if id_is_valid(sh_id[i])==-1:
                 sh_id[i] = 'SHA14' + sh_id[i]
+            if id_is_valid(sh_id[i])<-1:
+                sh_id[i] = 'SHA14' + zero(9-i) + sh_id[i]
             #below section is for on-spot guys
             if not id_in_db(sh_id[i]) and not barcode_in_db(barcode[i]):
                 profile = create_junk_profile(sh_id[i])
+                print profile.shaastra_id + '********88'
                 barcode_obj = Barcode(shaastra_id = sh_id[i],barcode = barcode[i])
                 return_list.append(str(sh_id[i]))
                 barcode_obj.save()
                 i = i+1
                 continue
             if barcode_in_db(barcode[i]):
-                #This section is for mainsite regd. ppl who registered in events, so got a bogus profile
-                if id_in_db(sh_id[i]):
-                    junk_profile = get_userprofile(sh_id[i])
-                    
-            #This section is for on-spot ppl regd. ppl who registered in events, so got a bogus profile
-                else:
-                    pass
+                #This section is for mainsite regd. ppl who registered in events, so got a bogus profile\
+                i=i+1
+                continue
                 
                 #TODO: what??
             # This below check is for existing shaastra ID's(mainsite registered)
@@ -220,11 +221,7 @@ def process_csv (request,file, title,type_str,event_title = None):
                 barcode_obj = Barcode(shaastra_id = sh_id[i],barcode = barcode[i])
                 return_list.append(str(sh_id[i]))
                 barcode_obj.save()
-            else:
-                i=i+1
-                continue
-                #TODO: code to do when shaastra ID is scanned second time..
-            #TODO: write to a log text file that this happened..
+            
             i=i+1
     if type_str == "participantsportal":
         if event_title == None:
@@ -232,10 +229,11 @@ def process_csv (request,file, title,type_str,event_title = None):
         barcode = []
         insti_list = []#List of insti roll no.s
         for d in input_file:
-            if is_valid_insti_roll(d['BARCODE']):
-                insti_list.append(d['BARCODE'])
+            key_list = d.keys()
+            if is_valid_insti_roll(key_list[0]):
+                insti_list.append(d[key_list[0]])
             else:
-                barcode.append(d['BARCODE'])
+                barcode.append(d[key_list[0]])
         event_list = GenericEvent.objects.filter(title = event_title)
         return_list.append(str(event_title))
         if event_list.count() == 0:
