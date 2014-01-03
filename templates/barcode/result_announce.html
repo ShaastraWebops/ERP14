@@ -9,8 +9,7 @@
 </div>
 <hr/>
 <div class="span5">
-<center>
-<table class="table table-bordered span5">
+<table class="table table-bordered">
 {% for event,announced in ziplist %}
   <tr {% if announced %}class="success"{% else %} class="error" {% endif %}>
     <td>
@@ -31,7 +30,8 @@
   </tr>
 {% endfor %}
 </table>
-{{wsziplist|length}}
+</div>
+<div class="span6">
 <table class="table table-bordered span5 pull-right">
 {% for event1,announced1 in wsziplist %}
   <tr {% if announced1 %}class="success"{% else %} class="error" {% endif %}>
@@ -54,5 +54,5 @@
 {% endfor %}
 
 </table>
-</center>
+</div>
 </div>
