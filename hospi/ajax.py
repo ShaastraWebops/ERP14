@@ -235,8 +235,11 @@ def createteam(request,team_formset=None,event_pk=None):
                     parti = UserProfile.objects.using(mainsite_db).get(shaastra_id=shaastraid)
                     userlist.append(parti.user)
                 except:
-                    prof = create_junk_profile(shaastraid)
-                    userlist.append(prof.user)
+                    if shaastraid == 'SHA14None':
+                        pass
+                    else:
+                        prof = create_junk_profile(shaastraid)
+                        userlist.append(prof.user)
 
             teamevent = TeamEvent(event_id=event_pk)
             teamevent.save(using='mainsite')
