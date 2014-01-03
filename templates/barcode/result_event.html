@@ -12,9 +12,9 @@
 {% ifequal winners|length 0 %}
     No winners data provided for {{event.title}} yet! Please wait or keep refreshing
 {% endifequal %}
-<table class="table" >
+<table class="table table-striped table-condensed" >
 {% for winner in winners %}
-<tr><td><ul> POSITION <strong>{{winner.position}}</strong> </td>
+<tr {% if forloop.counter|divisibleby:2%}class="success"{% else %}class="info"{% endif %}><td><ul> POSITION <strong>{{winner.position}}</strong> </td>
 <td>
     {% for barcode in winner.winners.all %}
     <li>
