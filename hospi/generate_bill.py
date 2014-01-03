@@ -181,10 +181,8 @@ def printParticipantDetails(pdf, x, y, s_id,team_id,number):
     
         #Add up all the mattresses given and put it into code below
         mattress = []
-        users_in_team = team_instance.users.all()
-        for user_ex in users_in_team:
-            shaastraid = user_ex.userprofile_set.all()[0].shaastra_id
-            indi_check = IndividualCheckIn.objects.get(shaastra_ID = shaastraid)
+        for sha in number:
+            indi_check = IndividualCheckIn.objects.get(shaastra_ID = sha
             mattress.append(indi_check.number_of_mattresses_given)
         mattress_sum = sum(mattress)
         pdf.drawString(x, y, 'Mattresses: %s' % mattress_sum)
