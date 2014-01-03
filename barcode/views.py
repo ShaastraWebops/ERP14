@@ -161,8 +161,8 @@ def upload_ppm(request):
         for k in range(6):
             for shid in sh_idlist[k]:
                 if not id_in_db(shid) and shid!='':
-                    return HttpResponse('Invalid Shaastra ID!! Check Again')
         for k in range(6):
+                    return HttpResponse('Invalid Shaastra ID!! Check Again')
             if is_not_filled(sh_idlist[k]):
                 continue
             pz = PrizeWinner(event = event,position = k+1)
@@ -176,6 +176,7 @@ def upload_ppm(request):
                         return HttpResponse('Shaastra ID %s has not been linked to a barcode!!'%shid)
             pz.save()
         message_str = "Event %s, winners uploaded!!"% event.title
+        eventform = EventForm()
         return render_to_response('barcode/ppm.html', locals(), context_instance=RequestContext(request))
     
         
