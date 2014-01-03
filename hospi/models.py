@@ -63,7 +63,6 @@ class IndividualCheckIn(models.Model):
     check_in_date = models.DateTimeField(default = datetime.now)
     check_out_date = models.DateTimeField(null = True, blank=True) 
     comments = models.CharField(max_length = 1000, blank=True)
-    coord = models.ForeignKey(ERPUser)
     
     def __unicode__(self):
         return self.first_name
