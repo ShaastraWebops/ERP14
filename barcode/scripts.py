@@ -8,7 +8,7 @@ def has_winner(event = None):
 
 def is_valid_barcode(code):
     #TODO
-    return True#remove for finale
+    #remove for finale
     strcode = str(code)
     if strcode.isdigit():
         if strcode<17000 and str>11000:

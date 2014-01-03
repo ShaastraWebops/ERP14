@@ -17,7 +17,7 @@ from hospi.models import *
 from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom,RegistrationForm,TeamCheckinForm
 from events.forms import ChooseEventForm
 from events.models import GenericEvent, ParticipantEvent
-from barcode.scripts import is_junk
+from barcode.scripts import is_junk,create_junk_profile
 import json 
 from misc.utilities import show_alert
 from erp.settings import DATABASES
@@ -230,7 +230,9 @@ def createteam(request,team_formset=None,event_pk=None):
                     parti = UserProfile.objects.using(mainsite_db).get(shaastra_id=shaastraid)
                     userlist.append(parti.user)
                 except:
-                    pass
+                    prof = create_junk_profile(shaastraid)
+                    userlist.append(prof.user)
+
             teamevent = TeamEvent(event_id=event_pk)
             teamevent.save(using='mainsite')
             teamevent.users = userlist
@@ -292,15 +294,27 @@ def team(request,team_form=None):
             team_instance = TeamEvent.objects.using(mainsite_db).get(team_id=team_id)
             if check_in_control_room=='Ganga':
                 userlist = []
+                checkedlist = []
                 shalist=[]
+                checkedin_shalist = []
+                queryset = IndividualCheckIn.objects.none()
                 users_in_team = team_instance.users.all()
                 for user_ex in users_in_team:
-                    if user_ex.userprofile_set.all()[0].gender == 'M':
-                        userlist.append(user_ex.userprofile_set.all()[0])
-                        shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
-                print len(userlist)
+                    shaastraid = user_ex.userprofile_set.all()[0].shaastra_id
+                    try:
+                        checkedin_already = IndividualCheckIn.objects.get(shaastra_ID=shaastraid)
+                        if user_ex.userprofile_set.all()[0].gender == 'M':
+                            checkedlist.append(user_ex.userprofile_set.all()[0])
+                            checkedin_shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
+                            queryset = queryset | IndividualCheckIn.objects.get(shaastra_ID = shaastraid)
+                        else:
+                            pass
+                    except:
+                        if user_ex.userprofile_set.all()[0].gender == 'M':
+                            userlist.append(user_ex.userprofile_set.all()[0])
+                            shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
                 tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm,extra=len(userlist))
-                formset = tcheckinformset(queryset=IndividualCheckIn.objects.none(),initial=[{'shaastra_ID':sid,'check_in_control_room':'Ganga','check_out_control_room':'Ganga'} for sid in shalist])
+                formset = tcheckinformset(queryset=queryset,initial=[{'shaastra_ID':sid,'check_in_control_room':'Ganga','check_out_control_room':'Ganga'} for sid in shalist])
                 data={
                         'form-TOTAL_FORMS':u'',
                         'form-INITIAL_FORMS':u'',
@@ -313,13 +327,27 @@ def team(request,team_form=None):
             else:
                 userlist = []
                 shalist=[]
+                checkedlist =[]
+                checkedin_shalist =[]
+                queryset = IndividualCheckIn.objects.none()
                 users_in_team = team_instance.users.all()
                 for user_ex in users_in_team:
-                    if user_ex.userprofile_set.all()[0].gender == 'F':
-                        userlist.append(user_ex.userprofile_set.all()[0])
-                        shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
+                    shaastraid = user_ex.userprofil_set.all()[0].shaastra_id
+                    try:
+                        checkedin_already = IndividualCheckIn.objects.get(shaastra_ID=shaastraid)
+                        if user_ex.usreprofile_set.all()[0].gender == 'F':
+                            checkedlist.append(user_ex.userprofile_set.all()[0])
+                            checkedin_shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
+                            queryset = queryset | IndividualCheckIn.objects.get(shaastra_ID = shaastraid)
+                        else:
+                            pass
+                    except:
+                        if user_ex.userprofile_set.all()[0].gender == 'F':
+                            userlist.append(user_ex.userprofile_set.all()[0])
+                            shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
+                
                 tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm,extra=len(userlist))
-                formset = tcheckinformset(queryset=IndividualCheckIn.objects.none(),initial=[{'shaastra_ID':sid,'check_in_control_room':'Sharavati','check_out_control_room':'Sharavati'} for sid in shalist])
+                formset = tcheckinformset(queryset=queryset,initial=[{'shaastra_ID':sid,'check_in_control_room':'Sharavati','check_out_control_room':'Sharavati'} for sid in shalist])
                 data={
                         'form-TOTAL_FORMS':u'',
                         'form-INITIAL_FORMS':u'',

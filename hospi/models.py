@@ -1,4 +1,5 @@
 from django.db import models
+from users.models import ERPUser
 from datetime import datetime, timedelta
 
 GENDER_CHOICES = (('M', 'Male'), ('F', 'Female'))

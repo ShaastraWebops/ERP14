@@ -2,6 +2,7 @@ from users.models import UserProfile, College
 from dashboard.models import TeamEvent
 from events.models import GenericEvent
 from hospi.models import *
+from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, HttpResponse
@@ -108,7 +109,8 @@ def generatetable(pdf, x, y, leader,s_ids):
     """        
     for s in s_ids:
         checkin = IndividualCheckIn.objects.get(shaastra_ID = s)
-        tableData.append([checkin.shaastra_ID, checkin.room,(checkin.first_name+checkin.last_name),checkin.phone_no])    
+        profile = UserProfile.objects.using(mainsite_db).get(shaastra_id = s)
+        tableData.append([checkin.shaastra_ID, checkin.room,(profile.first_name+profile.last_name),profile.phone_no])    
         
     t = Table(tableData, repeatRows=1)
 
@@ -179,10 +181,8 @@ def printParticipantDetails(pdf, x, y, s_id,team_id,number):
     
         #Add up all the mattresses given and put it into code below
         mattress = []
-        users_in_team = team_instance.users.all()
-        for user_ex in users_in_team:
-            shaastraid = user_ex.userprofile_set.all()[0].shaastra_id
-            indi_check = IndividualCheckIn.objects.get(shaastra_ID = shaastraid)
+        for sha in number:
+            indi_check = IndividualCheckIn.objects.get(shaastra_ID = sha
             mattress.append(indi_check.number_of_mattresses_given)
         mattress_sum = sum(mattress)
         pdf.drawString(x, y, 'Mattresses: %s' % mattress_sum)
@@ -192,7 +192,7 @@ def printParticipantDetails(pdf, x, y, s_id,team_id,number):
     d = checkedin.duration_of_stay
 
     
-    pdf.drawString(x, y, 'Check In date & time: %s' % str(checkedin.check_in_date)[:-6])
+    pdf.drawString(x, y, 'Check In date & time: %s' % str(checkedin.check_in_date + timedelta(hours=5.5))[:-6])
     
     y -= lineheight + (cm * 0.8)
 
