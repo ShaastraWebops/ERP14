@@ -256,7 +256,7 @@ def upload_csv(request, type):
         title = "Participant's Portal"
         eventForm = EventForm()
         isbarcode = False
-    return render_to_response('barcode/upload_csv.html', {'eventForm':eventForm,'flag_str':flag_str,'form': form, 'type': type, 'title': title}, context_instance=RequestContext(request))
+    return render_to_response('barcode/upload_csv.html', {'eventForm':eventForm,'flag_str':flag_str,'form': form, 'type': type, 'title': title,'isbarcode':isbarcode}, context_instance=RequestContext(request))
 
 
 def process_csv (request,file, title,type_str,event_title = None):
