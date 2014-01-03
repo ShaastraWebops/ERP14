@@ -108,7 +108,8 @@ def generatetable(pdf, x, y, leader,s_ids):
     """        
     for s in s_ids:
         checkin = IndividualCheckIn.objects.get(shaastra_ID = s)
-        tableData.append([checkin.shaastra_ID, checkin.room,(checkin.first_name+checkin.last_name),checkin.phone_no])    
+        profile = UserProfile.objects.using(mainsite_db).get(shaastra_id = s)
+        tableData.append([checkin.shaastra_ID, checkin.room,(profile.first_name+profile.last_name),profile.phone_no])    
         
     t = Table(tableData, repeatRows=1)
 
