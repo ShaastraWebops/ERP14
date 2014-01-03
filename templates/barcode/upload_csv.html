@@ -12,17 +12,22 @@
 <b><u>Note:</b></u><br/>
 <ol>
 <li>File must be of type <u><b><u>csv</b></u></u>.<br/>
+{% if not isbarcode %}
 <li>If barcode portal,<br/><ul>
     <li>First Row must be named (A1 cell) <b><u>SHAASTRA ID</b></u>      and A2 cell <b><u>BARCODE</b></u></li>
     <li>Click <a href="/media/barcode_format.csv">here</a> for format..it should be exactly in the same format</li>
+    <li>Do NOT swap the columns</li>
+    <li>Save with delimiter as 'comma' if asked by your spreadsheet editor</li>
 </ul>
 </li>
+{% else %}
 <li>If participant portal,<br/><ul>
     <li>First Row must be named (A1 cell) <b><u>BARCODE</b></u></li>
     <li>Click <a href="/media/participant_format.csv">here</a> for format..it should be exactly in the same format</li>
     </ul>
 </li>
 <li> Also, choose the event carefully.It cannot be undone.</li>
+{% endif %}
 {% if messages %}<br/>
 <ul>
 <span style="color:red">

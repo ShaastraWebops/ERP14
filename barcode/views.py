@@ -233,8 +233,6 @@ def upload_csv(request, type):
                         message_str+=str(display_list)
                 else:
                     (display_list,fail_list) = process_csv(request,request.FILES['file'],"" ,type) 
-                    if (display_list,fail_list)==('test','test'):
-                        return HttpResponse('file read issue')
                     if display_list:
                         message_str += str(len(display_list)) + "items;"
                         message_str += str(display_list[0:5]) + "etc.."
@@ -253,20 +251,17 @@ def upload_csv(request, type):
 
     if type == "barcodeportal":
         title = "Barcode Portal"
+        isbarcode= True 
     if type == "participantsportal":
         title = "Participant's Portal"
         eventForm = EventForm()
+        isbarcode = False
     return render_to_response('barcode/upload_csv.html', {'eventForm':eventForm,'flag_str':flag_str,'form': form, 'type': type, 'title': title}, context_instance=RequestContext(request))
 
 
 def process_csv (request,file, title,type_str,event_title = None):
     try:
         input_file = csv.DictReader(file,delimiter=',')
-        """
-        if file.content_type!='text/csv':
-            return ('text','text')
-            return (None,None)
-         """
     except:
         return ('text2','text2')
         return (None,None)
