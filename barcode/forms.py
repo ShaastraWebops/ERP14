@@ -36,5 +36,16 @@ class EventForm(forms.Form):
                              help_text='Choose the event for which list is being uploaded. Please check twice'
                              )
 
+class WinnerForm(forms.Form):
+    shaastra_id1 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
+    
+    shaastra_id2 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
+    
+    shaastra_id3 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
+    shaastra_id4 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
+    shaastra_id5 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
+    shaastra_id6 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
+    
+
 class DetailForm(forms.Form):
-    shaastra_id = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)    
+    shaastra_id = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)

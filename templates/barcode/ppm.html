@@ -7,26 +7,45 @@
 <link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet" media="screen">
 <script src="{% static 'js/jquery-1.9.1.js' %}"></script>
 <script src="{% static 'js/base.js' %}"></script>
-<script>
-function submit_winner(){
-	
-}
 </script>
 
 <p><h3>Upload PPM:</h3></p>
+<h5>You can leave fields empty if not relevant, also fill  only as many positions as relevant</h5>
+<span stlye="color:red">{{message}}</span>
 <div class="well">
-<form action="" method="POST">
-{% csrf_token %}
-<table class="table table-hover table-bordered">
-{% for i in no_of_places %}
-<b>POSITION</b> {{i}} <br/>
-{% for j in max_team %}
-	<input id={{i}} + "," + {{j}} + type="text">
-{% endfor %}
-{% endfor %}
-</table>
+<form action="" method="POST" >{% csrf_token %}<input type="submit" class="btn btn-large btn-inverse "/>
 
-<input type="submit"  />
+    {{eventform.as_table}}
+<hr/>
+<a onclick = "$('input').height(20);$('#winner_form').css('display','block');$(this).hide()" style="cursor:pointer"><u>Enter Winners</u></a>
+<div style="display:none" id="winner_form">
+
+<b>POSITION</b> 1: <br/>
+<ul >
+{{form1.as_ul}}
+</ul><br/>
+<b>POSITION</b> 2: <br/>
+<ul >
+{{form2.as_ul}}
+</ul><br/>
+<b>POSITION</b> 3: <br/>
+<ul >
+{{form3.as_ul}}
+</ul><br/>
+
+<b>POSITION</b> 4: <br/>
+<ul >
+{{form4.as_ul}}
+</ul><br/>
+<b>POSITION</b> 5: <br/>
+{{form5.as_ul}}
+<ul >
+</ul><br/>
+<b>POSITION</b> 6: <br/>
+<ul >
+{{form6.as_ul}}
+</ul>
+</div>
+</div>
 </form>
 
-</div>
