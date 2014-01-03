@@ -33,17 +33,17 @@
 </table>
 {{wsziplist|length}}
 <table class="table table-bordered span5 pull-right">
-{% for event,announced in wsziplist %}
-  <tr {% if announced %}class="success"{% else %} class="error" {% endif %}>
+{% for event1,announced1 in wsziplist %}
+  <tr {% if announced1 %}class="success"{% else %} class="error" {% endif %}>
     <td>
     <span>
-    {{event.title}}
+    {{event1.title}}
     </span>
     </td>
     <td>
-     {% if announced %}
+     {% if announced1 %}
      <p class="text-info">
-    <a href="/barcode/event_winners/{{event.id}}" target="_blank">Click to get winner details</a>
+    <a href="/barcode/event_winners/{{event1.id}}" target="_blank">Click to get winner details</a>
      {% else %}
      <p class="muted">
      <strong>Results not announced</a>
