@@ -77,6 +77,15 @@ def get_details(request,sh_id=None):
     
     return render_to_response('barcode/get_details.html', {'form':detailform,'output_str':output_str}, context_instance=RequestContext(request))
 
+def get_bar_details(request,barcode=None):
+    if not barcode_in_db(barcode):
+        output_str = "Entered Shaastra ID is not yet entered into database"
+        return HttpResponse(output_str)
+    else:
+        bar = Barcode.objects.get(barcode = barcode)
+        return get_details(request,sh_id = bar.shaastra_id)
+
+
 def edit_profile(request,shaastra_id=None):
     message_str = ""
     if request.method == 'POST':
