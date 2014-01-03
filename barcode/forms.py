@@ -36,16 +36,63 @@ class EventForm(forms.Form):
                              help_text='Choose the event for which list is being uploaded. Please check twice'
                              )
 
-class WinnerForm(forms.Form):
-    shaastra_id1 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
+class Winner1Form(forms.Form):
+    shaastra1_id1 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
     
-    shaastra_id2 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
+    shaastra1_id2 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
     
-    shaastra_id3 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
-    shaastra_id4 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
-    shaastra_id5 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
-    shaastra_id6 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
+    shaastra1_id3 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra1_id4 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra1_id5 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra1_id6 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+
+class Winner2Form(forms.Form):
+    shaastra2_id1 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    
+    shaastra2_id2 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    
+    shaastra2_id3 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra2_id4 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra2_id5 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra2_id6 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+
+class Winner3Form(forms.Form):
+    shaastra3_id1 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    
+    shaastra3_id2 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    
+    shaastra3_id3 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra3_id4 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra3_id5 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra3_id6 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+class Winner4Form(forms.Form):
+    shaastra4_id1 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    
+    shaastra4_id2 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    
+    shaastra4_id3 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra4_id4 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra4_id5 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra4_id6 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+class Winner5Form(forms.Form):
+    shaastra5_id1 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    
+    shaastra5_id2 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    
+    shaastra5_id3 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra5_id4 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra5_id5 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra5_id6 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+class Winner6Form(forms.Form):
+    shaastra6_id1 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    
+    shaastra6_id2 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    
+    shaastra6_id3 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra6_id4 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra6_id5 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
+    shaastra6_id6 = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)
     
 
 class DetailForm(forms.Form):
-    shaastra_id = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10)
+    shaastra_id = forms.CharField(help_text = 'Enter shaastra ID of participant here',max_length = 10,required= False)

@@ -19,32 +19,51 @@
 <hr/>
 <a onclick = "$('input').height(20);$('#winner_form').css('display','block');$(this).hide()" style="cursor:pointer"><u>Enter Winners</u></a>
 <div style="display:none" id="winner_form">
-
+<table class="table table-bordered">
+<tr><td>
 <b>POSITION</b> 1: <br/>
 <ul >
 {{form1.as_ul}}
-</ul><br/>
+</ul>
+</td>
+<td>
 <b>POSITION</b> 2: <br/>
 <ul >
 {{form2.as_ul}}
 </ul><br/>
-<b>POSITION</b> 3: <br/>
+</td>
+
+<tr><td>
 <ul >
+<b>POSITION</b> 3: <br/>
 {{form3.as_ul}}
 </ul><br/>
+</td>
+<td>
 
 <b>POSITION</b> 4: <br/>
+
 <ul >
 {{form4.as_ul}}
 </ul><br/>
+</td>
+<tr><td>
+<ul >
 <b>POSITION</b> 5: <br/>
 {{form5.as_ul}}
-<ul >
 </ul><br/>
+</td>
+<td>
+
 <b>POSITION</b> 6: <br/>
+
 <ul >
 {{form6.as_ul}}
-</ul>
+</ul><br/>
+</td>
+
+</tr>
+</table>
 </div>
 </div>
 </form>
