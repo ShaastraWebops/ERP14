@@ -146,6 +146,11 @@ def upload_ppm(request):
             event = GenericEvent.objects.get(title = event.cleaned_data['event_title'])
         else:
             return HttpResponse(" Failed: improper event..check again(reload)")
+        try:
+            PrizeWinner.objects.get(event = event)
+            return HttpResponse('%s winners have already been uploaded. Check erp.shaastra.org/barcode/winners'%event.title)
+        except:
+            flag = True#gen line
         frmlist = [frm1,frm2,frm3,frm4,frm5,frm6]
         for frm in frmlist:
             if not frm.is_valid():
