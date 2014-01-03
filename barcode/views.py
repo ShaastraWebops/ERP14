@@ -22,8 +22,8 @@ def event_winners(request,event_id):
     
 def hospi_announce(request):
     events_list = [event.genericevent_ptr for event in ParticipantEvent.objects.all()]
-    announced_list = [has_winner(event) for event in GenericEvent.objects.all()]
-    ziplist = zip(events_list,announced_list)    
+    announced_list = [has_winner(event) for event in events_list]
+    ziplist = zip(events_list,announced_list)
     return render_to_response('barcode/result_announce.html', {'ziplist':ziplist}, context_instance=RequestContext(request))
     
 def zero(intg):
