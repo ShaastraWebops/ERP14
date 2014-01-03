@@ -20,7 +20,12 @@
     <td>
      {% if announced %}
      <p class="text-info">
-    <a href="/barcode/event_winners/{{event.id}}" target="_blank">Click to get winner details</a>
+    <a href="/barcode/event_winners/{{event.id}}" target="_blank">Click to get winner details</a><br/>
+    {% if request.user.is_authenticated %}
+        {% ifequal request.user.username 'ppm' %}
+        <a href="/barcode/delete_event_winners/{{event.id}}" target = "_blank">Wrong details entered?? Delete here,and you can re-enter later</a>
+        {% endifequal %}
+    {% endif %}
      {% else %}
      <p class="muted">
      <strong>Results not announced</a>
@@ -43,7 +48,7 @@
     <td>
      {% if announced1 %}
      <p class="text-info">
-    <a href="/barcode/event_winners/{{event1.id}}" target="_blank">Click to get winner details</a>
+    <a href="/barcode/event_winners/{{event1.id}}" target="_blank">Click to get workshop registered members details</a>
      {% else %}
      <p class="muted">
      <strong>Results not announced</a>

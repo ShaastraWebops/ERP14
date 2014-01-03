@@ -149,6 +149,12 @@ def edit_profile(request,shaastra_id=None):
 def upload_ppm(request):
     max_team = range(1,7)
     no_of_places = range(1,6)
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+    """TO REMOVE
+    if request.user.username != 'ppm':
+        return HttpResponse('malicious attempt..please login with ppm account')
+    """ 
     if request.method == 'POST':
         event = EventForm(request.POST)
         frm1 = Winner1Form(request.POST)
