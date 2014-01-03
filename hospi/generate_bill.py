@@ -2,6 +2,7 @@ from users.models import UserProfile, College
 from dashboard.models import TeamEvent
 from events.models import GenericEvent
 from hospi.models import *
+from datetime import datetime, timedelta
 
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseForbidden, HttpResponse
@@ -193,7 +194,7 @@ def printParticipantDetails(pdf, x, y, s_id,team_id,number):
     d = checkedin.duration_of_stay
 
     
-    pdf.drawString(x, y, 'Check In date & time: %s' % str(checkedin.check_in_date)[:-6])
+    pdf.drawString(x, y, 'Check In date & time: %s' % str(checkedin.check_in_date + timedelta(hours=5.5))[:-6])
     
     y -= lineheight + (cm * 0.8)
 
