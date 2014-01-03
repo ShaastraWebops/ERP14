@@ -260,7 +260,7 @@ class UploadTabFiles(ModelForm):
 class ChooseEventForm(forms.Form):
     #event = forms.ModelChoiceField( queryset = GenericEvent.objects.all(), required=False)
     event_list = GenericEvent.objects.all()
-    event_choices = [('','Airshow')] + [(event,event) for event in event_list]
+    event_choices = [(event,event) for event in event_list]
 
     event = forms.ChoiceField(event_choices,required=False,widget=forms.Select())
 
