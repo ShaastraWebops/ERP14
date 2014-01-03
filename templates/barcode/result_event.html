@@ -9,18 +9,20 @@
 	<span id='#user_profile_title'>Winners Data: {{event.title}}</span>
 	&nbsp;
 </h5>
-
+{% ifequal winners|length 0 %}
+    No winners data provided for {{event.title}} yet! Please wait or keep refreshing
+{% endifequal %}
 <table class="table" >
-
-
 {% for winner in winners %}
-<tr>
-<td>POSITION <strong>{{winner.position}}</strong> </td>
+<tr><td><ul> POSITION <strong>{{winner.position}}</strong> </td>
+<td>
     {% for barcode in winner.winners.all %}
-    <td>
+    <li>
         <a href="/barcode/get_details/{{barcode.shaastra_id}}" target="_blank">{{barcode.shaastra_id}}</a>
-    </td>
-    {%endfor%}</tr>
+    </li>
+    {%endfor%}
+    <td>
+    </ul></tr>
     {% endfor %}
 
 

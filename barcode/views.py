@@ -6,7 +6,7 @@ from django.template import RequestContext
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import reverse
 from events.models import GenericEvent,ParticipantEvent
-from models import Barcode,Event_Participant
+from models import Barcode,Event_Participant,PrizeWinner
 from django.contrib import messages
 from users.models import UserProfile
 from barcode.scripts import *
@@ -34,6 +34,9 @@ def zero(intg):
         count+=1
     return s
 #TODO: if shaastra id not valid in portal
+
+
+
 def get_details(request,sh_id=None):
     output_str = ""
     if sh_id:
@@ -129,22 +132,70 @@ def edit_profile(request,shaastra_id=None):
     return render_to_response('barcode/edit_profile.html', {'profileform':form,'collegeform':college_form,'message_str':message_str}, context_instance=RequestContext(request))
 
 def upload_ppm(request):
-    return HttpResponse('!')
-"""
-	max_team = 6
-	no_of_places = 4
-	nolist=range(no_of_places*max_team)
-	form_list = [DetailForm() for i in nolist]
-	if request.method == 'POST':
-		form_list = []
-		for i in nolist:
-			form_list.append(DetailForm (request.POST))
-			if form_list[i].is_valid():
-				print form_list[i].cleaned_data['shaastra_id']
-		return HttpResponseRedirect(reverse(upload_ppm))
-    return HttpResponse('df')
-#    return render_to_response ('barcode/ppm.html', {'form_list': form_list,'no_of_places':no_of_places,'max_team':max_team }, context_instance=RequestContext(request))
-"""  
+    max_team = range(1,7)
+    no_of_places = range(1,6)
+    if request.method == 'POST':
+        event = EventForm(request.POST)
+        frm = WinnerForm(request.POST)
+        if event.is_valid():
+            event = GenericEvent.objects.get(title = event.cleaned_data['event_title'])
+        else:
+            return HttpResponse(" Failed: improper event..check again(reload)")
+        id1 = frm.data[u'shaastra_id1']
+        print '!!!!!!%s!!!!!!!!!'% str(id1)
+        id2 = frm.data[u'shaastra_id2']
+        id3 = frm.data[u'shaastra_id3']
+        id4 = frm.data[u'shaastra_id4']
+        id5 = frm.data[u'shaastra_id5']
+        id6 = frm.data[u'shaastra_id6']
+        i=0
+        length = max(len(id1),len(id2),len(id3),len(id4),len(id5),len(id6))
+        print "*********%d++++++++=="%length
+        while i<length:
+            id_temp = [id1[i],id2[i],id3[i],id4[i],id5[i],id6[i]]
+            print id_temp
+            for id in id_temp:
+                if not id_in_db(id) and id!='':
+                    return HttpResponse("%s failed: invalid Shaastra ID..check again"% id)
+            (p1,p2,p3,p4,p5,p6) = (None,None,None,None,None,None,)
+            if id1[i]!='':
+                p1 = get_userprofile(id1[i])
+            if id1[i]!='':
+                p2 = get_userprofile(id2[i])
+            if id1[i]!='':
+                p3 = get_userprofile(id3[i])
+            if id1[i]!='':
+                p4 = get_userprofile(id4[i])
+            if id1[i]!='':
+                p5 = get_userprofile(id5[i])
+            if id1[i]!='':
+                p6 = get_userprofile(id6[i])
+            pz = PrizeWinner(position = i+1,event = event)
+            pz.save()
+            if p1 is not None:
+                pz.winners.add(p1)
+            if p2 is not None:
+                pz.winners.add(p2)
+            if p3 is not None:
+                pz.winners.add(p3)
+            if p4 is not None:
+                pz.winners.add(p4)
+            if p5 is not None:
+                pz.winners.add(p5)
+            if p6 is not None:
+                pz.winners.add(p6)
+            pz.save()
+            i=i+1
+    eventform = EventForm()
+    form1 = WinnerForm()
+    form2 = WinnerForm()
+    form3 = WinnerForm()
+    form4 = WinnerForm()
+    form5 = WinnerForm()
+    form6 = WinnerForm()
+    return render_to_response('barcode/ppm.html', locals(), context_instance=RequestContext(request))
+    
+    
 def upload_csv(request, type):
     flag_str = ''
     
