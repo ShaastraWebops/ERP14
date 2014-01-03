@@ -26,12 +26,4 @@ class PrizeWinner(models.Model):
     position = models.IntegerField(default = 4)
     winners = models.ManyToManyField(Barcode,blank = True,null = True)
     event = models.ForeignKey(GenericEvent)
-"""
-class PPM(models.Model):
-#One-many or one-one?? Temporarily kept at the safer option - one-many.
-    event = models.ForeignKey(GenericEvent)
-    first_prize_winners  =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='firstprize_set' )
-    second_prize_winners =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='secondprize_set')
-    third_prize_winners =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='thirdprize_set')
-    need_consoling       =  models.ManyToManyField (Barcode, blank = True, null = True, related_name='consolation_set')
-"""
+

@@ -14,5 +14,6 @@ urlpatterns = patterns('barcode.views',
     url(r'^direct/$', direct_to_template, {'template': 'barcode/result_announce.html'}),
     url(r'^detail_entry',direct_to_template,{'template':'barcode/detail_entry.html'},name = 'detail_entry'),
     url(r'^winners/$','hospi_announce'),
+    url(r'^event_winners/(?P<event_id>\w+)/$','event_winners'),
     
 )

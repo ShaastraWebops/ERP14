@@ -21,7 +21,7 @@ PROFILE DETAIL ENTRY
 <form action="" method="POST" class="form-horizontal">
 {% csrf_token %}
 {{profileform.as_table}}
-<p><h4>College(Optional)</h4>(use form <b>only</b> if you can't find college above),Also do not forget to choose state</p><br/>
+<p><h4>College(Optional)</h4>(use <b>only</b> if you can't find college above),Also do not forget to choose state</p><br/>
 {{collegeform.as_table}}
 <br/>
 <input type="submit" />

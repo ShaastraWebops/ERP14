@@ -5,15 +5,23 @@ from barcode.forms import *
 from django.template import RequestContext
 from django.http import HttpResponseRedirect,HttpResponse
 from django.core.urlresolvers import reverse
-from events.models import GenericEvent
+from events.models import GenericEvent,ParticipantEvent
 from models import Barcode,Event_Participant
 from django.contrib import messages
 from users.models import UserProfile
 from barcode.scripts import *
 from django.forms.models import modelform_factory
 
+def event_winners(request,event_id):
+    try:
+        event = GenericEvent.objects.get(id = event_id)
+    except:
+        return HttpResponse('Invalid Event Request <a href="/barcode/winners/">Back</a>')
+    winners = list(PrizeWinner.objects.filter(event = event).order_by('position'))
+    return render_to_response('barcode/result_event.html', {'winners':winners,'event':event}, context_instance=RequestContext(request))    
+    
 def hospi_announce(request):
-    events_list = [event for event in GenericEvent.objects.all()]
+    events_list = [event.genericevent_ptr for event in ParticipantEvent.objects.all()]
     announced_list = [has_winner(event) for event in GenericEvent.objects.all()]
     ziplist = zip(events_list,announced_list)    
     return render_to_response('barcode/result_announce.html', {'ziplist':ziplist}, context_instance=RequestContext(request))

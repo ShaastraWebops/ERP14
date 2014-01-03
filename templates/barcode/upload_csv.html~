@@ -1,30 +1,51 @@
 {% load staticfiles %}
+<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet" media="screen">
 
 <title> {{title}} </title>
 <h1>{{title}}</h1>
+<div class="well">
 <p>
-<span style="color:green">{{msg_success}}
-<br/>
-{% if messages %}
+<span style="color:green">{{msg_success}}</span>
+<span>
+<b><u>Note:</b></u><br/>
+<ol>
+<li>File must be of type <u><b><u>csv</b></u></u>.<br/>
+<li>If barcode portal,<br/><ul>
+    <li>First Row must be named (A1 cell) <b><u>SHAASTRA ID</b></u>      and A2 cell <b><u>BARCODE</b></u></li>
+    <li>Click <a href="/media/barcode_format.csv">here</a> for format..it should be exactly in the same format</li>
+</ul>
+</li>
+<li>If participant portal,<br/><ul>
+    <li>First Row must be named (A1 cell) <b><u>BARCODE</b></u></li>
+    <li>Click <a href="/media/participant_format.csv">here</a> for format..it should be exactly in the same format</li>
+    </ul>
+</li>
+<li> Also, choose the event carefully.It cannot be undone.</li>
+{% if messages %}<br/>
 <ul>
+<span style="color:red">
 {% for message in messages %}
 <li>{{message}}</li>
 {% endfor %}
 </ul>
 {% endif %}
-
-<form action="" method="post" id ="Portal_Form" enctype="multipart/form-data">
+</span>
+<form action="" method="post" id ="Portal_Form" enctype="multipart/form-data" class="form-horizontal">
 {% csrf_token %}
-
+<div class="control-group">
 {% if form.errors or eventForm.errors %}<p style="color:red">Error in form:{{flag_str}}</p>{% endif %}
 <table>
 {{ form.as_table }}
 {% ifequal title "Participant's Portal" %}
 {{ eventForm.as_table }}
+<br/>
+<span> You need not fill in the column name entry if you have standard format </span>
 {% else %}
-<span>Note: take care that second column must be named "BARCODE" (without the quotes)</span>
 {% endifequal %}
 </table>
+</div>
 <p><input type="submit"  /></p>
 </form>
 </p>
