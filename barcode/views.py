@@ -164,6 +164,18 @@ def delete_event_winners(request,event_id):
     pzw.delete()
     return HttpResponse('Winners of event %s have been removed.Go <a href="/barcode/winners">back</a> to winners page.')
 
+def ppm_finalistlist(request):
+    form = EventForm()
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+    """TO REMOVE
+    if request.user.username != 'ppm':
+        return HttpResponse('malicious attempt..please login with ppm account')
+    """ 
+    if request.method == 'POST':
+        return HttpResponse('post')
+    return render_to_response('barcode/ppm_finalistlist.html', locals(), context_instance=RequestContext(request))
+        
 def upload_ppm(request):
     max_team = range(1,7)
     no_of_places = range(1,6)

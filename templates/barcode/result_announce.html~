@@ -9,7 +9,6 @@
 </div>
 <hr/>
 <div class="span5">
-<center>
 <table class="table table-bordered">
 {% for event,announced in ziplist %}
   <tr {% if announced %}class="success"{% else %} class="error" {% endif %}>
@@ -21,15 +20,46 @@
     <td>
      {% if announced %}
      <p class="text-info">
-    <a href="/barcode/event_winners/{{event.id}}">Click to get winner details</a>
+    <a href="/barcode/event_winners/{{event.id}}" target="_blank">Click to get winner details</a><br/>
+    {% if request.user.is_authenticated %}
+        {% ifequal request.user.username 'ppm' %}
+        Wrong details entered?? Delete<a href="/barcode/delete_event_winners/{{event.id}}" target = "_blank"> here,and you can re-enter later</a>
+        <br/>
+        <strong>This action CANNOT be undone..be very careful</strong>
+        {% endifequal %}
+    {% endif %}
      {% else %}
      <p class="muted">
      <strong>Results not announced</a>
-     {% else %}
+     {% endif %}
     </p>
     </td>
   </tr>
 {% endfor %}
 </table>
-</center>
+</div>
+<div class="span6">
+<table class="table table-bordered span5 pull-right">
+{% for event1,announced1 in wsziplist %}
+  <tr {% if announced1 %}class="success"{% else %} class="error" {% endif %}>
+    <td>
+    <span>
+    {{event1.title}}
+    </span>
+    </td>
+    <td>
+     {% if announced1 %}
+     <p class="text-info">
+    <a href="/barcode/event_winners/{{event1.id}}" target="_blank">Click to get workshop registered members details</a>
+     {% else %}
+     <p class="muted">
+     <strong>Results not announced</a>
+     {% endif %}
+    </p>
+    </td>
+  </tr>
+{% endfor %}
+
+</table>
+</div>
 </div>
