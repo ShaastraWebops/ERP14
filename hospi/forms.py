@@ -3,6 +3,7 @@ from django.forms import ModelForm
 from hospi.models import *
 from users.models import UserProfile
 from events.models import GenericEvent
+from barcode.forms import COLLEGE_CHOICES
 
 event_list = GenericEvent.objects.all()
 event_choices = [(event,event) for event in event_list]
@@ -39,6 +40,7 @@ class RegistrationForm(ModelForm):
     last_name = forms.CharField(max_length=30)
     username = forms.CharField(max_length=30)
     email = forms.EmailField()
+    college = forms.ChoiceField(choices=COLLEGE_CHOICES, help_text = 'Try to find college here, else fill form below')
     class Meta:
         model = UserProfile
         fields = (
@@ -46,7 +48,6 @@ class RegistrationForm(ModelForm):
                 'gender',
                 'branch',
                 'mobile_number',
-                'college',
                 'college_roll',
                 'shaastra_id',
                 )
