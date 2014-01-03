@@ -31,6 +31,7 @@
   </tr>
 {% endfor %}
 </table>
+{{wsziplist|length}}
 <table class="table table-bordered span5 pull-right">
 {% for event,announced in wsziplist %}
   <tr {% if announced %}class="success"{% else %} class="error" {% endif %}>
