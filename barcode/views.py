@@ -22,8 +22,8 @@ def event_winners(request,event_id):
     
 def hospi_announce(request):
     events_list = [event.genericevent_ptr for event in ParticipantEvent.objects.all()]
-    announced_list = [has_winner(event) for event in GenericEvent.objects.all()]
-    ziplist = zip(events_list,announced_list)    
+    announced_list = [has_winner(event) for event in events_list]
+    ziplist = zip(events_list,announced_list)
     return render_to_response('barcode/result_announce.html', {'ziplist':ziplist}, context_instance=RequestContext(request))
     
 def zero(intg):
@@ -136,63 +136,57 @@ def upload_ppm(request):
     no_of_places = range(1,6)
     if request.method == 'POST':
         event = EventForm(request.POST)
-        frm = WinnerForm(request.POST)
+        frm1 = Winner1Form(request.POST)
+        frm2 = Winner2Form(request.POST)
+        frm3 = Winner3Form(request.POST)
+        frm4 = Winner4Form(request.POST)
+        frm5 = Winner5Form(request.POST)
+        frm6 = Winner6Form(request.POST)
         if event.is_valid():
             event = GenericEvent.objects.get(title = event.cleaned_data['event_title'])
         else:
             return HttpResponse(" Failed: improper event..check again(reload)")
-        id1 = frm.data[u'shaastra_id1']
-        print '!!!!!!%s!!!!!!!!!'% str(id1)
-        id2 = frm.data[u'shaastra_id2']
-        id3 = frm.data[u'shaastra_id3']
-        id4 = frm.data[u'shaastra_id4']
-        id5 = frm.data[u'shaastra_id5']
-        id6 = frm.data[u'shaastra_id6']
-        i=0
-        length = max(len(id1),len(id2),len(id3),len(id4),len(id5),len(id6))
-        print "*********%d++++++++=="%length
-        while i<length:
-            id_temp = [id1[i],id2[i],id3[i],id4[i],id5[i],id6[i]]
-            print id_temp
-            for id in id_temp:
-                if not id_in_db(id) and id!='':
-                    return HttpResponse("%s failed: invalid Shaastra ID..check again"% id)
-            (p1,p2,p3,p4,p5,p6) = (None,None,None,None,None,None,)
-            if id1[i]!='':
-                p1 = get_userprofile(id1[i])
-            if id1[i]!='':
-                p2 = get_userprofile(id2[i])
-            if id1[i]!='':
-                p3 = get_userprofile(id3[i])
-            if id1[i]!='':
-                p4 = get_userprofile(id4[i])
-            if id1[i]!='':
-                p5 = get_userprofile(id5[i])
-            if id1[i]!='':
-                p6 = get_userprofile(id6[i])
-            pz = PrizeWinner(position = i+1,event = event)
+        if PrizeWinner.objects.filter(event = event).count()>0:
+            return HttpResponse('%s winners have already been uploaded. Check erp.shaastra.org/barcode/winners'%event.title)
+        frmlist = [frm1,frm2,frm3,frm4,frm5,frm6]
+        for frm in frmlist:
+            if not frm.is_valid():
+                print frm.errors
+                return HttpResponse('Invalid Data. Try Again.%s'%str(frm.errors))
+        sh_idlist = [[] for i in range(6)]
+        for i in range(6):
+            for j in range(6):
+                shid = frmlist[i].cleaned_data['shaastra%d_id%d'%(i+1,j+1)]
+                sh_idlist[i].append(shid)
+        for k in range(6):
+            for shid in sh_idlist[k]:
+                if not id_in_db(shid) and shid!='':
+                    return HttpResponse('Invalid Shaastra ID!! Check Again')
+        for k in range(6):
+            if is_not_filled(sh_idlist[k]):
+                continue
+            pz = PrizeWinner(event = event,position = k+1)
             pz.save()
-            if p1 is not None:
-                pz.winners.add(p1)
-            if p2 is not None:
-                pz.winners.add(p2)
-            if p3 is not None:
-                pz.winners.add(p3)
-            if p4 is not None:
-                pz.winners.add(p4)
-            if p5 is not None:
-                pz.winners.add(p5)
-            if p6 is not None:
-                pz.winners.add(p6)
+            for shid in sh_idlist[k]:
+                if shid!='':
+                    prof = get_userprofile(shid)
+                    try:
+                        pz.winners.add(Barcode.objects.get(shaastra_id = prof.shaastra_id))
+                    except:
+                        return HttpResponse('Shaastra ID %s has not been linked to a barcode!!'%shid)
             pz.save()
-            i=i+1
+        message_str = "Event %s, winners uploaded!!"% event.title
+        eventform = EventForm()
+        return render_to_response('barcode/ppm.html', locals(), context_instance=RequestContext(request))
+    
+        
     eventform = EventForm()
-    form1 = WinnerForm()
-    form2 = WinnerForm()
-    form3 = WinnerForm()
-    form4 = WinnerForm()
-    form5 = WinnerForm()
-    form6 = WinnerForm()
+    form1 = Winner1Form()
+    form2 = Winner2Form()
+    form3 = Winner3Form()
+    form4 = Winner4Form()
+    form5 = Winner5Form()
+    form6 = Winner6Form()
     return render_to_response('barcode/ppm.html', locals(), context_instance=RequestContext(request))
     
     

@@ -6,6 +6,11 @@ def has_winner(event = None):
         return 0
     return PrizeWinner.objects.filter(event = event).count()>0
 
+def is_not_filled(shidlist):
+    for id in shidlist:
+        if id!='':
+            return False
+    return True
 def is_valid_barcode(code):
     #TODO
     #remove for finale
