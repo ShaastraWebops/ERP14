@@ -13,7 +13,7 @@ urlpatterns = patterns('barcode.views',
     url(r'^get_bar_details/(?P<barcode>\w+)/$','get_bar_details'),
     url(r'^edit_profile/(?P<shaastra_id>\w+)/$','edit_profile'),
     url(r'^ppm/$', 'upload_ppm',name='ppm'),
-    url(r'^ppm_finalistlist','ppm_finalistlist',name = 'ppm_finalistlist')
+    url(r'^ppm_finalistlist','ppm_finalistlist',name = 'ppm_finalistlist'),
     url(r'^direct/$', direct_to_template, {'template': 'barcode/result_announce.html'}),
     url(r'^detail_entry',direct_to_template,{'template':'barcode/detail_entry.html'},name = 'detail_entry'),
     url(r'^winners/$','hospi_announce'),
