@@ -24,6 +24,8 @@
     {% if request.user.is_authenticated %}
         {% ifequal request.user.username 'ppm' %}
         <a href="/barcode/delete_event_winners/{{event.id}}" target = "_blank">Wrong details entered?? Delete here,and you can re-enter later</a>
+        <br/>
+        <strong>This action CANNOT be undone..be very careful</strong>
         {% endifequal %}
     {% endif %}
      {% else %}

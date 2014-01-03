@@ -146,6 +146,24 @@ def edit_profile(request,shaastra_id=None):
         college_form = CollegeForm()
     return render_to_response('barcode/edit_profile.html', {'profileform':form,'collegeform':college_form,'message_str':message_str}, context_instance=RequestContext(request))
 
+def delete_event_winners(request,event_id):
+    if not request.user.is_authenticated():
+        return HttpResponseRedirect('/login')
+    """TO REMOVE
+    if request.user.username != 'ppm':
+        return HttpResponse('malicious attempt..please login with ppm account')
+    """ 
+    try:
+        event = GenericEvent.objects.get(id = event_id)
+    except:
+        return HttpResponse('Invalid link, please check')
+    try:
+        pzw = PrizeWinner.objects.filter(event = event)
+    except:
+        return HttpResponse('Winners not announced yet. Go <a href="/barcode/winners">back</a> to winners page.')
+    pzw.delete()
+    return HttpResponse('Winners of event %s have been removed.Go <a href="/barcode/winners">back</a> to winners page.')
+
 def upload_ppm(request):
     max_team = range(1,7)
     no_of_places = range(1,6)
