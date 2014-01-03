@@ -3,6 +3,12 @@
     <table class="table table-striped table-bordered table-condensed">
         {{new_form.as_table}}
     </table>
-    <a class="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.hospi.register, Dajax.process, {'reg_form':$('#id_form_reg').serialize(true)})">Submit</a>
 </form>
+<form method="POST" action="" id="id_form_coll">
+    {% csrf_token %}
+    <table class="table table-striped table-bordered table-condensed">
+        {{college_form.as_table}}
+    </table>
+</form>
+    <a class="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.hospi.register, Dajax.process, {'reg_form':$('#id_form_reg').serialize(true),'coll_form':$('#id_form_coll').serialize(true)})">Submit</a>
 

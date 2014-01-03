@@ -34,11 +34,11 @@ def checkin(request):
             pdf = generateParticipantPDF(shaastraid,0)
             return pdf
         else:
-            msg = "Form is not valid"
             return render_to_response('hospi/home.html',locals(),RequestContext(request))
 
 def teamcheckin(request,pk,team_idi):
     tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm)
+    print tcheckinformset
     event_pk = pk
     team_id_num = team_idi
     generic_event_instance = GenericEvent.objects.get(pk=event_pk)
@@ -46,6 +46,7 @@ def teamcheckin(request,pk,team_idi):
     team_id = 'TEAM#'+str(event_name[:5])+'#'+str(team_id_num)
     if request.method=="POST":
         formset = tcheckinformset(request.POST)
+        print formset
         if formset.is_valid():
             shalist = []
             roomlist = []

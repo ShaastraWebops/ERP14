@@ -12,12 +12,13 @@ from django.forms.models import modelformset_factory
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from dashboard.models import TeamEvent
-from users.models import UserProfile
+from users.models import UserProfile,College
 from hospi.models import *
 from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom,RegistrationForm,TeamCheckinForm
 from events.forms import ChooseEventForm
 from events.models import GenericEvent, ParticipantEvent
 from barcode.scripts import is_junk,create_junk_profile
+from barcode.forms import CollegeForm
 import json 
 from misc.utilities import show_alert
 from erp.settings import DATABASES
@@ -79,6 +80,7 @@ def checkin(request,indi_form=None):
                 participant = UserProfile.objects.using(mainsite_db).get(shaastra_id = shaastraid) #So participant in the database can be pre-reg or junk
             except:
                 new_form = RegistrationForm(initial={'shaastra_id':shaastraid})
+                college_form = CollegeForm()
                 html_content = render_to_string('hospi/Register.html',locals(),RequestContext(request))
                 dajax.assign('#tab3',"innerHTML",html_content)
                 return dajax.json()
@@ -97,6 +99,7 @@ def checkin(request,indi_form=None):
                 if is_junk(shaastraid):
                     participant.user.is_staff = False
                     new_form = RegistrationForm(initial={'shaastra_id':shaastraid})
+                    college_form = CollegeForm()
                     html_content = render_to_string('hospi/Register.html',locals(),RequestContext(request))
                     dajax.assign('#tab3',"innerHTML",html_content)
                     return dajax.json()
@@ -220,9 +223,11 @@ def createteam(request,team_formset=None,event_pk=None):
     event_name = generic_event_instance.title
     if request.method=="POST" and team_formset != None:
         formset = teamformset(deserialize_form(team_formset))
+        print '111111111111111 %s' % formset
         if formset.is_valid():
             userlist = []
             for f in formset:
+                print f
                 cd = f.cleaned_data
                 shaastraid='SHA14'+str(cd.get('shaastraID'))
                 print shaastraid
@@ -249,11 +254,24 @@ def createteam(request,team_formset=None,event_pk=None):
         return dajax.json()
 
 @dajaxice_register
-def register(request,reg_form=None):
+def register(request,reg_form=None,coll_form=None):
     dajax=Dajax()
-    if request.method=='POST' and reg_form != None:
+    if request.method=='POST':
         form = RegistrationForm(deserialize_form(reg_form))
+        collegeform = CollegeForm(deserialize_form(coll_form))
         if form.is_valid():
+            if not collegeform.is_valid():
+                collist = form.cleaned_data['college'].split('|')
+                collquery = College.objects.using(mainsite_db).filter(name = collist[0],city=collist[1], state=collist[2])
+                if collquery.count():
+                    college=collquery[0]
+                else:
+                    college = College(name=collist[0],city=collist[1],state=collist[2])
+                    college.save(using='mainsite')
+            else:
+                college = collegeform.instance
+                college.save(using='mainsite')
+
             cleaned_form = form.cleaned_data
             new_user = User(first_name=cleaned_form['first_name'],last_name=cleaned_form['last_name'],username=cleaned_form['username'],email=cleaned_form['email']) 
             new_user.set_password('default')
@@ -265,13 +283,15 @@ def register(request,reg_form=None):
                     branch=cleaned_form['branch'],
                     age=cleaned_form['age'],
                     mobile_number=cleaned_form['mobile_number'],
-                    college = cleaned_form['college'],
                     college_roll = cleaned_form['college_roll'],
                     shaastra_id = cleaned_form['shaastra_id'],
                     want_accomodation = True,
                     )
             userprofile.save(using='mainsite')
-            show_alert(dajax,"success","Participant registered successfully")
+            shaastraid = cleaned_form['shaastra_id']
+            new_form = IndividualForm(initial={'shaastra_ID':shaastraid})
+            html_content = render_to_string('hospi/Checkin_form.html',locals(),RequestContext(request))
+            dajax.assign('#tab3',"innerHTML",html_content)
             return dajax.json()
         else:
             show_alert(dajax,"error","Form is invalid")
@@ -291,6 +311,7 @@ def team(request,team_form=None):
             actual_name = event_name[:5]
             team_id_num = cleaned_form['team_id_num']
             team_id = 'TEAM#'+str(actual_name)+'#'+str(cleaned_form['team_id_num'])
+            print team_id
             team_instance = TeamEvent.objects.using(mainsite_db).get(team_id=team_id)
             if check_in_control_room=='Ganga':
                 userlist = []
@@ -366,8 +387,4 @@ def team(request,team_form=None):
         html_content = render_to_string('hospi/TeamCheckin.html',locals(),RequestContext(request))
         dajax.assign("#tab7","innerHTML",html_content)
         return dajax.json()
-
-
-
-
 

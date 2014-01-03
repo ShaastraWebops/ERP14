@@ -1,10 +1,11 @@
 from django import forms 
 from django.forms import ModelForm 
 from hospi.models import *
-from users.models import UserProfile
+from users.models import UserProfile,College
 from events.models import GenericEvent
-from barcode.forms import COLLEGE_CHOICES
-
+from erp.settings import DATABASES
+mainsite_db = DATABASES.keys()[1]
+COLLEGE_CHOICES = ((college.name+"|"+college.city+"|"+college.state, college.name+"|"+college.city+"|"+college.state) for college in College.objects.using(mainsite_db))
 event_list = GenericEvent.objects.all()
 event_choices = [(event,event) for event in event_list]
 
