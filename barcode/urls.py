@@ -9,6 +9,7 @@ urlpatterns = patterns('barcode.views',
     url(r'^add_single_participant/$','add_single_entry',{'type': "participantsportal"},name="add_single_participant"),
     url(r'^get_details/(?P<sh_id>\w+)/$','get_details'),#tried to get shaastra id search query from url
     url(r'^get_details/$','get_details',{'sh_id':None}),
+    url(r'get_bar_details/$','get_bar_details',{'barcode':'acidification'}),
     url(r'^get_bar_details/(?P<barcode>\w+)/$','get_bar_details'),
     url(r'^edit_profile/(?P<shaastra_id>\w+)/$','edit_profile'),
     url(r'^ppm/$', 'upload_ppm',name='ppm'),
