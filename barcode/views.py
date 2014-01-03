@@ -173,7 +173,9 @@ def upload_ppm(request):
                     except:
                         return HttpResponse('Shaastra ID %s has not been linked to a barcode!!'%shid)
             pz.save()
-        return HttpResponseRedirect(reverse('ppm'))
+        message_str = "Event %s, winners uploaded!!"% event.title
+        return render_to_response('barcode/ppm.html', locals(), context_instance=RequestContext(request))
+    
         
     eventform = EventForm()
     form1 = Winner1Form()
