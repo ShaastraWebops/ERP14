@@ -18,10 +18,10 @@
 <td>POSITION <strong>{{winner.position}}</strong> </td>
     {% for barcode in winner.winners.all %}
     <td>
-        <a href="/barcode/get_details/{{barcode.shaastra_id}}">{{barcode.shaastra_id}}</a>
+        <a href="/barcode/get_details/{{barcode.shaastra_id}}" target="_blank">{{barcode.shaastra_id}}</a>
     </td>
-    { % endfor % }
-</tr>
-{ % endfor % }
-</table>
+    {%endfor%}</tr>
+    {% endfor %}
+
+
 
