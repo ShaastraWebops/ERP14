@@ -332,7 +332,7 @@ def team(request,team_form=None):
                 queryset = IndividualCheckIn.objects.none()
                 users_in_team = team_instance.users.all()
                 for user_ex in users_in_team:
-                    shaastraid = user_ex.userprofil_set.all()[0].shaastra_id
+                    shaastraid = user_ex.userprofile_set.all()[0].shaastra_id
                     try:
                         checkedin_already = IndividualCheckIn.objects.get(shaastra_ID=shaastraid)
                         if user_ex.usreprofile_set.all()[0].gender == 'F':
