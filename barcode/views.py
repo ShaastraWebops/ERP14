@@ -161,8 +161,8 @@ def upload_ppm(request):
         for k in range(6):
             for shid in sh_idlist[k]:
                 if not id_in_db(shid) and shid!='':
-        for k in range(6):
                     return HttpResponse('Invalid Shaastra ID!! Check Again')
+        for k in range(6):
             if is_not_filled(sh_idlist[k]):
                 continue
             pz = PrizeWinner(event = event,position = k+1)
