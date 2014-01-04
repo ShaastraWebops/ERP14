@@ -24,17 +24,14 @@ HOSTEL_CHOICES = (
     )
 
 CONTROL_ROOM_CHOICES = (
-    ('Ganga','Ganga'),
+    ('Godav','Godav'),
     ('Sharavati','Sharavati'),
     )
 
 MATTRESS_CHOICES = (
-    ('Ganga','Ganga'),
-    ('Sindhu','Sindhu'),
-    ('Tamraparani','Tamraparani'),
-    ('Jamuna','Jamuna'),
+    ('Godav 1001','Godav 1001'),
+    ('Mahanadi 138','Mahanadi 138'),
     ('Sharavati','Sharavati'),
-    ('Sarayu Extn','Sarayu Extn'),
     )
 
 class AvailableRooms(models.Model):
@@ -77,3 +74,4 @@ class Mattresses(models.Model):
 class Mattresses_new(models.Model):
     team_shaastra_id = models.CharField(max_length=20)
     no_of_mattresses = models.IntegerField(default=0,blank=True)
+
