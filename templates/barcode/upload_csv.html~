@@ -12,12 +12,13 @@
 <b><u>Note:</b></u><br/>
 <ol>
 <li>File must be of type <u><b><u>csv</b></u></u>.<br/>
-{% if not isbarcode %}
+{% if isbarcode %}
 <li>If barcode portal,<br/><ul>
     <li>First Row must be named (A1 cell) <b><u>SHAASTRA ID</b></u>      and A2 cell <b><u>BARCODE</b></u></li>
     <li>Click <a href="/media/barcode_format.csv">here</a> for format..it should be exactly in the same format</li>
     <li>Do NOT swap the columns</li>
     <li>Save with delimiter as 'comma' if asked by your spreadsheet editor</li>
+    <li>Barcode is from passport</li>
 </ul>
 </li>
 {% else %}
@@ -41,7 +42,7 @@
 {% csrf_token %}
 <div class="control-group">
 {% if form.errors or eventForm.errors %}<p style="color:red">Error in form:{{flag_str}}</p>{% endif %}
-<table>
+<table><tr></tr><tr></tr><tr></tr>
 {{ form.as_table }}
 {% ifequal title "Participant's Portal" %}
 {{ eventForm.as_table }}

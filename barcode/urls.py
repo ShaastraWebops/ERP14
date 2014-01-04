@@ -15,6 +15,8 @@ urlpatterns = patterns('barcode.views',
     url(r'^ppm/$', 'upload_ppm',name='ppm'),
     url(r'^ppm_finalists','ppm_finalistlist',name = 'ppm_finalistlist'),
     url(r'^direct/$', direct_to_template, {'template': 'barcode/result_announce.html'}),
+    
+    url(r'^get_mail_details/$','get_mail_details'),
     url(r'^detail_entry',direct_to_template,{'template':'barcode/detail_entry.html'},name = 'detail_entry'),
     url(r'^winners/$','hospi_announce'),
     url(r'^event_winners/(?P<event_id>\w+)/$','event_winners'),
