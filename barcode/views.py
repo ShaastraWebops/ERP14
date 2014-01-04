@@ -157,13 +157,17 @@ def edit_profile(request,shaastra_id=None):
         else:
             if form.errors.values():
                 message_str += str(form.errors.values())
-    
     if shaastra_id is None or not id_is_valid(shaastra_id):
         return HttpResponse('<strong>Invalid Shaastra ID</strong>')
+    if id_is_valid(shaastra_id)==-1:
+        shaastra_id = 'SHA14' + shaastra_id
+    if id_is_valid(shaastra_id)<-1:
+        return HttpResponse('Enter 5 digits for shaastra ID')
+#        shaastra_id = 'SHA14' + zero(9-i) + shaastra_id
+    #redundant..but lite
     if id_is_valid('SHA14' + str(shaastra_id)):
         shaastra_id = 'SHA14' + str(shaastra_id)
-        
-    if not id_in_db(shaastra_id):
+    if not id_in_db(shaastra_id) :
         #Here, details are not submitted-> no barcode..
         if not id_is_valid(shaastra_id):
             return HttpResponse('Invalid Shaastra ID format..please check')
