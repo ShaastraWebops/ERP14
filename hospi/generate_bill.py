@@ -133,10 +133,10 @@ def generatetable(pdf, x, y, leader,s_ids):
 
 def printParticipantDetails(pdf, x, y, s_id,team_id,number):
     print number 
-    if not number:
-        n=1  
+    if number:
+        n=len(number)  
     else:
-        n=len(number)
+        n=1
 
     checkedin = IndividualCheckIn.objects.get(shaastra_ID=s_id)  
     if not team_id:
