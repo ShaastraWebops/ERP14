@@ -132,6 +132,7 @@ def generatetable(pdf, x, y, leader,s_ids):
     t.drawOn(pdf, x, y - tableHeight)
 
 def printParticipantDetails(pdf, x, y, s_id,team_id,number):
+    print number 
     if not number:
         n=1  
     else:
