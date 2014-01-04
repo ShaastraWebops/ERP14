@@ -132,6 +132,7 @@ def edit_profile(request,shaastra_id=None):
                 user = profile.user
             user.first_name = form.cleaned_data['first_name']
             user.email = form.cleaned_data['email']
+            user.last_name = form.cleaned_data['last_name']
             user.save(using = 'mainsite')
             profile.college = college
             profile.user = user
