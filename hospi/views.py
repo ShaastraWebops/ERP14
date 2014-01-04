@@ -60,11 +60,12 @@ def teamcheckin(request,pk,team_idi):
                 f.save()
             else:
                 continue
-            for room in roomlist:
-                room.max_number = room.max_number - 1
-                room.save()
-            pdf = generateParticipantPDF(shalist[0],team_id,shalist)
-            return pdf
-        else:
-            return render_to_response('hospi/home.html',locals(),RequestContext(request))
+        for room in roomlist:
+            room.max_number = room.max_number - 1
+            room.save()
+        pdf = generateParticipantPDF(shalist[0],team_id,shalist)
+        print shalist
+        return pdf
+    else:
+        return render_to_response('hospi/home.html',locals(),RequestContext(request))
 

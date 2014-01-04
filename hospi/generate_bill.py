@@ -132,11 +132,11 @@ def generatetable(pdf, x, y, leader,s_ids):
     t.drawOn(pdf, x, y - tableHeight)
 
 def printParticipantDetails(pdf, x, y, s_id,team_id,number):
-    if not number:
-        n=1  
-    else:
-        n=len(number)
 
+    if team_id:
+        n = len(number)
+    else:
+        n = 1
     checkedin = IndividualCheckIn.objects.get(shaastra_ID=s_id)  
     if not team_id:
         CD = 0
