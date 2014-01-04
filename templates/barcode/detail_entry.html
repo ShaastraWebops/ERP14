@@ -8,8 +8,22 @@
 <script src="{% static 'js/base.js' %}"></script>
 <script>
 function redirect(data){
+    
+    if (data.length == 5){
+    alert(data);
+        if (parseFloat(data)==data){
+            var url = "/barcode/edit_profile/SHA14".concat(data);
+            window.location.replace(url);
+     }
+        else{
+        alert('Enter 5 digits only.')
+        }
+    }
+    else{
     var url = "/barcode/edit_profile/".concat(data);
     window.location.replace(url);
+    }
+    
 }
 </script>
 <script>
