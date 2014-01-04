@@ -59,8 +59,7 @@ def teamcheckin(request,pk,team_idi):
                 room.save()
                 f.save()
             else:
-                pass
-
+                continue
             for room in roomlist:
                 room.max_number = room.max_number - 1
                 room.save()

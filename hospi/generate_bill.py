@@ -136,12 +136,12 @@ def printParticipantDetails(pdf, x, y, s_id,team_id,number):
         n=1  
     else:
         n=len(number)
+
+    checkedin = IndividualCheckIn.objects.get(shaastra_ID=s_id)  
     if not team_id:
         CD = 0
-        checkedin = IndividualCheckIn.objects.get(shaastra_ID=s_id)  
         profile = UserProfile.objects.using(mainsite_db).get(shaastra_id = s_id)
     else:
-        checkedin = IndividualCheckIn.objects.get(shaastra_ID=s_id) #This is the checked in object after team checkin is done 
         team_instance = TeamEvent.objects.using(mainsite_db).get(team_id=team_id)
 #        leader = User.objects.using(mainsite_db).get(id = profile.user_id)
      
