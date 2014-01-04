@@ -16,7 +16,10 @@ class Barcode(models.Model):
             if profile.college:
                 string = "Name:%s ;College:%s"%(profile.user.get_full_name(),profile.college.name)
             else:
-                string = "Name:%s ;"%(profile.user.get_full_name())
+                if profile.user.get_full_name()!='Junk':
+                    string = "Name:%s ;"%(profile.user.get_full_name())
+                else:
+                    string = 'Insti_Participant: Name not provided'
         except:
             string = "failed to retrieve data"
         return string
