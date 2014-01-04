@@ -47,18 +47,20 @@ def teamcheckin(request,pk,team_idi):
     if request.method=="POST":
         formset = tcheckinformset(request.POST)
         print formset
-        if formset.is_valid():
-            shalist = []
-            roomlist = []
-            for f in formset:
+        shalist = []
+        roomlist = []
+        for f in formset:
+            if f.is_valid():
                 cd = f.cleaned_data
                 shalist.append(cd.get('shaastra_ID'))
                 roomlist.append(cd.get('room'))
                 room = cd.get('room')
                 room.max_number -= 1
                 room.save()
+                f.save()
+            else:
+                pass
 
-            formset.save()
             for room in roomlist:
                 room.max_number = room.max_number - 1
                 room.save()
