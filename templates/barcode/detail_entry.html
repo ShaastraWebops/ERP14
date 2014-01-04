@@ -12,7 +12,7 @@ function redirect(data){
     if (data.length == 5){
         if (parseFloat(data)==data){
             var url = "/barcode/edit_profile/SHA14".concat(data);
-            window.location.replace(url);
+            window.location.assign(url);
      }
         else{
         alert('Enter 5 digits only.')
@@ -20,7 +20,7 @@ function redirect(data){
     }
     else{
     var url = "/barcode/edit_profile/".concat(data);
-    window.location.replace(url);
+    window.location.assign(url);
     }
     
 }
