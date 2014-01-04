@@ -19,13 +19,15 @@
     </td>
     <td>
      {% if announced %}
-     <p class="text-info">
+     <p class="text-success">
     <a href="/barcode/event_winners/{{event.id}}" target="_blank">Click to get winner details</a><br/>
     {% if request.user.is_authenticated %}
         {% ifequal request.user.username 'ppm' %}
+        </p><p class="text-warning">
         Wrong details entered?? Delete<a href="/barcode/delete_event_winners/{{event.id}}" target = "_blank"> here</a>,and you can re-enter winner details later
         <br/>
         <strong>This action CANNOT be undone..be very careful</strong>
+        
         {% endifequal %}
     {% endif %}
      {% else %}

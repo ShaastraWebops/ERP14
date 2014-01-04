@@ -238,10 +238,10 @@ def ppm_finalistlist(request):
 def upload_ppm(request):
     max_team = range(1,7)
     no_of_places = range(1,6)
-    if not request.user.is_authenticated():
-        return HttpResponseRedirect('/login')
-    if request.user.username != 'ppm':
-        return HttpResponse('malicious attempt..please login with ppm account')
+#    if not request.user.is_authenticated():
+#        return HttpResponseRedirect('/login')
+#    if request.user.username != 'ppm':
+#        return HttpResponse('malicious attempt..please login with ppm account')
     if request.method == 'POST':
         event = EventForm(request.POST)
         frm1 = Winner1Form(request.POST)
@@ -268,7 +268,7 @@ def upload_ppm(request):
                 sh_idlist[i].append(shid)
         for k in range(6):
             for shid in sh_idlist[k]:
-                if not id_in_db(shid) and shid!='':
+                if not id_in_db(shid) and shid!='' and not is_valid_insti_roll(shid):
                     return HttpResponse('Invalid Shaastra ID!! Check Again')
         for k in range(6):
             if is_not_filled(sh_idlist[k]):
@@ -277,11 +277,17 @@ def upload_ppm(request):
             pz.save()
             for shid in sh_idlist[k]:
                 if shid!='':
-                    prof = get_userprofile(shid)
-                    try:
-                        pz.winners.add(Barcode.objects.get(shaastra_id = prof.shaastra_id))
-                    except:
-                        return HttpResponse('Shaastra ID %s has not been linked to a barcode!!'%shid)
+                    if not is_valid_insti_roll(shid):
+                        prof = get_userprofile(shid)
+                        try:
+                            pz.winners.add(Barcode.objects.get(shaastra_id = prof.shaastra_id))
+                        except:
+                            return HttpResponse('Shaastra ID %s has not been linked to a barcode!!'%shid)
+                    else:
+                        prof = create_junk_profile('%^&'+str(shid))
+                        barcode = Barcode.objects.create(shaastra_id = prof.shaastra_id,barcode = prof.shaastra_id)
+                        pz.winners.add(barcode)
+                    
             pz.save()
         message_str = "Event %s, winners uploaded!!"% event.title
         eventform = EventForm()
