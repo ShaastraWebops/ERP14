@@ -1,6 +1,13 @@
 from users.models import *
 from models import *
 
+def has_winner_ws(event = None):
+    if not event:
+        return 0
+    d1 = Event_Participant.objects.filter(event = event).count()
+    return d1
+    
+
 def has_winner(event = None):
     if not event:
         return 0

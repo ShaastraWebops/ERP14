@@ -20,10 +20,19 @@ def event_winners(request,event_id):
     winners = list(PrizeWinner.objects.filter(event = event).order_by('position'))
     return render_to_response('barcode/result_event.html', {'winners':winners,'event':event}, context_instance=RequestContext(request))    
     
+def event_ws_winners(request,event_id):
+    try:
+        event = GenericEvent.objects.get(id = event_id)
+    except:
+        return HttpResponse('Invalid Event(workshop) Request <a href="/barcode/winners/">Back</a>')
+    #winners = list(PrizeWinner.objects.filter(event = event).order_by('position'))
+    winners = list(Event_Participant.objects.filter(event = event).order_by('shaastra_id'))
+    return render_to_response('barcode/result_ws_event.html', {'winners':winners,'event':event}, context_instance=RequestContext(request))    
+    
 def hospi_announce(request):
     events_list = [event.genericevent_ptr for event in ParticipantEvent.objects.all() if event.category!='Workshops']
     workshop_list = [event for event in GenericEvent.objects.filter(category = 'Workshops')]
-    ws_announce_list = [has_winner(gevent) for gevent in workshop_list]
+    ws_announce_list = [has_winner_ws(gevent) for gevent in workshop_list]
     announced_list = [has_winner(event) for event in events_list]
     ziplist = zip(events_list,announced_list)
     wsziplist = zip(workshop_list,ws_announce_list)
@@ -98,7 +107,6 @@ def edit_profile(request,shaastra_id=None):
 #            profile = form.instance
             up = form.save(commit = False)
             if not college_form.is_valid():
-                print '555555555555555'
                 colllist = form.cleaned_data['coll'].split('|')
                 collquery = College.objects.using('mainsite').filter(name =  colllist[0],city = colllist[1],state = colllist[2])
                 if collquery.count():

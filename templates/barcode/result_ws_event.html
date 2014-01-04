@@ -1,0 +1,28 @@
+{% load staticfiles %}
+<link href="{% static "css/bootstrap.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap.min.css" %}" rel="stylesheet" media="screen">
+<link href="{% static "css/bootstrap-responsive.css" %}" rel="stylesheet" media="screen">
+
+
+<center>
+<h4 style='width : 100%;'>
+	<span id='#user_profile_title'>Winners Data: {{event.title}}</span>
+	&nbsp;
+</h4>
+<h6>Note: position 6 may also mean that they are all finalists</h6>
+{% ifequal winners|length 0 %}
+    No winners data provided for {{event.title}} yet! Please wait or keep refreshing
+{% endifequal %}
+<table class="table table-striped table-condensed" >
+{% for winner in winners %}
+<tr {% if forloop.counter|divisibleby:2%}class="success"{% else %}class="info"{% endif %}>
+<td>
+    <li>
+        <a href="/barcode/get_details/{{barcode.shaastra_id}}" target="_blank">{{winner.shaastra_id}}</a>
+    </li>
+    <td>
+    </ul></tr>
+{% endfor %}
+
+
+
