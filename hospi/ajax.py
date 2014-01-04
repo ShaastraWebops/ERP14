@@ -17,7 +17,7 @@ from hospi.models import *
 from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom,RegistrationForm,TeamCheckinForm
 from events.forms import ChooseEventForm
 from events.models import GenericEvent, ParticipantEvent
-from barcode.scripts import is_junk,create_junk_profile
+from barcode.scripts import is_junk,create_junk_profile,get_userprofile
 from barcode.forms import CollegeForm
 import json 
 from misc.utilities import show_alert
@@ -276,22 +276,24 @@ def register(request,reg_form=None,coll_form=None):
                 college.save(using='mainsite')
 
             cleaned_form = form.cleaned_data
-            new_user = User(first_name=cleaned_form['first_name'],last_name=cleaned_form['last_name'],username=cleaned_form['username'],email=cleaned_form['email']) 
-            new_user.set_password('default')
-            new_user.is_active = True
-            new_user.save(using='mainsite')
-            userprofile = UserProfile(
-                    user=new_user,
-                    gender=cleaned_form['gender'],
-                    branch=cleaned_form['branch'],
-                    age=cleaned_form['age'],
-                    mobile_number=cleaned_form['mobile_number'],
-                    college_roll = cleaned_form['college_roll'],
-                    shaastra_id = cleaned_form['shaastra_id'],
-                    want_accomodation = True,
-                    )
-            userprofile.save(using='mainsite')
             shaastraid = cleaned_form['shaastra_id']
+            if not id_in_db(shaastraid):
+                new_user = User(first_name=cleaned_form['first_name'],last_name=cleaned_form['last_name'],username=cleaned_form['username'],email=cleaned_form['email']) 
+                new_user.set_password('default')
+                new_user.is_active = True
+                new_user.save(using='mainsite')
+            else:
+                try:
+                    userprofile = get_userprofile(shaastraid)                
+                except:
+                    userprofile = UserProfile(user=new_user)
+                userprofile.gender = cleaned_form['gender']
+                userprofile.branch = cleaned_form['branch']
+                userprofile.age = cleaned_form['age']
+                userprofile.mobile_number = cleaned_form['mobile_number']
+                userprofile.college_roll = cleaned_form['college_roll']
+                userprofile.save(using='mainsite')
+
             new_form = IndividualForm(initial={'shaastra_ID':shaastraid})
             html_content = render_to_string('hospi/Checkin_form.html',locals(),RequestContext(request))
             dajax.assign('#tab3',"innerHTML",html_content)
