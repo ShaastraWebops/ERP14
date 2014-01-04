@@ -3,7 +3,7 @@ from events.models import GenericEvent
 from users.models import *
 from models import *
 EVENT_CHOICES = ((event.title,event.title) for event in GenericEvent.objects.all())
-COLLEGE_CHOICES = ((college.name +"|"+ college.city+"|" + college.state,college.name +"|"+ college.city+"|" + college.state) for college in College.objects.using('mainsite').all())
+COLLEGE_CHOICES = ((college.name +"|"+ college.city+"|" + college.state,college.name +"|"+ college.city+"|" + college.state) for college in College.objects.using('mainsite').all().order_by('name'))
 
 class BarcodeForm(forms.ModelForm):
     class Meta:
