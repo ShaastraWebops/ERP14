@@ -335,22 +335,28 @@ def upload_csv(request, type):
             else:
                 display_list = []
                 fail_list = []
-                message_str = "Successfully uploaded "
+                message_str = ""
                 if type == "participantsportal":
                     (display_list,fail_list) = process_csv(request,request.FILES['file'],"",type,event.cleaned_data['event_title'] )
+                    
+                    message_str += "Successfully uploaded "
                     if display_list[1:]:
                         message_str+=str(display_list[0])
                         display_list = display_list[1:]
                         message_str += "::"
                         message_str+=str(display_list)
+                    if fail_list:
+                        message_str +="________Failed %s items::"%len(fail_list)
+                        message_str +="______%s"%str(fail_list)
                 else:
                     (display_list,fail_list) = process_csv(request,request.FILES['file'],"" ,type) 
                     if display_list:
-                        message_str += str(len(display_list)) + "items;"
-                        message_str += str(display_list[0:5]) + "etc.."
+                        message_str = "Successfully uploaded "
+                        message_str += str(len(display_list)) + "items;____"
+                        message_str += str(display_list[0:10]) + "etc.."
                         print str(display_list)
                     if fail_list:
-                        message_str += "||Failed: %s" % str(fail_list)
+                        message_str += "______________Failed: %s" % str(fail_list)
                 if display_list is None and fail_list is None:
                     return HttpResponse('File reading failed, check file format')
                 
