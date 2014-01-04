@@ -54,7 +54,6 @@ def get_mail_details(request):
         form = EmailForm(request.POST)
         if form.is_valid():
             mail = form.cleaned_data['email']
-            print mail+'@@@@@'
             try:
                 up = UserProfile.objects.using('mainsite').filter(user__email = mail)[0]
                 return get_details(request,up.shaastra_id)
@@ -74,7 +73,7 @@ def get_details(request,sh_id=None):
             output_str += "Entered Shaastra ID is not yet entered into database"
         elif is_junk(sh_id):
             output_str += "Entered Shaastra ID details are junk. Please request and enter the participants details"
-            output_str += "<a href = '/???'>here</a>?"
+            output_str += "<a href = '/barcode/edit_profile/%s'>here</a>?"% sh_id
             return HttpResponse(output_str)
             #TODO: link to url for edit profile!!
         else:
