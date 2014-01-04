@@ -149,10 +149,8 @@ def edit_profile(request,shaastra_id=None):
 def delete_event_winners(request,event_id):
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
-    """TO REMOVE
     if request.user.username != 'ppm':
         return HttpResponse('malicious attempt..please login with ppm account')
-    """ 
     try:
         event = GenericEvent.objects.get(id = event_id)
     except:
