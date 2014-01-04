@@ -55,7 +55,7 @@ def teamcheckin(request,pk,team_idi):
                 shalist.append(cd.get('shaastra_ID'))
                 roomlist.append(cd.get('room'))
                 room = cd.get('room')
-                room.max_number -= 1
+                room.max_number = room.max_number - 1
                 room.save()
                 f.save()
             else:
