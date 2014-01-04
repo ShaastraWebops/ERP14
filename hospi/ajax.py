@@ -17,7 +17,7 @@ from hospi.models import *
 from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom,RegistrationForm,TeamCheckinForm
 from events.forms import ChooseEventForm
 from events.models import GenericEvent, ParticipantEvent
-from barcode.scripts import is_junk,create_junk_profile,get_userprofile
+from barcode.scripts import is_junk,create_junk_profile,get_userprofile,id_in_db
 from barcode.forms import CollegeForm
 import json 
 from misc.utilities import show_alert
