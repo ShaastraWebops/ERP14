@@ -26,4 +26,5 @@ class PrizeWinner(models.Model):
     position = models.IntegerField(default = 4)
     winners = models.ManyToManyField(Barcode,blank = True,null = True)
     event = models.ForeignKey(GenericEvent)
-
+    def __unicode__(self):
+        return self.event.title + '::winners'

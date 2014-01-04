@@ -170,8 +170,42 @@ def ppm_finalistlist(request):
     if request.user.username != 'ppm':
         return HttpResponse('malicious attempt..please login with ppm account')
     """ 
+    max_finalists = range(10)
     if request.method == 'POST':
-        return HttpResponse('post')
+        print str(request.POST.getlist('finalist'))
+        finalistlist = request.POST.getlist('finalist')
+        message_str = ""
+        eventform = EventForm(request.POST)
+        if not eventform.is_valid():
+            return HttpResponse('Invalid Event')
+        event = GenericEvent.objects.get(title = eventform.cleaned_data['event_title'])
+        barcodelist = []        
+        for shid in finalistlist:
+            if shid == 'SHA14':
+                continue
+            if not id_in_db(shid) or Barcode.objects.filter(shaastra_id = shid).count()==0:
+                message_str += "Upload of winner with ID %s failed..correct and try again."% shid 
+                continue
+            try:
+                barcode = Barcode.objects.get(shaastra_id = shid)
+                if barcode not in barcodelist:
+                    #check for duplicates
+                    barcodelist.append(barcode)
+                else:
+                    message_str += "ID %s was found repeated"% shid
+            except:
+                message_str += "Upload of winner with ID %s failed..correct and try again."% shid 
+        if barcodelist!=[]:
+            pz = PrizeWinner.objects.create(event = event,position = 6)
+            for code in barcodelist:
+                pz.winners.add(code)
+        if len(barcodelist)==0:
+            messages.success(request,"Uploaded no finalists successfully!!check the id's")
+        else:
+            messages.success(request,"Uploaded %d finalists successfully!!!!"% len(barcodelist))
+        messages.success(request,"%s..."% (message_str))
+        return render_to_response('barcode/ppm_finalistlist.html', locals(), context_instance=RequestContext(request))
+
     return render_to_response('barcode/ppm_finalistlist.html', locals(), context_instance=RequestContext(request))
         
 def upload_ppm(request):
