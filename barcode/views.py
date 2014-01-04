@@ -53,6 +53,12 @@ def zero(intg):
 def get_details(request,sh_id=None):
     output_str = ""
     if sh_id:
+        try:
+            up = UserProfile.objects.using('mainsite').get(user__email = sh_id)
+            profile = up
+            return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
+        except:
+            gen=1
         if not id_in_db(sh_id):
             output_str += "Entered Shaastra ID is not yet entered into database"
         elif is_junk(sh_id):
@@ -70,6 +76,12 @@ def get_details(request,sh_id=None):
         output_str = ""
         if detailform.is_valid():
             shaastra_id  = detailform.cleaned_data['shaastra_id']
+            try:
+                up = UserProfile.objects.using('mainsite').get(user__email = shaastra_id)
+                profile = up
+                return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
+            except:
+                gen=1
             if not id_in_db(shaastra_id):
                 output_str += "Entered Shaastra ID is not yet entered into database"
             elif is_junk(shaastra_id):
@@ -178,10 +190,8 @@ def ppm_finalistlist(request):
     form = EventForm()
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
-    """TO REMOVE
     if request.user.username != 'ppm':
         return HttpResponse('malicious attempt..please login with ppm account')
-    """ 
     max_finalists = range(10)
     if request.method == 'POST':
         print str(request.POST.getlist('finalist'))
@@ -225,10 +235,8 @@ def upload_ppm(request):
     no_of_places = range(1,6)
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
-    """TO REMOVE
     if request.user.username != 'ppm':
         return HttpResponse('malicious attempt..please login with ppm account')
-    """ 
     if request.method == 'POST':
         event = EventForm(request.POST)
         frm1 = Winner1Form(request.POST)
