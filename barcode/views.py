@@ -53,6 +53,12 @@ def zero(intg):
 def get_details(request,sh_id=None):
     output_str = ""
     if sh_id:
+        try:
+            up = UserProfile.objects.using('mainsite').get(user__email = sh_id)
+            profile = up
+            return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
+        except:
+            gen=1
         if not id_in_db(sh_id):
             output_str += "Entered Shaastra ID is not yet entered into database"
         elif is_junk(sh_id):
@@ -70,6 +76,12 @@ def get_details(request,sh_id=None):
         output_str = ""
         if detailform.is_valid():
             shaastra_id  = detailform.cleaned_data['shaastra_id']
+            try:
+                up = UserProfile.objects.using('mainsite').get(user__email = shaastra_id)
+                profile = up
+                return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
+            except:
+                gen=1
             if not id_in_db(shaastra_id):
                 output_str += "Entered Shaastra ID is not yet entered into database"
             elif is_junk(shaastra_id):
@@ -132,6 +144,7 @@ def edit_profile(request,shaastra_id=None):
                 user = profile.user
             user.first_name = form.cleaned_data['first_name']
             user.email = form.cleaned_data['email']
+            user.last_name = form.cleaned_data['last_name']
             user.save(using = 'mainsite')
             profile.college = college
             profile.user = user
@@ -150,7 +163,10 @@ def edit_profile(request,shaastra_id=None):
     else:
         message_str = "Details already entered, may be junk, so replace with actual values."
         profile = get_userprofile(shaastra_id)
-        form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email,'coll':profile.college.name +"|"+ profile.college.city+"|" + profile.college.state})
+        if profile.college:
+            form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email,'coll':profile.college.name +"|"+ profile.college.city+"|" + profile.college.state})
+        else:
+            form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email})
         college_form = CollegeForm()
     return render_to_response('barcode/edit_profile.html', {'profileform':form,'collegeform':college_form,'message_str':message_str}, context_instance=RequestContext(request))
 
@@ -174,10 +190,8 @@ def ppm_finalistlist(request):
     form = EventForm()
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
-    """TO REMOVE
     if request.user.username != 'ppm':
         return HttpResponse('malicious attempt..please login with ppm account')
-    """ 
     max_finalists = range(10)
     if request.method == 'POST':
         print str(request.POST.getlist('finalist'))
@@ -221,10 +235,8 @@ def upload_ppm(request):
     no_of_places = range(1,6)
     if not request.user.is_authenticated():
         return HttpResponseRedirect('/login')
-    """TO REMOVE
     if request.user.username != 'ppm':
         return HttpResponse('malicious attempt..please login with ppm account')
-    """ 
     if request.method == 'POST':
         event = EventForm(request.POST)
         frm1 = Winner1Form(request.POST)
