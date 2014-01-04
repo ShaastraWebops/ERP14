@@ -150,7 +150,10 @@ def edit_profile(request,shaastra_id=None):
     else:
         message_str = "Details already entered, may be junk, so replace with actual values."
         profile = get_userprofile(shaastra_id)
-        form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email,'coll':profile.college.name +"|"+ profile.college.city+"|" + profile.college.state})
+        if profile.college:
+            form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email,'coll':profile.college.name +"|"+ profile.college.city+"|" + profile.college.state})
+        else:
+            form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email})
         college_form = CollegeForm()
     return render_to_response('barcode/edit_profile.html', {'profileform':form,'collegeform':college_form,'message_str':message_str}, context_instance=RequestContext(request))
 
