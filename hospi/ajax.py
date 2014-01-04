@@ -282,16 +282,24 @@ def register(request,reg_form=None,coll_form=None):
                 new_user.set_password('default')
                 new_user.is_active = True
                 new_user.save(using='mainsite')
+                userprofile = UserProfile(user=new_user,
+                        gender = cleaned_form['gender'],
+                        branch = cleaned_form['branch'],
+                        age = cleaned_form['age'],
+                        mobile_number = cleaned_form['mobile_number'],
+                        college_roll = cleaned_form['college_roll'],
+                        college = college
+                        shaastra_id = shaasrtaid
+                        )
+                userprofile.save(using='mainsite')
             else:
-                try:
-                    userprofile = get_userprofile(shaastraid)                
-                except:
-                    userprofile = UserProfile(user=new_user)
+                userprofile = get_userprofile(shaastraid)                
                 userprofile.gender = cleaned_form['gender']
                 userprofile.branch = cleaned_form['branch']
                 userprofile.age = cleaned_form['age']
                 userprofile.mobile_number = cleaned_form['mobile_number']
                 userprofile.college_roll = cleaned_form['college_roll']
+                userprofile.college = college
                 userprofile.save(using='mainsite')
 
             new_form = IndividualForm(initial={'shaastra_ID':shaastraid})
