@@ -288,8 +288,8 @@ def register(request,reg_form=None,coll_form=None):
                         age = cleaned_form['age'],
                         mobile_number = cleaned_form['mobile_number'],
                         college_roll = cleaned_form['college_roll'],
-                        college = college
-                        shaastra_id = shaasrtaid
+                        college = college,
+                        shaastra_id = shaastraid,
                         )
                 userprofile.save(using='mainsite')
             else:
