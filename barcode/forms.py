@@ -13,11 +13,14 @@ class Event_Participant_Form(forms.ModelForm):
     class Meta:
         model = Event_Participant
 
+class EmailForm(forms.Form):
+    email = forms.EmailField()
+
 class EditProfileForm(forms.ModelForm):
     first_name = forms.CharField(max_length = 50,min_length = 1)
     email = forms.EmailField()
     last_name = forms.CharField(max_length = 50,min_length = 1)
-
+#    autofill = forms.CharField(max_length = 50)
     coll = forms.ChoiceField(choices = COLLEGE_CHOICES,help_text = 'Try to find the college here, else fill form below')
     class Meta:
         model = UserProfile

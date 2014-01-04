@@ -48,17 +48,28 @@ def zero(intg):
     return s
 #TODO: if shaastra id not valid in portal
 
-
-
+def get_mail_details(request):
+    error_str = ""
+    if request.method == 'POST':
+        form = EmailForm(request.POST)
+        if form.is_valid():
+            mail = form.cleaned_data['email']
+            print mail+'@@@@@'
+            try:
+                up = UserProfile.objects.using('mainsite').filter(user__email = mail)[0]
+                return get_details(request,up.shaastra_id)
+            except:
+                error_str = 'Email not in database.'
+        else:
+            error_str = 'email invalid' 
+        return render_to_response('barcode/search_mail.html', locals(),context_instance=RequestContext(request))
+    form = EmailForm()
+    return render_to_response('barcode/search_mail.html',locals(), context_instance=RequestContext(request))
+    
+    
 def get_details(request,sh_id=None):
     output_str = ""
     if sh_id:
-        try:
-            up = UserProfile.objects.using('mainsite').get(user__email = sh_id)
-            profile = up
-            return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
-        except:
-            gen=1
         if not id_in_db(sh_id):
             output_str += "Entered Shaastra ID is not yet entered into database"
         elif is_junk(sh_id):
@@ -76,12 +87,6 @@ def get_details(request,sh_id=None):
         output_str = ""
         if detailform.is_valid():
             shaastra_id  = detailform.cleaned_data['shaastra_id']
-            try:
-                up = UserProfile.objects.using('mainsite').get(user__email = shaastra_id)
-                profile = up
-                return render_to_response('barcode/profile_details.html', {'profile':profile}, context_instance=RequestContext(request))
-            except:
-                gen=1
             if not id_in_db(shaastra_id):
                 output_str += "Entered Shaastra ID is not yet entered into database"
             elif is_junk(shaastra_id):
