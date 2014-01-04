@@ -3,7 +3,8 @@ import csv
 from django.shortcuts import render_to_response
 from barcode.forms import *
 from django.template import RequestContext
-from django.http import HttpResponseRedirect,HttpResponse
+from django.http import HttpResponseRedirect
+from django.http import HttpResponse as arbit
 from django.core.urlresolvers import reverse
 from events.models import GenericEvent,ParticipantEvent
 from models import Barcode,Event_Participant,PrizeWinner
@@ -11,6 +12,7 @@ from django.contrib import messages
 from users.models import UserProfile
 from barcode.scripts import *
 from django.forms.models import modelform_factory
+
 
 def event_winners(request,event_id):
     try:

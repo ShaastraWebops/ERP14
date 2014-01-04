@@ -1,13 +1,16 @@
 from users.models import *
 from models import *
-
+from django.shortcuts import render_to_response
+from django.template import RequestContext
 def has_winner_ws(event = None):
     if not event:
         return 0
     d1 = Event_Participant.objects.filter(event = event).count()
     return d1
     
-
+def HttpResponse(data):
+    return render_to_response('barcode/error.html',{'str':data})
+    
 def has_winner(event = None):
     if not event:
         return 0
