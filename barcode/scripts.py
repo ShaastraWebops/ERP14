@@ -16,7 +16,7 @@ def is_valid_barcode(code):
     #remove for finale
     strcode = str(code)
     if strcode.isdigit():
-        if strcode<17000 and str>11000:
+        if strcode<17000 and str>10000:
             return True
     return False
 
