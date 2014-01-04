@@ -10,7 +10,6 @@
 function redirect(data){
     
     if (data.length == 5){
-    alert(data);
         if (parseFloat(data)==data){
             var url = "/barcode/edit_profile/SHA14".concat(data);
             window.location.replace(url);
