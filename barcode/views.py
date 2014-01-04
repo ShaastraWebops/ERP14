@@ -284,7 +284,10 @@ def upload_ppm(request):
                         except:
                             return HttpResponse('Shaastra ID %s has not been linked to a barcode!!'%shid)
                     else:
-                        prof = create_junk_profile('%^&'+str(shid))
+                        if id_in_db('%^&' + str(shid)):
+                            prof = get_userprofile('%^&'+str(shid))
+                        else:
+                            prof = create_junk_profile('%^&'+str(shid))
                         barcode = Barcode.objects.create(shaastra_id = prof.shaastra_id,barcode = prof.shaastra_id)
                         pz.winners.add(barcode)
                     
