@@ -164,6 +164,8 @@ def edit_profile(request,shaastra_id=None):
         shaastra_id = 'SHA14' + str(shaastra_id)
     if not id_in_db(shaastra_id) :
         #Here, details are not submitted-> no barcode..
+        if not id_is_valid(shaastra_id):
+            return HttpResponse('Invalid Shaastra ID format..please check')
         form = EditProfileForm(initial = {'shaastra_id':shaastra_id,'gender':'M'})
         college_form = CollegeForm()
     else:
