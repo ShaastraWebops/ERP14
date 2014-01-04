@@ -169,7 +169,7 @@ def edit_profile(request,shaastra_id=None):
         message_str = "Details already entered, may be junk, so replace with actual values."
         profile = get_userprofile(shaastra_id)
         if profile.college:
-            form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email,'coll':profile.college.name +"|"+ profile.college.city+"|" + profile.college.state})
+            form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email,'last_name':profile.user.last_name,'coll':profile.college.name +"|"+ profile.college.city+"|" + profile.college.state})
         else:
             form = EditProfileForm(instance = profile,initial = {'first_name':profile.user.first_name,'email':profile.user.email})
         college_form = CollegeForm()
