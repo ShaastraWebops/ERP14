@@ -236,7 +236,7 @@ def createteam(request,team_formset=None,event_pk=None):
                     userlist.append(parti.user)
                 except:
                     if shaastraid == 'SHA14None':
-                        pass
+                        continue
                     else:
                         prof = create_junk_profile(shaastraid)
                         userlist.append(prof.user)
@@ -316,7 +316,7 @@ def team(request,team_form=None):
             team_id = 'TEAM#'+str(actual_name)+'#'+str(cleaned_form['team_id_num'])
             print team_id
             team_instance = TeamEvent.objects.using(mainsite_db).get(team_id=team_id)
-            if check_in_control_room=='Ganga':
+            if check_in_control_room=='Godav':
                 userlist = []
                 checkedlist = []
                 shalist=[]
@@ -336,7 +336,7 @@ def team(request,team_form=None):
                             userlist.append(user_ex.userprofile_set.all()[0])
                             shalist.append(user_ex.userprofile_set.all()[0].shaastra_id)
                 tcheckinformset = modelformset_factory(IndividualCheckIn,form=IndividualForm,extra=len(userlist))
-                formset = tcheckinformset(queryset=IndividualCheckIn.objects.filter(shaastra_ID__in = checkedin_shalist),initial=[{'shaastra_ID':sid,'check_in_control_room':'Ganga','check_out_control_room':'Ganga'} for sid in shalist])
+                formset = tcheckinformset(queryset=IndividualCheckIn.objects.filter(shaastra_ID__in = checkedin_shalist),initial=[{'shaastra_ID':sid,'check_in_control_room':'Godav','check_out_control_room':'Godav'} for sid in shalist])
                 data={
                         'form-TOTAL_FORMS':u'',
                         'form-INITIAL_FORMS':u'',
