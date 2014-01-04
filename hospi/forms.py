@@ -59,3 +59,7 @@ class TeamCheckinForm(forms.Form):
     check_in_control_room = forms.ChoiceField(choices=CONTROL_ROOM_CHOICES,required=False,widget=forms.Select())
     team_id_num = forms.IntegerField(required=False)
 
+class TeamCheckoutForm(forms.Form):
+    event = forms.ChoiceField(choices=event_choices,required=False,widget=forms.Select())
+    check_out_control_room = forms.ChoiceField(choices=CONTROL_ROOM_CHOICES,required=False,widget=forms.Select())
+    team_id_num = forms.IntegerField(required=False)

@@ -1,0 +1,8 @@
+<form method="POST" action="" id="id_team_checkout">
+    {% csrf_token %}
+    <table class="table table-bordered table-hover">
+        {{form.as_table}}
+    </table>
+    <a class="btn btn-info" href="#" onclick="javascript:do_dajax(Dajaxice.hospi.team_checkout,Dajax.process, {'team_form':$('#id_team_checkout').serialize(true)})">Submit</a>
+</form>
+ 

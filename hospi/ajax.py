@@ -14,7 +14,7 @@ from django.contrib.auth.models import User
 from dashboard.models import TeamEvent
 from users.models import UserProfile,College
 from hospi.models import *
-from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom,RegistrationForm,TeamCheckinForm
+from hospi.forms import AddRoomForm,IndividualForm,ShaastraIDForm,RemoveRoom,RegistrationForm,TeamCheckinForm,TeamCheckoutForm
 from events.forms import ChooseEventForm
 from events.models import GenericEvent, ParticipantEvent
 from barcode.scripts import is_junk,create_junk_profile,get_userprofile,id_in_db
@@ -396,4 +396,72 @@ def team(request,team_form=None):
         html_content = render_to_string('hospi/TeamCheckin.html',locals(),RequestContext(request))
         dajax.assign("#tab7","innerHTML",html_content)
         return dajax.json()
+
+@dajaxice_register
+def team_checkout(request,team_form=None):
+    dajax=Dajax()
+    if request.method == 'POST' and team_form != None:
+        form = TeamCheckoutForm(deserialize_form(team_form))
+        if form.is_valid():
+            cleaned_form = form.cleaned_data
+            check_out_control_room = cleaned_form['check_out_control_room']
+            event_name = cleaned_form['event']
+            actual_name = event_name[:5]
+            team_id_num = cleaned_form['team_id_num']
+            team_id = 'TEAM#'+str(actual_name)+'#'+str(team_id_num)
+            team_instance = TeamEvent.objects.using(mainsite_db).get(team_id=team_id)
+            if check_out_control_room == 'Godav':
+                users_in_team = team_instance.users.all()
+                for user_ex in users_in_team:
+                    shaastraid = user_ex.userprofile_set.all()[0].shaastra_id
+                    try:
+                        checkedin = IndividualCheckIn.objects.get(shaastra_id=shaastraid)
+                        if checkedin.check_out_date:
+                            show_alert(dajax,"error","Participant has already checked out")
+                            return dajax.json()
+                        else:
+                            checkedin.check_out_date = datetime.now()
+                            checkedin.check_out_control_room = checkedin.check_in_control_room
+                            checkedin.save()
+                            room = checkedin.room
+                            room.max_number += 1
+                            room.save()
+                            show_alert(dajax,"success","Checked out successfully")
+                    except:
+                        show_alert(dajax,"error","Not checked in")
+                        return dajax.json()
+                return dajax.json()
+
+            else: 
+                users_in_team = team_instance.users.all()
+                for user_ex in users_in_team:
+                    shaastraid = user_ex.userprofile_set.all()[0].shaastra_id
+                    try:
+                        checkedin = IndividualCheckIn.objects.get(shaastra_id=shaastraid)
+                        if checkedin.check_out_date:
+                            show_alert(dajax,"error","Participant has already checked out")
+                            return dajax.json()
+                        else:
+                            checkedin.check_out_date = datetime.now()
+                            checkedin.check_out_control_room = checkedin.check_in_control_room
+                            checkedin.save()
+                            room = checkedin.room
+                            room.max_number += 1
+                            room.save()
+                            show_alert(dajax,"success","Checked out successfully")
+                    except:
+                        show_alert(dajax,"error","Not checked in")
+                        return dajax.json()
+                return dajax.json()
+        else:
+            show_alert(dajax,"error","Form is invalid")
+            return dajax.json()
+
+    else:
+        print 'sdfs'
+        form = TeamCheckoutForm()
+        html_content = render_to_string('hospi/TeamCheckout.html',locals(),RequestContext(request))
+        dajax.assign('#tab8',"innerHTML",html_content)
+        return dajax.json()
+
 
