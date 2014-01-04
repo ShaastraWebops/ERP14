@@ -42,6 +42,7 @@
 {% csrf_token %}
 <div class="control-group">
 {% if form.errors or eventForm.errors %}<p style="color:red">Error in form:{{flag_str}}</p>{% endif %}
+<br/><br/>
 <table>
 {{ form.as_table }}
 {% ifequal title "Participant's Portal" %}
