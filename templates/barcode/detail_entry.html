@@ -12,10 +12,20 @@ function redirect(data){
     window.location.replace(url);
 }
 </script>
+<script>
+$(document).ready(function(){
+$("#detail_entry_form input").keypress(function(event) {
+        if (event.which == 13) {
+        event.preventDefault();
+        $("#submit_shid").click();
+        }
+    });
+  });
 
+</script>
 <center>
 <h3>
-Enter details of a Shaastra ID
+Enter details of a Shaastra IDaaa
 </h3>
 {% if error_str %}
 <span style="color:red">
@@ -24,11 +34,11 @@ Error:<br/>
 </span>
 {% endif %}
 <br/>
-<form class="form-inline">
+<form class="form-inline" id="detail_entry_form">
   <label><strong>Shaastra ID</strong></label>
   <input type="text" class="input-large" placeholder="Enter Shaastra ID" id = "shaastra_id">
   
-  <a href="#" class="btn btn-primary" onclick = "redirect($('#shaastra_id').val())">Submit Shaastra ID</a>
+  <a href="javascript:void(0)" id="submit_shid" class="btn btn-primary" onclick = "redirect($('#shaastra_id').val())">Submit Shaastra ID</a>
 </form>
 
 </center>
