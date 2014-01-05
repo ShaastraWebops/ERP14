@@ -108,8 +108,9 @@ def get_details(request,sh_id=None):
 def get_bar_details(request,barcode=None):
     if barcode == 'acidification':
         return render_to_response('barcode/get_barcode.html')
+    barcode = str(barcode)
     if not barcode_in_db(barcode):
-        output_str = "Entered Shaastra ID is not yet entered into database"
+        output_str = "Entered barcode is not yet entered into database"
         return HttpResponse(output_str)
     else:
         bar = Barcode.objects.get(barcode = barcode)
@@ -155,7 +156,7 @@ def edit_profile(request,shaastra_id=None):
             profile.college = college
             profile.user = user
             profile.save(using = 'mainsite')
-            return HttpResponse("success!!%s Added..Go  <a href='/barcode/detail_entry' >back</a>"% str(shaastra_id))
+            return HttpResponse("success!!%s Added.."% str(shaastra_id))
         else:
             if form.errors.values():
                 message_str += str(form.errors.values())
