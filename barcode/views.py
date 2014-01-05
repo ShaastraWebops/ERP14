@@ -346,6 +346,8 @@ def upload_csv(request, type):
                         message_str+=str(display_list)
                 else:
                     (display_list,fail_list) = process_csv(request,request.FILES['file'],"" ,type) 
+                    if fail_list is None:
+                        return HttpResponse(display_list)
                     if display_list:
                         message_str += str(len(display_list)) + "items;"
                         message_str += str(display_list[0:5]) + "etc.."
@@ -354,7 +356,8 @@ def upload_csv(request, type):
                         message_str += "||Failed: %s" % str(fail_list)
                 if display_list is None and fail_list is None:
                     return HttpResponse('File reading failed, check file format')
-                
+                if fail_list is None:
+                    return HttpResponse(str(display_list))
                 messages.success(request,"%s..."% (message_str))
                 return HttpResponseRedirect(reverse(type))
                 """
@@ -422,6 +425,8 @@ def process_csv (request,file, title,type_str,event_title = None):
             except:
                 return (None,None)
         i=0
+        #return (str(sh_id),None)
+        #return (None,sh_id)
         while i<len(sh_id):
             if not id_is_valid(sh_id[i]):
                 fail_list.append(sh_id[i])
@@ -460,7 +465,7 @@ def process_csv (request,file, title,type_str,event_title = None):
         insti_list = []#List of insti roll no.s
         for d in input_file:
             key_list = d.keys()
-            if is_valid_insti_roll(key_list[0]):
+            if is_valid_insti_roll(d[key_list[0]]):
                 insti_list.append(d[key_list[0]])
             else:
                 barcode.append(d[key_list[0]])
