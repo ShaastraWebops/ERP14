@@ -13,6 +13,7 @@
             <td><b>Check out Control Room</b></td>
         </tr>
         {% for form in formset.forms %}
+        {{form.id}}
             <tr class="success">
                 <td>{{form.room}}</td>
                 <td>{{form.duration_of_stay}}</td>
