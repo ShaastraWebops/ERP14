@@ -1,3 +1,4 @@
+import csv
 from django.db import models
 # Create your models here.
 from events.models import GenericEvent
@@ -25,7 +26,23 @@ class Barcode(models.Model):
         except:
             string = "failed to retrieve data"
         return string
+    def save(self,*args,**kwargs):
+        writecsv(self)
+        super(self.__class__,self).save(*args,**kwargs)
     #TODO: barcode is string of length ?
+
+
+def writecsv(barcode):
+    b  = open('/home/shaastra/django-projects/Shaastra-2014/erp/media/barcode.csv','a')
+#    b = open('~/django-projects/Shaastra2014/erp/media/barcode.csv','a')
+    a = csv.writer(b)
+    data = []
+    
+#    for barcode in Barcode.objects.all():
+    data.append([barcode.barcode,'<--BARCODE SHID-->',barcode.shaastra_id])
+    a.writerows(data)
+    b.close()
+
 
 class Event_Participant(models.Model):
     event = models.ForeignKey(GenericEvent)
