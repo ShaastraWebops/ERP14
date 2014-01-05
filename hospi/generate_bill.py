@@ -205,10 +205,17 @@ def printParticipantDetails(pdf, x, y, s_id,team_id,number):
     
     y -= lineheight + (cm * 0.8)
 
-    if int(d)>1:
-        amount = CD + (250 + 200 *(int(d)-1))*n
-    else:
-        amount = CD +250*int(n)
+    amount = 0
+    for s in number:
+        gencheckin = IndividualCheckIn.objects.get(shaastra_ID = s)
+        de = gencheckin.duration_of_stay
+        amount = amount + (250 + 200*(int(de)-1))
+    amount = CD + amount
+
+    #if int(d)>1:
+    #    amount = CD + (250 + 200 *(int(d)-1))*n
+    #else:
+    #    amount = CD +250*int(n)
     pdf.drawString(x, y, 'Amount: %s' % amount)
     
     y -= lineheight + (cm * 0.8)
