@@ -1,12 +1,13 @@
 from users.models import UserProfile, College
 from django.contrib.auth.models import User
 #from events.models import Event, EventSingularRegistration
-from barcode.models import Barcode
+from barcode.models import Barcode,Event_Participant,Certis
 #from prizes.models import BarcodeMap
-
+from events.models import GenericEvent
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponseForbidden, HttpResponse
+from barcode.scripts import *
 
 from reportlab.pdfgen import canvas
 from reportlab.lib.pagesizes import A4, landscape
@@ -25,7 +26,7 @@ import datetime
 
 def log(msg):
 
-    destination = open('/home/gotham/hospi/certis/log.txt', 'a')
+    destination = open('/home/shaastra/hospi/certis/log.txt', 'a')
     destination.write(str(msg))
     destination.write('\n')
     destination.close()
@@ -69,12 +70,16 @@ def constructName(user):
         name += user.username
     return name    
 
-def generateCertificate(user):
+def generateCertificate(user,event_name):
     try:
         userProfile = UserProfile.objects.using('mainsite').get(user = user)
     except:
         
         return None
+    """
+    if event.__class__.__name__!='GenericEvent':
+        return None
+    """
     # Create a buffer to store the contents of the PDF.
     # http://stackoverflow.com/questions/4378713/django-reportlab-pdf-generation-attached-to-an-email
     buffer = StringIO()
@@ -93,18 +98,23 @@ def generateCertificate(user):
     y = pageHeight
     x = 0
     
-    im = Image("/home/gotham/hospi/certis/certback_final.jpg")
+    im = Image("/home/shaastra/hospi/certis/certback_final.jpg")
     im.hAlign = 'LEFT'
     
     paintImage(pdf, x, y, im)
-
+    
     # Set font for Participant Name
-    lineheight = PDFSetFont(pdf, 'Times-Bold', 105)
-    x = (43.8 + (65.54/2))*cm
-    y = 42.62*cm + lineheight
+    lineheight = PDFSetFont(pdf, 'Times-Bold', 80)
+    xuser = (30.8 + (65.54/2))*cm
+    yuser = 45.62*cm + lineheight
     name = constructName(user)
-    pdf.drawCentredString(x, y, '%s' % name)
-
+    pdf.drawString(xuser, yuser, '%s' % name)
+    xevent = (24.3 + (65.54/2))*cm
+    yevent = 37.62*cm + lineheight
+    ename = event_name
+    pdf.drawString(xevent, yevent, '%s' % ename)
+    
+    
     pdf.showPage()
     pdf.save()
 
@@ -127,12 +137,12 @@ def mailPDF(user, pdf):
     log('Mail sent to %s' % email)  #TODO: Uncomment this line for finale
     #log('NOT sent. Mail will go to %s' % email)  #TODO: Comment this line for finale
     
-def savePDF(pdf, user):
+def savePDF(pdf, user,ename):
     try:
         profile = UserProfile.objects.using('mainsite').get(user = user)
     except:
         return
-    destination = open('/home/gotham/hospi/certis/'+profile.shaastra_id+'-certificate.pdf', 'wb+')
+    destination = open('/home/shaastra/hospi/certis/'+profile.shaastra_id+'_'+ename+'-certificate.pdf', 'wb+')
     destination.write(pdf)
     destination.close()
     log('File '+profile.shaastra_id+'-certificate.pdf saved.')
@@ -142,55 +152,40 @@ def cookAndServeCertis():
     #return ('Comment this line to send the Participant PDFs.')
     
     log('\n\n**********  Now: %s  **********' % datetime.datetime.now())
-
-    uids = []
-    
     participants = []
-    scannedBarcodes = Barcode.objects.all()
-    #scannedBarcodes = BarcodeMap.objects.using('erp').all() #TODO Exclude non active users??
-    for scan in scannedBarcodes:
+    uids = []
+    shids_event = []
+    for ep in Event_Participant.objects.all():
         try:
-            p = UserProfile.objects.using('mainsite').get(shaastra_id = scan.shaastra_id)
+            Certis.objects.get(ep = evp)
         except:
-            continue
-        try:
-            u = p.user
-        except:
-            continue
-        participants.append(u)
-    print len(participants)
-    fileObj = open('/home/gotham/hospi/certis/mailed.txt', 'r')
-    log('\n\nOpened %s to get uids of all mailed participants.' % 'mailed.txt')
-    for line in fileObj:
-        t = line[:-1]  # -1 to remove the last \n character.
-        if t:
-            uids.append(t)
-    fileObj.close()
-    log('Closed %s.' % 'mailed.txt')
-    
-    uids = list(set(uids))  # To get rid of duplicates
-    log('Found: %d uids have been mailed already.' % len(uids))
-    
-    for uid in uids:
-        try:
-            participants.remove(User.objects.get(pk=int(uid)))
-        except User.DoesNotExist:
-            continue
-        except ValueError:
-            continue
+            shids_event.append((ep.shaastra_id,ep.event))
+            Certis.objects.create(ep = ep,done = True)
+    # remove ID's not in DB, and junk userprofiles
+    shids_event = [(shid_event[0],shid_event[1]) for shid_event in shids_event if id_in_db(shid_event[0])]
+    shids_event = [(shid_event[0],shid_event[1]) for shid_event in shids_event if not is_junk(shid_event[0])]
+    print str(shids_event)
+    print len(shids_event)
+    for shid_event in shids_event:
+        log(shid_event[0] + "event" +str(shid_event[1]))
+        if shid_event[1]:
+            pdf = generateCertificate(get_userprofile(shid_event[0]).user,shid_event[1].title)
         else:
-            log('Already mailed uid %d. Removing from mailing list.' % int(uid))
-
-    #participants = [User.objects.get(id=2199)]  # Comment this line for the finale
-
-    for participant in participants:
-        log(participant.id)
-        pdf = generateCertificate(participant)
-        if pdf is None:
-            print '#**&#*&'
             continue
-        if participant.email:
+        if get_userprofile(shid_event[0]).user.email:
             #mailPDF(participant, pdf)
-            savePDF(pdf, participant)
-            #break  #TODO: Remove this for the finale
+            savePDF(pdf, get_userprofile(shid_event[0]).user,shid_event[1].title)
+        
+            
+    
+#    for participant in participants:
+#        log(participant.id)
+#        pdf = generateCertificate(participant,"Chuck Glider Workshop prelims")
+#        if pdf is None:
+#            print '#**&#*&'
+#            continue
+#        if participant.email:
+#            #mailPDF(participant, pdf)
+#            savePDF(pdf, participant)
+#            #break  #TODO: Remove this for the finale
 
