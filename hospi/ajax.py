@@ -415,21 +415,21 @@ def team_checkout(request,team_form=None):
                 for user_ex in users_in_team:
                     shaastraid = user_ex.userprofile_set.all()[0].shaastra_id
                     try:
-                        checkedin = IndividualCheckIn.objects.get(shaastra_id=shaastraid)
+                        checkedin = IndividualCheckIn.objects.get(shaastra_ID=shaastraid)
                         if checkedin.check_out_date:
                             show_alert(dajax,"error","Participant has already checked out")
                             return dajax.json()
                         else:
                             checkedin.check_out_date = datetime.now()
                             checkedin.check_out_control_room = checkedin.check_in_control_room
-                            checkedin.save()
                             room = checkedin.room
                             room.max_number += 1
                             room.save()
-                            show_alert(dajax,"success","Checked out successfully")
+                            checkedin.save()
                     except:
                         show_alert(dajax,"error","Not checked in")
                         return dajax.json()
+                show_alert(dajax,"success","Team Checked out")
                 return dajax.json()
 
             else: 
@@ -458,7 +458,6 @@ def team_checkout(request,team_form=None):
             return dajax.json()
 
     else:
-        print 'sdfs'
         form = TeamCheckoutForm()
         html_content = render_to_string('hospi/TeamCheckout.html',locals(),RequestContext(request))
         dajax.assign('#tab8',"innerHTML",html_content)
