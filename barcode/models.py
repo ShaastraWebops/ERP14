@@ -49,7 +49,10 @@ class Event_Participant(models.Model):
     shaastra_id = models.CharField(max_length = 40)
     def __unicode__(self):
         return "ID: %s; Event:%s" % (self.shaastra_id,self.event.title)
-    
+
+class Certis(models.Model):
+    ep = models.ForeignKey(Event_Participant)
+    done = models.BooleanField(default = False)
     
 class Insti_Participant(models.Model):
     event = models.ForeignKey(GenericEvent)
